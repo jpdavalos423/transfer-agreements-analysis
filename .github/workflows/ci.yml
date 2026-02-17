@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Lint (syntax smoke)
+        run: |
+          python -m compileall -q apps packages tests
+
+      - name: Unit tests
+        run: |
+          python -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+
+      - name: E2E request smoke
+        run: |
+          python -m apps.api.server > /tmp/api.log 2>&1 &
+          API_PID=$!
+          trap "kill $API_PID" EXIT
+          sleep 1
+
+          HTTP_CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" \
+            -X POST http://127.0.0.1:8000/v1/pathways/generate \
+            -H "Content-Type: application/json" \
+            -d '{"college_id":"de_anza","target_ucs":["UCLA"],"ge_pattern":"IGETC","completed_courses":["MATH 1A"]}')
+
+          test "$HTTP_CODE" = "200"
+
+          python - <<'PY'
+          import json
+          with open("/tmp/resp.json", "r", encoding="utf-8") as f:
+              data = json.load(f)
+          assert data.get("version") == "v1"
+          assert isinstance(data.get("plan"), list)
+          assert isinstance(data.get("warnings"), list)
+          print("E2E smoke response OK")
+          PY
+

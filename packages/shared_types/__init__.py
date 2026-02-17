@@ -1,0 +1,2 @@
+# Shared types package marker.
+
