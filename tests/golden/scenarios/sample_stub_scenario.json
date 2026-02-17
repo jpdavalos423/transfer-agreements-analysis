@@ -1,0 +1,18 @@
+{
+  "id": "sample_stub_de_anza_multi_uc",
+  "description": "Vertical-slice stub planner response for De Anza with two UC targets.",
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCSD",
+      "UCLA"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "MATH 1A",
+      "CIS 22A"
+    ]
+  },
+  "expected_file": "sample_stub_scenario_expected.json"
+}
+

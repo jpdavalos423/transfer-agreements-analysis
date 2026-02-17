@@ -12,6 +12,7 @@ from packages.shared_types.v1 import (
     build_error_response,
     validate_generate_request,
 )
+from packages.planner_core import generate_stub_plan
 from apps.api.subset_loader import load_subset_metadata
 
 
@@ -105,27 +106,12 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        # Stubbed vertical-slice response; planner implementation is deferred.
-        response = {
-            "version": API_VERSION,
-            "plan": [],
-            "warnings": [
-                {
-                    "code": "PLANNER_NOT_IMPLEMENTED",
-                    "message": "Planner logic is not implemented yet; returning stub response.",
-                }
-            ],
-            "meta": {
-                "college_id": payload["college_id"],
-                "target_ucs": payload["target_ucs"],
-                "ge_pattern": payload["ge_pattern"],
-                "completed_courses_count": len(payload["completed_courses"]),
-                "subset": {
-                    "colleges": subset.colleges,
-                    "target_ucs": subset.target_ucs,
-                    "ge_patterns": subset.ge_patterns,
-                },
-            },
+        response = generate_stub_plan(payload)
+        response.setdefault("meta", {})
+        response["meta"]["subset"] = {
+            "colleges": subset.colleges,
+            "target_ucs": subset.target_ucs,
+            "ge_patterns": subset.ge_patterns,
         }
         self._send_json(HTTPStatus.OK, response)
 

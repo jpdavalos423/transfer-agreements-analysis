@@ -30,7 +30,13 @@ jobs:
 
       - name: Unit tests
         run: |
-          python -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+          python -m unittest \
+            tests/data_adapter/test_parsers.py \
+            tests/data_adapter/test_runtime_builder.py \
+            tests/golden/test_bootstrap_script.py \
+            tests/golden/test_golden_runner.py \
+            tests/api/test_generate_endpoint.py \
+            tests/web/test_ui_smoke.py
 
       - name: E2E request smoke
         run: |
@@ -55,4 +61,3 @@ jobs:
           assert isinstance(data.get("warnings"), list)
           print("E2E smoke response OK")
           PY
-

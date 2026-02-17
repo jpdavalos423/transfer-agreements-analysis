@@ -182,6 +182,27 @@ def load_json(path):
 
 def get_course_units(course_code, prereqs, articulated=None):
     """Get the unit count for a course from prereqs or articulated data."""
+    code_raw = course_code
+    code_norm = str(course_code).strip() if course_code is not None else course_code
+
+    if isinstance(prereqs, dict) and code_norm != code_raw and code_norm in prereqs:
+        course_data = prereqs[code_norm]
+        if isinstance(course_data, dict):
+            if 'units' in course_data:
+                units = course_data['units']
+                debug_log(
+                    f"Found units for {code_raw!r} via stripped match {code_norm!r} in prereqs dict",
+                    {"units": units},
+                )
+                return units
+            elif 'courseUnits' in course_data:
+                units = course_data['courseUnits']
+                debug_log(
+                    f"Found courseUnits for {code_raw!r} via stripped match {code_norm!r} in prereqs dict",
+                    {"units": units},
+                )
+                return units
+
     if isinstance(prereqs, list):
         for course in prereqs:
             if isinstance(course, dict) and course.get('courseCode') == course_code:
@@ -232,7 +253,26 @@ def get_course_units(course_code, prereqs, articulated=None):
                                                     units = course['courseUnits']
                                                     debug_log(f"Found courseUnits for {course_code} in articulated", {"units": units})
                                                     return units
-    debug_log(f"Could not find units for {course_code}, defaulting to 3 units", {"course_code": course_code})
+    fallback_details = {
+        "course_code_raw": code_raw,
+        "course_code_repr": repr(code_raw),
+        "course_code_stripped": code_norm,
+        "exact_key_exists_in_prereqs_dict": isinstance(prereqs, dict) and code_raw in prereqs,
+        "stripped_key_exists_in_prereqs_dict": isinstance(prereqs, dict) and code_norm in prereqs,
+    }
+    if isinstance(prereqs, dict):
+        norm_to_keys = {}
+        for key in prereqs.keys():
+            k_norm = str(key).strip().upper()
+            norm_to_keys.setdefault(k_norm, []).append(key)
+        matches = norm_to_keys.get(str(code_norm).upper(), [])
+        fallback_details["normalized_key_candidates"] = matches[:10]
+        fallback_details["prereqs_key_count"] = len(prereqs)
+
+    debug_log(
+        f"Could not find units for {course_code}, defaulting to 3 units",
+        fallback_details,
+    )
     return 3
 
 

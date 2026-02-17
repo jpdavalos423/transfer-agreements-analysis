@@ -1,0 +1,101 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from packages.planner_core import canonicalize_for_comparison, generate_stub_plan  # noqa: E402
+
+
+def _write_json(path: Path, payload: Any) -> None:
+    text = json.dumps(payload, indent=2, sort_keys=False, ensure_ascii=False)
+    path.write_text(text + "\n", encoding="utf-8")
+
+
+def _load_request(path: Path) -> dict[str, Any]:
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Request JSON must be an object.")
+    required = ("college_id", "target_ucs", "ge_pattern", "completed_courses")
+    missing = [k for k in required if k not in payload]
+    if missing:
+        raise ValueError(f"Request JSON missing required keys: {missing}")
+    return payload
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Bootstrap golden scenario + expected output files.")
+    parser.add_argument("--id", required=True, help="Scenario id, e.g. de_anza_ucla_igetc")
+    parser.add_argument("--request-file", required=True, help="Path to request JSON payload file.")
+    parser.add_argument("--description", default="", help="Optional scenario description.")
+    parser.add_argument(
+        "--scenarios-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        help="Directory for scenario definitions.",
+    )
+    parser.add_argument(
+        "--expected-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "expected"),
+        help="Directory for expected outputs.",
+    )
+    parser.add_argument(
+        "--expected-file",
+        default="",
+        help="Expected output filename. Defaults to <id>_expected.json.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Allow overwriting existing scenario/expected files.",
+    )
+    args = parser.parse_args()
+
+    scenario_id = args.id.strip()
+    if not scenario_id:
+        raise SystemExit("Scenario id cannot be empty.")
+
+    request_payload = _load_request(Path(args.request_file))
+    expected_payload = canonicalize_for_comparison(generate_stub_plan(request_payload))
+
+    scenarios_dir = Path(args.scenarios_dir)
+    expected_dir = Path(args.expected_dir)
+    scenarios_dir.mkdir(parents=True, exist_ok=True)
+    expected_dir.mkdir(parents=True, exist_ok=True)
+
+    expected_file = args.expected_file.strip() or f"{scenario_id}_expected.json"
+    scenario_path = scenarios_dir / f"{scenario_id}.json"
+    expected_path = expected_dir / expected_file
+
+    if not args.overwrite:
+        conflicts = [p for p in (scenario_path, expected_path) if p.exists()]
+        if conflicts:
+            raise SystemExit(
+                "Refusing to overwrite existing files without --overwrite: "
+                + ", ".join(str(p) for p in conflicts)
+            )
+
+    scenario_payload = {
+        "id": scenario_id,
+        "description": args.description,
+        "request": request_payload,
+        "expected_file": expected_file,
+    }
+
+    _write_json(scenario_path, scenario_payload)
+    _write_json(expected_path, expected_payload)
+
+    print(f"Wrote scenario: {scenario_path}")
+    print(f"Wrote expected: {expected_path}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
