@@ -12,9 +12,17 @@ Semantic comparison is used (not raw JSON byte equality):
 
 ## Run
 ```bash
+scripts/golden --suite phase_a
+scripts/golden --suite full
+scripts/golden --suite full --repeat 5
+```
+
+## Unittest Targets
+```bash
+python3 -m unittest tests/golden/test_phase_a_scenarios.py
+python3 -m unittest tests/golden/test_full_suite_scenarios.py
 python3 -m unittest tests/golden/test_golden_runner.py
 python3 -m unittest tests/golden/test_legacy_pathway_units_golden.py
-python3 -m unittest tests/golden/test_phase_a_scenarios.py
 ```
 
 ## Bootstrap New Scenario

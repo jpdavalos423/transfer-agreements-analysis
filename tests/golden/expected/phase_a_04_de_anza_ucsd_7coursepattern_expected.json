@@ -10,11 +10,9 @@
   "meta": {
     "college_id": "de_anza",
     "target_ucs": [
-      "UCLA",
       "UCSD"
     ],
-    "ge_pattern": "IGETC",
-    "completed_courses_count": 2
+    "ge_pattern": "7CoursePattern",
+    "completed_courses_count": 3
   }
 }
-

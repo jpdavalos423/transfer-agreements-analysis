@@ -1,0 +1,18 @@
+{
+  "version": "v1",
+  "plan": [],
+  "warnings": [
+    {
+      "code": "PLANNER_NOT_IMPLEMENTED",
+      "message": "Planner logic is not implemented yet; returning stub response."
+    }
+  ],
+  "meta": {
+    "college_id": "lassen",
+    "target_ucs": [
+      "UCM"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses_count": 2
+  }
+}

@@ -13,7 +13,7 @@
       "UCLA",
       "UCSD"
     ],
-    "ge_pattern": "IGETC",
-    "completed_courses_count": 11
+    "ge_pattern": "7CoursePattern",
+    "completed_courses_count": 3
   }
 }

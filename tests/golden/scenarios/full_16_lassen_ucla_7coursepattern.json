@@ -1,0 +1,19 @@
+{
+  "id": "full_16_lassen_ucla_7coursepattern",
+  "description": "Matrix scenario 16: lassen -> ['UCLA'] (7CoursePattern)",
+  "tags": [
+    "full"
+  ],
+  "request": {
+    "college_id": "lassen",
+    "target_ucs": [
+      "UCLA"
+    ],
+    "ge_pattern": "7CoursePattern",
+    "completed_courses": [
+      "MATH 1A",
+      "MATH 1B"
+    ]
+  },
+  "expected_file": "full_16_lassen_ucla_7coursepattern_expected.json"
+}

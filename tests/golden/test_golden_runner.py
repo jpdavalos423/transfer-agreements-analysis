@@ -12,7 +12,7 @@ EXPECTED_DIR = BASE_DIR / "expected"
 
 
 class GoldenRunnerTests(unittest.TestCase):
-    def test_sample_golden_scenario_passes(self):
+    def test_golden_scenarios_pass(self):
         scenarios = load_scenarios(SCENARIOS_DIR)
         self.assertGreaterEqual(len(scenarios), 1)
         outputs = run_all(SCENARIOS_DIR, EXPECTED_DIR)
@@ -27,4 +27,3 @@ class GoldenRunnerTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

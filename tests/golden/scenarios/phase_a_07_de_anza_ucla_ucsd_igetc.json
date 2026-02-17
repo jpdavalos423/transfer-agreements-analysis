@@ -1,0 +1,22 @@
+{
+  "id": "phase_a_07_de_anza_ucla_ucsd_igetc",
+  "description": "Matrix scenario 7: de_anza -> ['UCLA', 'UCSD'] (IGETC)",
+  "tags": [
+    "phase_a",
+    "full"
+  ],
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCLA",
+      "UCSD"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "CIS 22A",
+      "CIS 22B",
+      "CIS 22BH"
+    ]
+  },
+  "expected_file": "phase_a_07_de_anza_ucla_ucsd_igetc_expected.json"
+}

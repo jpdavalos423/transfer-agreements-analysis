@@ -8,10 +8,9 @@
     }
   ],
   "meta": {
-    "college_id": "de_anza",
+    "college_id": "lassen",
     "target_ucs": [
-      "UCLA",
-      "UCSD"
+      "UCLA"
     ],
     "ge_pattern": "IGETC",
     "completed_courses_count": 2

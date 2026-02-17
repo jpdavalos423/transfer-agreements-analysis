@@ -1,0 +1,20 @@
+{
+  "id": "full_26_lassen_ucsd_ucm_7coursepattern",
+  "description": "Matrix scenario 26: lassen -> ['UCSD', 'UCM'] (7CoursePattern)",
+  "tags": [
+    "full"
+  ],
+  "request": {
+    "college_id": "lassen",
+    "target_ucs": [
+      "UCSD",
+      "UCM"
+    ],
+    "ge_pattern": "7CoursePattern",
+    "completed_courses": [
+      "MATH 1A",
+      "MATH 1B"
+    ]
+  },
+  "expected_file": "full_26_lassen_ucsd_ucm_7coursepattern_expected.json"
+}

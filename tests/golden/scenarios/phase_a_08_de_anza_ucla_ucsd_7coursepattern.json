@@ -1,0 +1,22 @@
+{
+  "id": "phase_a_08_de_anza_ucla_ucsd_7coursepattern",
+  "description": "Matrix scenario 8: de_anza -> ['UCLA', 'UCSD'] (7CoursePattern)",
+  "tags": [
+    "phase_a",
+    "full"
+  ],
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCLA",
+      "UCSD"
+    ],
+    "ge_pattern": "7CoursePattern",
+    "completed_courses": [
+      "CIS 22A",
+      "CIS 22B",
+      "CIS 22BH"
+    ]
+  },
+  "expected_file": "phase_a_08_de_anza_ucla_ucsd_7coursepattern_expected.json"
+}

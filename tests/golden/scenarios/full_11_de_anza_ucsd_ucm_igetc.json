@@ -1,0 +1,21 @@
+{
+  "id": "full_11_de_anza_ucsd_ucm_igetc",
+  "description": "Matrix scenario 11: de_anza -> ['UCSD', 'UCM'] (IGETC)",
+  "tags": [
+    "full"
+  ],
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCSD",
+      "UCM"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "CIS 22C",
+      "CIS 22CH",
+      "CIS 35A"
+    ]
+  },
+  "expected_file": "full_11_de_anza_ucsd_ucm_igetc_expected.json"
+}

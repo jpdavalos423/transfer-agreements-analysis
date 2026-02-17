@@ -33,6 +33,7 @@ jobs:
           python -m unittest -f \
             tests/golden/test_golden_runner.py \
             tests/golden/test_phase_a_scenarios.py \
+            tests/golden/test_full_suite_scenarios.py \
             tests/golden/test_legacy_pathway_units_golden.py
 
       - name: Unit tests

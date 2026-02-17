@@ -10,9 +10,11 @@
   "meta": {
     "college_id": "lassen",
     "target_ucs": [
+      "UCLA",
+      "UCM",
       "UCSD"
     ],
-    "ge_pattern": "7CoursePattern",
-    "completed_courses_count": 0
+    "ge_pattern": "IGETC",
+    "completed_courses_count": 2
   }
 }
