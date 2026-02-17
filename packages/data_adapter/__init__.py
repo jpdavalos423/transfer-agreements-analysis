@@ -8,6 +8,7 @@ from .parsers import (
     parse_filtered_csv_file,
     parse_filtered_results_dir,
 )
+from .runtime_builder import build_runtime_dataset, load_runtime_dataset
 
 __all__ = [
     "AlternativeBlock",
@@ -22,5 +23,6 @@ __all__ = [
     "parse_district_csvs_dir",
     "parse_filtered_csv_file",
     "parse_filtered_results_dir",
+    "build_runtime_dataset",
+    "load_runtime_dataset",
 ]
-

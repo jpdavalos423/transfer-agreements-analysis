@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+# Ensure repo root is importable when executed directly.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from packages.data_adapter.diagnostics import DataParseError  # noqa: E402
+from packages.data_adapter.runtime_builder import build_runtime_dataset  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Build normalized runtime dataset artifacts under data/runtime.")
+    parser.add_argument(
+        "--filtered-results-dir",
+        default=str(REPO_ROOT / "filtered_results"),
+        help="Path to filtered_results CSV directory.",
+    )
+    parser.add_argument(
+        "--district-csvs-dir",
+        default=str(REPO_ROOT / "district_csvs"),
+        help="Path to district_csvs CSV directory.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=str(REPO_ROOT / "data" / "runtime"),
+        help="Output directory for normalized artifacts and manifest.json.",
+    )
+    args = parser.parse_args()
+
+    try:
+        manifest = build_runtime_dataset(
+            filtered_results_dir=args.filtered_results_dir,
+            district_csvs_dir=args.district_csvs_dir,
+            output_dir=args.output_dir,
+        )
+    except DataParseError as exc:
+        print("Runtime dataset build failed due to parse errors:")
+        for diag in exc.diagnostics:
+            print(
+                f"- {diag.severity.value}: {diag.message} "
+                f"[{diag.row_ref.file_path}:{diag.row_ref.row_number or '-'}:{diag.row_ref.column or '-'}]"
+            )
+        return 1
+
+    print(json.dumps(manifest, indent=2, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
