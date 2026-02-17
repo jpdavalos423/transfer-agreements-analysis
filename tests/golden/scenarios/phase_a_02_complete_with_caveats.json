@@ -1,0 +1,20 @@
+{
+  "id": "phase_a_02_complete_with_caveats",
+  "description": "Complete-with-caveats representative; verifies warning-bearing successful response path.",
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCLA",
+      "UCM"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "MATH 1A"
+    ]
+  },
+  "expected_file": "phase_a_02_complete_with_caveats_expected.json",
+  "coverage": [
+    "complete_with_caveats",
+    "warnings_present"
+  ]
+}

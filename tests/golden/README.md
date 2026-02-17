@@ -14,6 +14,7 @@ Semantic comparison is used (not raw JSON byte equality):
 ```bash
 python3 -m unittest tests/golden/test_golden_runner.py
 python3 -m unittest tests/golden/test_legacy_pathway_units_golden.py
+python3 -m unittest tests/golden/test_phase_a_scenarios.py
 ```
 
 ## Bootstrap New Scenario
