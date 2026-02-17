@@ -15,3 +15,9 @@ Default endpoint:
 ```text
 POST /v1/pathways/generate
 ```
+
+Subset metadata endpoint:
+
+```text
+GET /v1/metadata
+```

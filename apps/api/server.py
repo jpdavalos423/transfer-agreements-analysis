@@ -12,6 +12,7 @@ from packages.shared_types.v1 import (
     build_error_response,
     validate_generate_request,
 )
+from apps.api.subset_loader import load_subset_metadata
 
 
 class PathwayRequestHandler(BaseHTTPRequestHandler):
@@ -37,6 +38,12 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", "0")
         self.end_headers()
 
+    def _subset_metadata(self):
+        try:
+            return load_subset_metadata(), None
+        except Exception as exc:  # pragma: no cover - defensive server fallback
+            return None, exc
+
     def do_POST(self) -> None:  # noqa: N802 (stdlib naming)
         if self.path != "/v1/pathways/generate":
             self._send_json(
@@ -45,6 +52,18 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "NOT_FOUND",
                     "Route not found.",
                     [{"field": "path", "message": "Use POST /v1/pathways/generate."}],
+                ),
+            )
+            return
+
+        subset, subset_err = self._subset_metadata()
+        if subset_err is not None:
+            self._send_json(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                build_error_response(
+                    "SUBSET_LOAD_ERROR",
+                    "Unable to load subset metadata from source CSVs.",
+                    [{"field": "subset_loader", "message": str(subset_err)}],
                 ),
             )
             return
@@ -70,7 +89,11 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        validation_errors = validate_generate_request(payload)
+        validation_errors = validate_generate_request(
+            payload,
+            allowed_colleges=set(subset.colleges),
+            allowed_ucs=set(subset.target_ucs),
+        )
         if validation_errors:
             self._send_json(
                 HTTPStatus.BAD_REQUEST,
@@ -97,9 +120,51 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 "target_ucs": payload["target_ucs"],
                 "ge_pattern": payload["ge_pattern"],
                 "completed_courses_count": len(payload["completed_courses"]),
+                "subset": {
+                    "colleges": subset.colleges,
+                    "target_ucs": subset.target_ucs,
+                    "ge_patterns": subset.ge_patterns,
+                },
             },
         }
         self._send_json(HTTPStatus.OK, response)
+
+    def do_GET(self) -> None:  # noqa: N802 (stdlib naming)
+        if self.path != "/v1/metadata":
+            self._send_json(
+                HTTPStatus.NOT_FOUND,
+                build_error_response(
+                    "NOT_FOUND",
+                    "Route not found.",
+                    [{"field": "path", "message": "Use GET /v1/metadata."}],
+                ),
+            )
+            return
+
+        subset, subset_err = self._subset_metadata()
+        if subset_err is not None:
+            self._send_json(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                build_error_response(
+                    "SUBSET_LOAD_ERROR",
+                    "Unable to load subset metadata from source CSVs.",
+                    [{"field": "subset_loader", "message": str(subset_err)}],
+                ),
+            )
+            return
+
+        self._send_json(
+            HTTPStatus.OK,
+            {
+                "version": API_VERSION,
+                "subset": {
+                    "colleges": subset.colleges,
+                    "target_ucs": subset.target_ucs,
+                    "ge_patterns": subset.ge_patterns,
+                },
+                "sources": subset.sources,
+            },
+        )
 
     def log_message(self, fmt: str, *args: Any) -> None:
         # Keep output concise in tests and local runs.

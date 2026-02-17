@@ -33,10 +33,10 @@ class GenerateEndpointIntegrationTest(unittest.TestCase):
         )
         return urllib.request.urlopen(req, timeout=5)
 
-    def test_generate_returns_200_and_v1_shape(self):
+    def test_allow_de_anza_and_ucla(self):
         payload = {
             "college_id": "de_anza",
-            "target_ucs": ["UCLA", "UCSD"],
+            "target_ucs": ["UCLA"],
             "ge_pattern": "IGETC",
             "completed_courses": ["MATH 1A"],
         }
@@ -47,7 +47,26 @@ class GenerateEndpointIntegrationTest(unittest.TestCase):
         shape_errors = validate_generate_response_shape(body)
         self.assertEqual(shape_errors, [], f"Response shape errors: {shape_errors}")
 
-    def test_generate_returns_structured_validation_error(self):
+    def test_reject_college_not_in_subset(self):
+        invalid_payload = {
+            "college_id": "foothill",
+            "target_ucs": ["UCLA"],
+            "ge_pattern": "IGETC",
+            "completed_courses": [],
+        }
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._post_json("/v1/pathways/generate", invalid_payload)
+
+        self.assertEqual(ctx.exception.code, 400)
+        body = json.loads(ctx.exception.read().decode("utf-8"))
+        self.assertEqual(body.get("version"), "v1")
+        self.assertIn("error", body)
+        self.assertEqual(body["error"].get("code"), "VALIDATION_ERROR")
+        self.assertIsInstance(body["error"].get("details"), list)
+        fields = {d.get("field") for d in body["error"]["details"] if isinstance(d, dict)}
+        self.assertIn("college_id", fields)
+
+    def test_reject_uc_not_in_subset(self):
         invalid_payload = {
             "college_id": "de_anza",
             "target_ucs": ["UCB"],  # out of subset
@@ -63,8 +82,9 @@ class GenerateEndpointIntegrationTest(unittest.TestCase):
         self.assertIn("error", body)
         self.assertEqual(body["error"].get("code"), "VALIDATION_ERROR")
         self.assertIsInstance(body["error"].get("details"), list)
+        fields = {d.get("field") for d in body["error"]["details"] if isinstance(d, dict)}
+        self.assertIn("target_ucs[0]", fields)
 
 
 if __name__ == "__main__":
     unittest.main()
-

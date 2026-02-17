@@ -6,7 +6,7 @@ from typing import Any
 
 API_VERSION = "v1"
 
-# MVP subset constraints for P0-1.
+# MVP subset defaults (may be overridden by loader-fed values in API).
 ALLOWED_COLLEGES = {"de_anza", "lassen"}
 ALLOWED_UCS = {"UCLA", "UCSD", "UCM"}
 ALLOWED_GE_PATTERNS = {"IGETC", "7CoursePattern"}
@@ -16,9 +16,16 @@ def _is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and value.strip() != ""
 
 
-def validate_generate_request(payload: Any) -> list[dict[str, str]]:
+def validate_generate_request(
+    payload: Any,
+    *,
+    allowed_colleges: set[str] | None = None,
+    allowed_ucs: set[str] | None = None,
+) -> list[dict[str, str]]:
     """Validate request body for POST /v1/pathways/generate."""
     errors: list[dict[str, str]] = []
+    colleges = allowed_colleges or ALLOWED_COLLEGES
+    ucs = allowed_ucs or ALLOWED_UCS
 
     if not isinstance(payload, dict):
         return [{"field": "body", "message": "Request body must be a JSON object."}]
@@ -26,11 +33,11 @@ def validate_generate_request(payload: Any) -> list[dict[str, str]]:
     college_id = payload.get("college_id")
     if not _is_non_empty_string(college_id):
         errors.append({"field": "college_id", "message": "college_id is required and must be a non-empty string."})
-    elif college_id not in ALLOWED_COLLEGES:
+    elif college_id not in colleges:
         errors.append(
             {
                 "field": "college_id",
-                "message": f"college_id must be one of: {sorted(ALLOWED_COLLEGES)}.",
+                "message": f"college_id must be one of: {sorted(colleges)}.",
             }
         )
 
@@ -41,11 +48,11 @@ def validate_generate_request(payload: Any) -> list[dict[str, str]]:
         for idx, uc in enumerate(target_ucs):
             if not _is_non_empty_string(uc):
                 errors.append({"field": f"target_ucs[{idx}]", "message": "Each target UC must be a non-empty string."})
-            elif uc not in ALLOWED_UCS:
+            elif uc not in ucs:
                 errors.append(
                     {
                         "field": f"target_ucs[{idx}]",
-                        "message": f"UC must be one of: {sorted(ALLOWED_UCS)}.",
+                        "message": f"UC must be one of: {sorted(ucs)}.",
                     }
                 )
 
@@ -128,4 +135,3 @@ def validate_generate_response_shape(payload: Any) -> list[str]:
             shape_errors.append("meta.completed_courses_count must be an integer.")
 
     return shape_errors
-
