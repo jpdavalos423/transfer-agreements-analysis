@@ -169,3 +169,38 @@ Exit criteria:
 5. NFR thresholds and product metrics are implemented and observable.
 6. Data refresh/deploy runbooks are documented.
 
+## 10. Framework Migration Plan (Post-Vertical-Slice)
+Goal: move from minimal stdlib servers to production frameworks after contracts and behavior stabilize.
+
+### 10.1 Trigger Criteria
+Proceed with framework migration only after:
+1. Phase 0 vertical slice is stable.
+2. Phase 2 golden CI gate is active (at least Phase A scenarios).
+3. Core request/response contracts are stable (`/v1` schemas).
+4. No unresolved P0/P1 blocking defects.
+
+### 10.2 Target Stack
+1. Backend framework: FastAPI
+2. Frontend framework: React (Vite preferred for MVP speed; Next.js optional if SSR needs emerge)
+
+### 10.3 Migration Scope
+1. Backend:
+   - Replace stdlib `http.server` transport with FastAPI routes.
+   - Keep existing `/v1` endpoint paths and payload contracts unchanged.
+   - Preserve structured error envelope and warning semantics.
+2. Frontend:
+   - Port current static form flow into React components.
+   - Preserve input/output behavior, warnings panel, and raw JSON debug view initially.
+   - Add framework test runner and retain smoke coverage.
+
+### 10.4 Non-Goals During Migration
+1. No auth introduction.
+2. No counselor workflow introduction.
+3. No planner logic redesign.
+4. No data-contract changes outside versioned process.
+
+### 10.5 Validation Requirements
+1. Existing API integration tests must pass with no schema regressions.
+2. Golden tests must remain green before and after migration.
+3. UI smoke tests must pass against framework frontend.
+4. Local run commands and docs must be updated in lockstep.

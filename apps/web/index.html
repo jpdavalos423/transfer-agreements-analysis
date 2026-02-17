@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Pathway Planner (MVP)</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Transfer Pathway Planner</h1>
+      <p class="subtle">Vertical-slice UI (P0-2)</p>
+
+      <form id="planner-form" class="panel">
+        <div class="field">
+          <label for="college_id">College ID</label>
+          <input id="college_id" name="college_id" value="de_anza" required />
+        </div>
+
+        <div class="field">
+          <label for="target_ucs">Target UCs</label>
+          <select id="target_ucs" name="target_ucs" multiple size="3" required>
+            <option value="UCLA" selected>UCLA</option>
+            <option value="UCSD" selected>UCSD</option>
+            <option value="UCM">UCM</option>
+          </select>
+          <small>Hold Ctrl/Cmd to select multiple</small>
+        </div>
+
+        <div class="field">
+          <label for="ge_pattern">GE Pattern</label>
+          <select id="ge_pattern" name="ge_pattern" required>
+            <option value="IGETC" selected>IGETC</option>
+            <option value="7CoursePattern">7CoursePattern</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="completed_courses">Completed Courses (one per line)</label>
+          <textarea
+            id="completed_courses"
+            name="completed_courses"
+            rows="6"
+            placeholder="MATH 1A&#10;CIS 22A"
+          ></textarea>
+        </div>
+
+        <button type="submit">Generate Pathway</button>
+      </form>
+
+      <section id="warnings-panel" class="panel" aria-live="polite">
+        <h2>Warnings</h2>
+        <ul id="warnings-list"></ul>
+      </section>
+
+      <section class="panel">
+        <h2>Raw Response</h2>
+        <pre id="response-json">{}</pre>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
+

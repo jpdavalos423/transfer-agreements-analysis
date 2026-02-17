@@ -17,13 +17,25 @@ from packages.shared_types.v1 import (
 class PathwayRequestHandler(BaseHTTPRequestHandler):
     server_version = "TransferPathwayAPI/0.1"
 
+    def _set_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+
     def _send_json(self, status_code: int, payload: dict[str, Any]) -> None:
         body = json.dumps(payload).encode("utf-8")
         self.send_response(status_code)
+        self._set_cors_headers()
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def do_OPTIONS(self) -> None:  # noqa: N802 (stdlib naming)
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self._set_cors_headers()
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def do_POST(self) -> None:  # noqa: N802 (stdlib naming)
         if self.path != "/v1/pathways/generate":
@@ -111,4 +123,3 @@ def run(host: str = "127.0.0.1", port: int = 8000) -> None:
 
 if __name__ == "__main__":
     run()
-
