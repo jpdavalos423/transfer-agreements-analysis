@@ -7,19 +7,15 @@
         "units": 3
       },
       {
-        "courseCode": "MATH 140",
-        "units": 3
+        "courseCode": "CIS 22A",
+        "units": 4.5
       },
       {
-        "courseCode": "CSCI 112",
-        "units": 4
+        "courseCode": "MATH 1A",
+        "units": 5
       },
       {
         "courseCode": "IG_1B",
-        "units": 3
-      },
-      {
-        "courseCode": "IG_2",
         "units": 3
       }
     ]
@@ -28,27 +24,19 @@
     "term": "Term 2",
     "courses": [
       {
+        "courseCode": "IG_2",
+        "units": 3
+      },
+      {
+        "courseCode": "MATH 1B",
+        "units": 5
+      },
+      {
+        "courseCode": "CIS 22B",
+        "units": 4.5
+      },
+      {
         "courseCode": "IG_3A",
-        "units": 3
-      },
-      {
-        "courseCode": "MATH 141",
-        "units": 3
-      },
-      {
-        "courseCode": "CSCI 114",
-        "units": 3
-      },
-      {
-        "courseCode": "MATH 245",
-        "units": 3
-      },
-      {
-        "courseCode": "IG_3B",
-        "units": 3
-      },
-      {
-        "courseCode": "IG_3_Leftover",
         "units": 3
       }
     ]
@@ -57,27 +45,19 @@
     "term": "Term 3",
     "courses": [
       {
-        "courseCode": "IG_4",
+        "courseCode": "IG_3B",
         "units": 3
       },
       {
-        "courseCode": "MATH 205",
-        "units": 3
+        "courseCode": "MATH 1C",
+        "units": 5
       },
       {
-        "courseCode": "MATH 200",
-        "units": 3
+        "courseCode": "CIS 36A",
+        "units": 4.5
       },
       {
-        "courseCode": "CSCI 222",
-        "units": 3
-      },
-      {
-        "courseCode": "CSCI 210",
-        "units": 3
-      },
-      {
-        "courseCode": "IG_Physical",
+        "courseCode": "IG_3_Leftover",
         "units": 3
       }
     ]
@@ -90,16 +70,54 @@
         "units": 3
       },
       {
-        "courseCode": "MATH 206",
+        "courseCode": "MATH 1D",
+        "units": 5
+      },
+      {
+        "courseCode": "CIS 22C",
+        "units": 4.5
+      },
+      {
+        "courseCode": "IG_4__slot1",
         "units": 3
+      }
+    ]
+  },
+  {
+    "term": "Term 5",
+    "courses": [
+      {
+        "courseCode": "IG_Physical",
+        "units": 3
+      },
+      {
+        "courseCode": "MATH 22",
+        "units": 5
+      },
+      {
+        "courseCode": "MATH 2B",
+        "units": 5
       },
       {
         "courseCode": "IG_Biological",
         "units": 3
-      },
+      }
+    ]
+  },
+  {
+    "term": "Term 6",
+    "courses": [
       {
         "courseCode": "IG_Lab",
         "units": 3
+      },
+      {
+        "courseCode": "MATH 2A",
+        "units": 5
+      },
+      {
+        "courseCode": "CIS 40",
+        "units": 4.5
       },
       {
         "courseCode": "IG_7",

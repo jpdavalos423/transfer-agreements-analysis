@@ -1,9 +1,15 @@
 [
   {
+    "courseCode": "MATH 355",
+    "courseName": "Calculus for Biology and Medicine",
+    "units": 5,
+    "prerequisites": []  
+  },
+  {
     "courseCode": "MATH 400",
     "courseName": "Calculus I",
     "units": 5,
-    "prerequisites": ["MATH 372", "MATH 373"]  
+    "prerequisites": []  
   },
   {
     "courseCode": "MATH 401",
@@ -21,13 +27,13 @@
     "courseCode": "MATH 410",
     "courseName": "Linear Algebra",
     "units": 3,
-    "prerequisites": []  
+    "prerequisites": ["MATH 401"]  
   },
   {
     "courseCode": "MATH 420",
     "courseName": "Differential Equations",
     "units": 4,
-    "prerequisites": []  
+    "prerequisites": ["MATH 401"]  
   },
   {
     "courseCode": "CISP 360",
@@ -51,18 +57,24 @@
     "courseCode": "CISP 430",
     "courseName": "Data Structures",
     "units": 4,
-    "prerequisites": ["CISP 400"]
+    "prerequisites": ["CISP 400; CISP 401"]
   },
   {
     "courseCode": "CISP 440",
     "courseName": "Discrete Structures for Computer Science",
     "units": 3,
-    "prerequisites": ["CISP 400"]
+    "prerequisites": []
   },
   {
     "courseCode": "CISP 310",
     "courseName": "Assembly Language Programming on Microcomputers",
     "units": 4,
     "prerequisites": ["CISP 360"]
+  },
+  {
+    "courseCode": "CISP 300",
+    "courseName": "Algorithm Design",
+    "units": 4,
+    "prerequisites": []
   }
 ]
