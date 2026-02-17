@@ -9,7 +9,7 @@ on:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 3
 
     steps:
       - name: Checkout
@@ -28,13 +28,19 @@ jobs:
         run: |
           python -m compileall -q apps packages tests
 
+      - name: Golden gate (fail fast)
+        run: |
+          python -m unittest -f \
+            tests/golden/test_golden_runner.py \
+            tests/golden/test_phase_a_scenarios.py \
+            tests/golden/test_legacy_pathway_units_golden.py
+
       - name: Unit tests
         run: |
           python -m unittest \
             tests/data_adapter/test_parsers.py \
             tests/data_adapter/test_runtime_builder.py \
             tests/golden/test_bootstrap_script.py \
-            tests/golden/test_golden_runner.py \
             tests/api/test_generate_endpoint.py \
             tests/web/test_ui_smoke.py
 
