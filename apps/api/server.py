@@ -12,7 +12,7 @@ from packages.shared_types.v1 import (
     build_error_response,
     validate_generate_request,
 )
-from packages.planner_core import generate_stub_plan
+from apps.api.planner_service import PlannerServiceError, generate_pathway_response
 from apps.api.subset_loader import load_subset_metadata
 
 
@@ -106,7 +106,19 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
-        response = generate_stub_plan(payload)
+        try:
+            response = generate_pathway_response(payload)
+        except PlannerServiceError as exc:
+            self._send_json(
+                HTTPStatus.INTERNAL_SERVER_ERROR,
+                build_error_response(
+                    "PLANNER_RUNTIME_ERROR",
+                    "Unable to generate pathway response from runtime artifacts.",
+                    [{"field": "planner_service", "message": str(exc)}],
+                ),
+            )
+            return
+
         response.setdefault("meta", {})
         response["meta"]["subset"] = {
             "colleges": subset.colleges,

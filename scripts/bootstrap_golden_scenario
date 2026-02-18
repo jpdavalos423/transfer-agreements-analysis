@@ -11,7 +11,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from packages.planner_core import canonicalize_for_comparison, generate_stub_plan  # noqa: E402
+from apps.api.planner_service import generate_pathway_response  # noqa: E402
+from packages.planner_core import canonicalize_for_comparison  # noqa: E402
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -62,7 +63,7 @@ def main() -> int:
         raise SystemExit("Scenario id cannot be empty.")
 
     request_payload = _load_request(Path(args.request_file))
-    expected_payload = canonicalize_for_comparison(generate_stub_plan(request_payload))
+    expected_payload = canonicalize_for_comparison(generate_pathway_response(request_payload))
 
     scenarios_dir = Path(args.scenarios_dir)
     expected_dir = Path(args.expected_dir)
@@ -98,4 +99,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -13,7 +13,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from packages.planner_core import canonicalize_for_comparison, generate_stub_plan  # noqa: E402
+from apps.api.planner_service import generate_pathway_response  # noqa: E402
+from packages.planner_core import canonicalize_for_comparison  # noqa: E402
 from tests.golden.runner import GoldenScenario, load_scenarios  # noqa: E402
 
 
@@ -82,7 +83,7 @@ def cmd_candidate(args: argparse.Namespace) -> int:
 
     print(f"Generating candidate outputs for {len(scenarios)} scenario(s)...")
     for scenario in scenarios:
-        payload = canonicalize_for_comparison(generate_stub_plan(scenario.request))
+        payload = canonicalize_for_comparison(generate_pathway_response(scenario.request))
         candidate_path = candidate_dir / scenario.expected_file
         _write_json_deterministic(candidate_path, payload)
         candidate_text = candidate_path.read_text(encoding="utf-8")
