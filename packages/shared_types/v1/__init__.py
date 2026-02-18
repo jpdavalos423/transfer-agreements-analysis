@@ -9,6 +9,7 @@ from .pathways import (
     validate_metadata_response_shape,
     validate_health_response_shape,
     validate_error_response_shape,
+    validate_metrics_response_shape,
     normalize_warning_payloads,
     sort_metadata_items,
     build_error_response,

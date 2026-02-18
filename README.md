@@ -103,6 +103,7 @@ Use these results for reporting or presentations, such as research posters.
 - `docs/DATA_SPECS.md` – Data contracts and normalization specs
 - `docs/DATA_REFRESH_RUNBOOK.md` – Operational data refresh SOP, cadence, ownership, and failure handling
 - `docs/GOLDEN_WORKFLOW.md` – Reviewed workflow for golden candidate generation, diffs, and promotion
+- `docs/RELIABILITY_SLO.md` – SLI/SLO definition, reliability check command, and alerting path
 
 Golden PR marker for golden updates:
 - Include `[golden-update-approved]` in PR description (or apply label `golden-update-approved`)

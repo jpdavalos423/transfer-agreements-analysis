@@ -304,6 +304,65 @@ def validate_error_response_shape(payload: Any) -> list[str]:
     return shape_errors
 
 
+def validate_metrics_response_shape(payload: Any) -> list[str]:
+    shape_errors: list[str] = []
+    if not isinstance(payload, dict):
+        return ["metrics response must be an object."]
+    if payload.get("version") != API_VERSION:
+        shape_errors.append("metrics.version must be 'v1'.")
+    if payload.get("sli") != "valid_request_success_rate":
+        shape_errors.append("metrics.sli must be 'valid_request_success_rate'.")
+
+    totals = payload.get("totals")
+    if not isinstance(totals, dict):
+        shape_errors.append("metrics.totals must be an object.")
+    else:
+        for key in (
+            "request_count",
+            "success_count",
+            "error_count",
+            "valid_request_count",
+            "valid_success_count",
+            "valid_error_count",
+        ):
+            if not isinstance(totals.get(key), int):
+                shape_errors.append(f"metrics.totals.{key} must be an integer.")
+        if not isinstance(totals.get("error_count_by_code"), dict):
+            shape_errors.append("metrics.totals.error_count_by_code must be an object.")
+        rate = totals.get("valid_success_rate")
+        if rate is not None and not isinstance(rate, (int, float)):
+            shape_errors.append("metrics.totals.valid_success_rate must be number or null.")
+
+    by_route = payload.get("by_route")
+    if not isinstance(by_route, list):
+        shape_errors.append("metrics.by_route must be an array.")
+    else:
+        for i, item in enumerate(by_route):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.by_route[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("method")):
+                shape_errors.append(f"metrics.by_route[{i}].method must be a non-empty string.")
+            if not _is_non_empty_string(item.get("path")):
+                shape_errors.append(f"metrics.by_route[{i}].path must be a non-empty string.")
+            for key in (
+                "request_count",
+                "success_count",
+                "error_count",
+                "valid_request_count",
+                "valid_success_count",
+                "valid_error_count",
+            ):
+                if not isinstance(item.get(key), int):
+                    shape_errors.append(f"metrics.by_route[{i}].{key} must be an integer.")
+            if not isinstance(item.get("error_count_by_code"), dict):
+                shape_errors.append(f"metrics.by_route[{i}].error_count_by_code must be an object.")
+            rate = item.get("valid_success_rate")
+            if rate is not None and not isinstance(rate, (int, float)):
+                shape_errors.append(f"metrics.by_route[{i}].valid_success_rate must be number or null.")
+    return shape_errors
+
+
 def sort_metadata_items(items: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
     out = []
     for item in items:

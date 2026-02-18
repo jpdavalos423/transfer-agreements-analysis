@@ -8,6 +8,7 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
 
+from apps.api.metrics import APIMetrics
 from packages.shared_types.v1 import (
     ALLOWED_GE_PATTERNS,
     API_VERSION,
@@ -27,8 +28,31 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
-    def _send_json(self, status_code: int, payload: dict[str, Any]) -> None:
+    def _metrics(self) -> APIMetrics:
+        metrics = getattr(self.server, "api_metrics", None)
+        if isinstance(metrics, APIMetrics):
+            return metrics
+        fallback = APIMetrics()
+        setattr(self.server, "api_metrics", fallback)
+        return fallback
+
+    def _send_json(
+        self,
+        status_code: int,
+        payload: dict[str, Any],
+        *,
+        path: str,
+        error_code: str | None = None,
+        valid_request: bool | None = None,
+    ) -> None:
         body = json.dumps(payload).encode("utf-8")
+        self._metrics().record(
+            method=self.command,
+            path=path,
+            status_code=int(status_code),
+            error_code=error_code,
+            valid_request=valid_request,
+        )
         self.send_response(status_code)
         self._set_cors_headers()
         self.send_header("Content-Type", "application/json")
@@ -60,6 +84,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         request_id: str,
         path: str,
         details: list[dict[str, str]] | None = None,
+        valid_request: bool | None = None,
     ) -> None:
         self._send_json(
             status,
@@ -71,6 +96,9 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
             ),
+            path=path,
+            error_code=code,
+            valid_request=valid_request,
         )
 
     def _normalize_path(self) -> str:
@@ -92,6 +120,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                         "message": "Use POST /v1/pathways/generate.",
                     }
                 ],
+                valid_request=False,
             )
             return
 
@@ -104,6 +133,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 details=[{"field": "runtime_metadata", "message": str(metadata_err)}],
+                valid_request=True,
             )
             return
 
@@ -115,6 +145,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 message="Missing Content-Length header.",
                 request_id=request_id,
                 path=path,
+                valid_request=False,
             )
             return
 
@@ -128,6 +159,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 message="Request body must be valid JSON.",
                 request_id=request_id,
                 path=path,
+                valid_request=False,
             )
             return
 
@@ -145,6 +177,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 details=validation_errors,
+                valid_request=False,
             )
             return
 
@@ -158,6 +191,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 details=[{"field": "planner_service", "message": str(exc)}],
+                valid_request=True,
             )
             return
 
@@ -173,11 +207,24 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             "dataset_version": metadata.manifest.get("version"),
             "generated_at": metadata.manifest.get("generated_at"),
         }
-        self._send_json(HTTPStatus.OK, response)
+        self._send_json(
+            HTTPStatus.OK,
+            response,
+            path=path,
+            valid_request=True,
+        )
 
     def do_GET(self) -> None:  # noqa: N802 (stdlib naming)
         path = self._normalize_path()
         request_id = self._request_id()
+        if path == "/v1/metrics":
+            self._send_json(
+                HTTPStatus.OK,
+                self._metrics().snapshot(),
+                path=path,
+                valid_request=True,
+            )
+            return
         metadata, metadata_err = self._runtime_metadata()
         if metadata_err is not None:
             status = (
@@ -192,6 +239,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 details=[{"field": "runtime_metadata", "message": str(metadata_err)}],
+                valid_request=True,
             )
             return
 
@@ -202,6 +250,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "version": API_VERSION,
                     "data": metadata.colleges,
                 },
+                path=path,
+                valid_request=True,
             )
             return
         if path == "/v1/metadata/districts":
@@ -211,6 +261,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "version": API_VERSION,
                     "data": metadata.districts,
                 },
+                path=path,
+                valid_request=True,
             )
             return
         if path == "/v1/metadata/ucs":
@@ -220,6 +272,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "version": API_VERSION,
                     "data": metadata.ucs,
                 },
+                path=path,
+                valid_request=True,
             )
             return
         if path == "/v1/metadata":
@@ -233,6 +287,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "ucs": metadata.ucs,
                     "ge_patterns": sorted(ALLOWED_GE_PATTERNS),
                 },
+                path=path,
+                valid_request=True,
             )
             return
         if path == "/v1/health":
@@ -247,6 +303,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                         "row_counts": metadata.manifest.get("row_counts", {}),
                     },
                 },
+                path=path,
+                valid_request=True,
             )
             return
 
@@ -262,10 +320,11 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                     "message": (
                         "Use one of: POST /v1/pathways/generate, "
                         "GET /v1/metadata/colleges, GET /v1/metadata/districts, "
-                        "GET /v1/metadata/ucs, GET /v1/health."
+                        "GET /v1/metadata/ucs, GET /v1/health, GET /v1/metrics."
                     ),
                 }
             ],
+            valid_request=False,
         )
 
     def log_message(self, fmt: str, *args: Any) -> None:
@@ -274,7 +333,9 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
 
 
 def create_server(host: str = "127.0.0.1", port: int = 8000) -> ThreadingHTTPServer:
-    return ThreadingHTTPServer((host, port), PathwayRequestHandler)
+    server = ThreadingHTTPServer((host, port), PathwayRequestHandler)
+    setattr(server, "api_metrics", APIMetrics())
+    return server
 
 
 def run(host: str = "127.0.0.1", port: int = 8000) -> None:

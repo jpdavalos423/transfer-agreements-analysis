@@ -9,6 +9,7 @@ from packages.shared_types.v1 import (
     validate_error_response_shape,
     validate_generate_response_shape,
     validate_health_response_shape,
+    validate_metrics_response_shape,
     validate_metadata_response_shape,
 )
 
@@ -148,6 +149,55 @@ class APIIntegrationTest(unittest.TestCase):
             body = json.loads(resp.read().decode("utf-8"))
         shape_errors = validate_health_response_shape(body)
         self.assertEqual(shape_errors, [], f"Health shape errors: {shape_errors}")
+
+    def test_metrics_endpoint_and_reliability_counters(self):
+        valid_payload = {
+            "college_id": "de_anza",
+            "target_ucs": ["UCLA", "UCSD"],
+            "ge_pattern": "IGETC",
+            "completed_courses": ["MATH 1A"],
+        }
+        invalid_payload = {
+            "college_id": "__unknown_college__",
+            "target_ucs": ["UCLA"],
+            "ge_pattern": "IGETC",
+            "completed_courses": [],
+        }
+
+        with self._post_json("/v1/pathways/generate", valid_payload) as resp:
+            self.assertEqual(resp.status, 200)
+
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._post_json("/v1/pathways/generate", invalid_payload)
+        self.assertEqual(ctx.exception.code, 400)
+
+        with self.assertRaises(urllib.error.HTTPError) as ctx:
+            self._get("/v1/not-a-real-route")
+        self.assertEqual(ctx.exception.code, 404)
+
+        with self._get("/v1/metrics") as resp:
+            self.assertEqual(resp.status, 200)
+            metrics = json.loads(resp.read().decode("utf-8"))
+
+        shape_errors = validate_metrics_response_shape(metrics)
+        self.assertEqual(shape_errors, [], f"Metrics shape errors: {shape_errors}")
+
+        totals = metrics["totals"]
+        self.assertGreaterEqual(totals["request_count"], 3)
+        self.assertGreaterEqual(totals["success_count"], 1)
+        self.assertGreaterEqual(totals["error_count"], 2)
+        self.assertGreaterEqual(totals["error_count_by_code"].get("VALIDATION_ERROR", 0), 1)
+        self.assertGreaterEqual(totals["error_count_by_code"].get("NOT_FOUND", 0), 1)
+
+        route_metrics = None
+        for route in metrics["by_route"]:
+            if route.get("method") == "POST" and route.get("path") == "/v1/pathways/generate":
+                route_metrics = route
+                break
+        self.assertIsNotNone(route_metrics)
+        self.assertGreaterEqual(route_metrics["valid_request_count"], 1)
+        self.assertGreaterEqual(route_metrics["valid_success_count"], 1)
+        self.assertGreaterEqual(route_metrics["valid_success_rate"], 0.99)
 
     def test_unknown_route_returns_standard_error_envelope(self):
         with self.assertRaises(urllib.error.HTTPError) as ctx:
