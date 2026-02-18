@@ -1,0 +1,52 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tests.golden.determinism_runner import run_determinism_suite  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Run deterministic repeat-run suite (fails on first semantic mismatch)."
+    )
+    parser.add_argument(
+        "--suite",
+        choices=("phase_a", "full"),
+        default="full",
+        help="Scenario suite selector.",
+    )
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=10,
+        help="Repeat count per scenario (must be >=2).",
+    )
+    parser.add_argument(
+        "--scenarios-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        help="Golden scenario directory.",
+    )
+    args = parser.parse_args()
+
+    summary = run_determinism_suite(
+        scenarios_dir=args.scenarios_dir,
+        suite=args.suite,
+        repeat=args.repeat,
+    )
+    print(
+        f"Determinism suite '{summary.suite}' passed: "
+        f"{summary.scenario_count} scenarios x {summary.repeat} runs."
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+
