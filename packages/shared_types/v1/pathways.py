@@ -2,18 +2,102 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Iterable
 
 API_VERSION = "v1"
 
-# MVP subset defaults (may be overridden by loader-fed values in API).
+# Defaults are fallback only; API should pass runtime-backed allowed values.
 ALLOWED_COLLEGES = {"de_anza", "lassen"}
 ALLOWED_UCS = {"UCLA", "UCSD", "UCM"}
 ALLOWED_GE_PATTERNS = {"IGETC", "7CoursePattern"}
+ALLOWED_WARNING_SEVERITIES = {"INFO", "WARN", "ERROR"}
 
 
 def _is_non_empty_string(value: Any) -> bool:
     return isinstance(value, str) and value.strip() != ""
+
+
+def _normalize_details(details: Any) -> list[dict[str, str]]:
+    if not isinstance(details, list):
+        return []
+    normalized: list[dict[str, str]] = []
+    for item in details:
+        if not isinstance(item, dict):
+            continue
+        field = str(item.get("field") or "").strip()
+        message = str(item.get("message") or "").strip()
+        if not field or not message:
+            continue
+        normalized.append({"field": field, "message": message})
+    return sorted(normalized, key=lambda x: (x["field"], x["message"]))
+
+
+def build_error_response(
+    code: str,
+    message: str,
+    details: list[dict[str, str]] | None = None,
+    *,
+    status: int | None = None,
+    request_id: str | None = None,
+    path: str | None = None,
+) -> dict[str, Any]:
+    return {
+        "version": API_VERSION,
+        "request_id": request_id or "",
+        "error": {
+            "code": code,
+            "message": message,
+            "status": int(status or 500),
+            "path": path or "",
+            "details": _normalize_details(details or []),
+        },
+    }
+
+
+def normalize_warning_payloads(
+    warnings: Any,
+    *,
+    trace_id: str,
+    default_source: str = "planner_core",
+    default_severity: str = "WARN",
+) -> list[dict[str, Any]]:
+    if not isinstance(warnings, list):
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for warning in warnings:
+        if not isinstance(warning, dict):
+            continue
+        code = warning.get("code")
+        message = warning.get("message")
+        if not _is_non_empty_string(code) or not _is_non_empty_string(message):
+            continue
+        severity = str(warning.get("severity") or default_severity).upper()
+        if severity not in ALLOWED_WARNING_SEVERITIES:
+            severity = default_severity
+        source = str(warning.get("source") or default_source)
+        normalized.append(
+            {
+                "code": str(code),
+                "message": str(message),
+                "severity": severity,
+                "source": source,
+                "trace_id": str(warning.get("trace_id") or trace_id),
+                "details": _normalize_details(warning.get("details")),
+            }
+        )
+
+    return sorted(
+        normalized,
+        key=lambda x: (
+            x["code"],
+            x["message"],
+            x["severity"],
+            x["source"],
+            x["trace_id"],
+            tuple((d["field"], d["message"]) for d in x["details"]),
+        ),
+    )
 
 
 def validate_generate_request(
@@ -21,11 +105,13 @@ def validate_generate_request(
     *,
     allowed_colleges: set[str] | None = None,
     allowed_ucs: set[str] | None = None,
+    allowed_ge_patterns: set[str] | None = None,
 ) -> list[dict[str, str]]:
     """Validate request body for POST /v1/pathways/generate."""
     errors: list[dict[str, str]] = []
     colleges = allowed_colleges or ALLOWED_COLLEGES
     ucs = allowed_ucs or ALLOWED_UCS
+    ge_patterns = allowed_ge_patterns or ALLOWED_GE_PATTERNS
 
     if not isinstance(payload, dict):
         return [{"field": "body", "message": "Request body must be a JSON object."}]
@@ -59,11 +145,11 @@ def validate_generate_request(
     ge_pattern = payload.get("ge_pattern")
     if not _is_non_empty_string(ge_pattern):
         errors.append({"field": "ge_pattern", "message": "ge_pattern is required and must be a non-empty string."})
-    elif ge_pattern not in ALLOWED_GE_PATTERNS:
+    elif ge_pattern not in ge_patterns:
         errors.append(
             {
                 "field": "ge_pattern",
-                "message": f"ge_pattern must be one of: {sorted(ALLOWED_GE_PATTERNS)}.",
+                "message": f"ge_pattern must be one of: {sorted(ge_patterns)}.",
             }
         )
 
@@ -85,25 +171,16 @@ def validate_generate_request(
     return errors
 
 
-def build_error_response(code: str, message: str, details: list[dict[str, str]] | None = None) -> dict[str, Any]:
-    return {
-        "version": API_VERSION,
-        "error": {
-            "code": code,
-            "message": message,
-            "details": details or [],
-        },
-    }
-
-
 def validate_generate_response_shape(payload: Any) -> list[str]:
-    """Used by tests to assert the response contract."""
+    """Used by tests to assert the POST /v1/pathways/generate response contract."""
     shape_errors: list[str] = []
     if not isinstance(payload, dict):
         return ["Response must be an object."]
 
     if payload.get("version") != API_VERSION:
         shape_errors.append("version must be 'v1'.")
+    if not _is_non_empty_string(payload.get("request_id")):
+        shape_errors.append("request_id must be a non-empty string.")
 
     if not isinstance(payload.get("plan"), list):
         shape_errors.append("plan must be an array.")
@@ -120,6 +197,14 @@ def validate_generate_response_shape(payload: Any) -> list[str]:
                 shape_errors.append(f"warnings[{i}].code must be a non-empty string.")
             if not _is_non_empty_string(warning.get("message")):
                 shape_errors.append(f"warnings[{i}].message must be a non-empty string.")
+            if warning.get("severity") not in ALLOWED_WARNING_SEVERITIES:
+                shape_errors.append(f"warnings[{i}].severity must be one of {sorted(ALLOWED_WARNING_SEVERITIES)}.")
+            if not _is_non_empty_string(warning.get("source")):
+                shape_errors.append(f"warnings[{i}].source must be a non-empty string.")
+            if not _is_non_empty_string(warning.get("trace_id")):
+                shape_errors.append(f"warnings[{i}].trace_id must be a non-empty string.")
+            if not isinstance(warning.get("details"), list):
+                shape_errors.append(f"warnings[{i}].details must be an array.")
 
     meta = payload.get("meta")
     if not isinstance(meta, dict):
@@ -135,3 +220,98 @@ def validate_generate_response_shape(payload: Any) -> list[str]:
             shape_errors.append("meta.completed_courses_count must be an integer.")
 
     return shape_errors
+
+
+def _validate_metadata_item(item: Any, kind: str, index: int) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(item, dict):
+        return [f"{kind}.data[{index}] must be an object."]
+    if not _is_non_empty_string(item.get("id")):
+        errors.append(f"{kind}.data[{index}].id must be a non-empty string.")
+    if not _is_non_empty_string(item.get("name")):
+        errors.append(f"{kind}.data[{index}].name must be a non-empty string.")
+    return errors
+
+
+def validate_metadata_response_shape(payload: Any, *, kind: str) -> list[str]:
+    shape_errors: list[str] = []
+    if not isinstance(payload, dict):
+        return [f"{kind} response must be an object."]
+    if payload.get("version") != API_VERSION:
+        shape_errors.append(f"{kind}.version must be 'v1'.")
+    data = payload.get("data")
+    if not isinstance(data, list):
+        shape_errors.append(f"{kind}.data must be an array.")
+        return shape_errors
+    for idx, item in enumerate(data):
+        shape_errors.extend(_validate_metadata_item(item, kind, idx))
+    return shape_errors
+
+
+def validate_health_response_shape(payload: Any) -> list[str]:
+    shape_errors: list[str] = []
+    if not isinstance(payload, dict):
+        return ["health response must be an object."]
+    if payload.get("version") != API_VERSION:
+        shape_errors.append("health.version must be 'v1'.")
+    if payload.get("status") != "ok":
+        shape_errors.append("health.status must be 'ok'.")
+    runtime = payload.get("runtime")
+    if not isinstance(runtime, dict):
+        shape_errors.append("health.runtime must be an object.")
+    else:
+        if not _is_non_empty_string(runtime.get("dataset_version")):
+            shape_errors.append("health.runtime.dataset_version must be a non-empty string.")
+        if not _is_non_empty_string(runtime.get("generated_at")):
+            shape_errors.append("health.runtime.generated_at must be a non-empty string.")
+        if not isinstance(runtime.get("row_counts"), dict):
+            shape_errors.append("health.runtime.row_counts must be an object.")
+    return shape_errors
+
+
+def validate_error_response_shape(payload: Any) -> list[str]:
+    shape_errors: list[str] = []
+    if not isinstance(payload, dict):
+        return ["error response must be an object."]
+    if payload.get("version") != API_VERSION:
+        shape_errors.append("error.version must be 'v1'.")
+    if not _is_non_empty_string(payload.get("request_id")):
+        shape_errors.append("error.request_id must be a non-empty string.")
+    error = payload.get("error")
+    if not isinstance(error, dict):
+        shape_errors.append("error payload must include an error object.")
+        return shape_errors
+    if not _is_non_empty_string(error.get("code")):
+        shape_errors.append("error.code must be a non-empty string.")
+    if not _is_non_empty_string(error.get("message")):
+        shape_errors.append("error.message must be a non-empty string.")
+    if not isinstance(error.get("status"), int):
+        shape_errors.append("error.status must be an integer.")
+    if not _is_non_empty_string(error.get("path")):
+        shape_errors.append("error.path must be a non-empty string.")
+    details = error.get("details")
+    if not isinstance(details, list):
+        shape_errors.append("error.details must be an array.")
+    else:
+        for i, detail in enumerate(details):
+            if not isinstance(detail, dict):
+                shape_errors.append(f"error.details[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(detail.get("field")):
+                shape_errors.append(f"error.details[{i}].field must be a non-empty string.")
+            if not _is_non_empty_string(detail.get("message")):
+                shape_errors.append(f"error.details[{i}].message must be a non-empty string.")
+    return shape_errors
+
+
+def sort_metadata_items(items: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
+    out = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        item_id = item.get("id")
+        item_name = item.get("name")
+        if not _is_non_empty_string(item_id) or not _is_non_empty_string(item_name):
+            continue
+        out.append({"id": str(item_id), "name": str(item_name)})
+    return sorted(out, key=lambda x: (x["id"], x["name"]))

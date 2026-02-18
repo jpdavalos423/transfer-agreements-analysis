@@ -10,14 +10,12 @@ From repo root:
 python3 -m apps.api.server
 ```
 
-Default endpoint:
+Endpoints:
 
 ```text
 POST /v1/pathways/generate
-```
-
-Subset metadata endpoint:
-
-```text
-GET /v1/metadata
+GET /v1/metadata/colleges
+GET /v1/metadata/districts
+GET /v1/metadata/ucs
+GET /v1/health
 ```
