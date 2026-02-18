@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tests.perf.latency_runner import format_summary, measure_latency  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Run planner latency suite and enforce p95 threshold."
+    )
+    parser.add_argument(
+        "--suite",
+        choices=("phase_a", "full"),
+        default="phase_a",
+        help="Golden scenario suite used as the fixed request set.",
+    )
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=3,
+        help="Number of measured runs per scenario.",
+    )
+    parser.add_argument(
+        "--warmup",
+        type=int,
+        default=1,
+        help="Number of warmup passes over scenarios before timing.",
+    )
+    parser.add_argument(
+        "--threshold-seconds",
+        type=float,
+        default=2.0,
+        help="Fail when computed p95 exceeds this value.",
+    )
+    parser.add_argument(
+        "--scenarios-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        help="Directory containing golden scenario request definitions.",
+    )
+    args = parser.parse_args()
+
+    summary = measure_latency(
+        scenarios_dir=args.scenarios_dir,
+        suite=args.suite,
+        repeat=args.repeat,
+        warmup=args.warmup,
+        threshold_seconds=args.threshold_seconds,
+    )
+    print(format_summary(summary))
+    return 0 if summary.passes_threshold else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+

@@ -92,6 +92,10 @@ jobs:
             tests/api/test_generate_endpoint.py \
             tests/web/test_ui_smoke.py
 
+      - name: Reliability SLO check
+        run: |
+          scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
+
       - name: E2E request smoke
         run: |
           python -m apps.api.server > /tmp/api.log 2>&1 &

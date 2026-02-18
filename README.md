@@ -1,117 +1,108 @@
-# 📊 Unraveling California's CS Transfer Pathways
+# Transfer Pathway Planner
 
-<img src="https://github.com/user-attachments/assets/eae7b77a-cfa6-489c-bff6-178a7b9d9965" alt="Alvarado_Poster" width="800"/>
+Transfer Pathway Planner is a student-facing web application that generates community-college-to-UC Computer Science transfer pathways.
 
-## 📁 Project Structure
+This repository is now application-first (API + web + runtime data pipeline). Prior research artifacts are preserved under `legacy/`.
 
-| Folder/File        | Description |
-|--------------------|-------------|
-| `legacy/cc_agreements/`   | Raw articulation agreements per CC-UC pair (legacy) |
-| `legacy/creating_districts/` | Scripts to map colleges into districts (legacy) |
-| `legacy/cs_urls/`         | Generated UC-CS articulation URLs for scraping (legacy) |
-| `district_csvs/`   | CSVs grouping colleges by district |
-| `filtered_results/`| Cleaned articulation datasets |
-| `legacy/question_1/`      | Analysis for complexity of UC CS requirements (legacy) |
-| `legacy/question_2-3/`    | District-level coverage and missing course analytics (legacy) |
-| `legacy/results/`         | CSV articulation datasets for individual CCs (legacy) |
-| `scraping/`        | Web scraping logic (assist.org) |
----
+## Current Scope
 
-## ⚙️ Setup Instructions
+- Student planning workflows (MVP)
+- API-based pathway generation and metadata endpoints
+- Web UI for planner inputs, pathway results, and warnings
+- CSV-to-runtime data normalization pipeline
+- Deterministic and regression coverage with golden tests
 
-### Requirements
+## Repository Structure
+
+| Path | Purpose |
+|---|---|
+| `apps/api/` | Backend API service (`/v1/pathways/generate`, metadata, health, metrics) |
+| `apps/web/` | Student-facing frontend |
+| `packages/planner_core/` | Core planning logic |
+| `packages/data_adapter/` | CSV parser/validation/normalization layer |
+| `packages/shared_types/` | Shared contracts and schemas |
+| `data/runtime/` | Generated runtime artifacts and manifest |
+| `tests/` | API, web, data adapter, and golden coverage |
+| `docs/` | Product, implementation, data, reliability, and workflow docs |
+| `legacy/` | Archived research scripts/results from earlier project phase |
+
+## Run Locally
+
+Requirements:
 - Python 3.8+
-- Git (optional but recommended)
+- Node.js (for web logic tests)
 
-## 🚀 How to Use the Project
+Start API:
 
-### Step 1: Scrape Articulations
-Run the scraper to organize all CC UC articulation data into CSVs
 ```bash
-python scraping/scrape_all_cc.py
+python3 -m apps.api.server
 ```
 
-This will populate the `legacy/results/` folder with CSV files for each CC.
+Start web app (second terminal):
 
----
-
-### Step 2: Clean & Filter Data
-Run the filtering script to clean the scraped articulation data and standardize formatting.
 ```bash
-python scraping/post_process.py
+python3 -m apps.web.server
 ```
 
-This will populate the `filtered_results/` folded with filtered CSV files for each CC.
+Open:
 
----
+- `http://127.0.0.1:5173`
 
-### Step 3: Group by District
-Organize colleges into their corresponding districts to analyze district-level articulation coverage.
+## Data Runtime Refresh
+
+Source-of-truth CSV inputs:
+- `filtered_results/`
+- `district_csvs/`
+
+Build runtime artifacts:
+
 ```bash
-python legacy/creating_districts/creating_district_csvs.py
+scripts/build_runtime_dataset
 ```
 
-The output will be saved in the `district_csvs/` folder.
+Outputs are written to `data/runtime/`.
 
----
+Detailed SOP: `docs/DATA_REFRESH_RUNBOOK.md`
 
-### Step 4: Analyze Research Questions
+## Testing and Reliability
 
-#### Q1: Complexity of UC Requirements
-Navigate to the `legacy/question_1/` folder and run the scripts or Jupyter notebooks to:
-- Count how many CS courses each UC requires
-- Identify overlapping and unique requirements
+Data adapter tests:
 
-#### Q2 & Q3: District Coverage and Missing Courses
-In the `legacy/question_2-3/` folder, you'll find:
-- Code to calculate articulation completeness by district
-- Visualizations of the most frequently unarticulated courses across UCs
+```bash
+python3 -m unittest discover -s tests/data_adapter -p 'test_*.py'
+```
 
----
+API + web smoke:
 
-### Step 5: View Results
-Visualizations and summary data are available in the `legacy/results/` folder. These include:
-- Bar charts of missing courses by UC
-- Ranked list of districts by articulation coverage
-- Simulated 3-UC sequences to illustrate complexity
+```bash
+python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+```
 
-Use these results for reporting or presentations, such as research posters.
+Web logic tests:
 
----
+```bash
+node --test tests/web/test_planner_form_logic.mjs tests/web/test_results_view_logic.mjs tests/web/test_status_panel_logic.mjs
+```
 
-## 📈 Expected Outputs
+Reliability check:
 
-- 📊 **Unarticulated Course Charts**: Number of CS requirements not met per UC
-- 🗺️ **District Maps**: Number of UCs fully supported per district
-- 🔄 **3-UC Transfer Simulations**: Overlapping requirements across multiple UC application plans
+```bash
+scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
+```
 
----
+## Product and Engineering Docs
 
-## 📚 Background Resources
+- `docs/PRD.md`
+- `docs/IMPLEMENTATION_PLAN.md`
+- `docs/DATA_SPECS.md`
+- `docs/DATA_REFRESH_RUNBOOK.md`
+- `docs/GOLDEN_WORKFLOW.md`
+- `docs/RELIABILITY_SLO.md`
+- `docs/PRODUCT_METRICS.md`
+- `docs/DEPLOYMENT.md`
+- `docs/RUNBOOK.md`
+- `docs/FALLBACKS.md`
 
-- [Assist.org](https://assist.org) – Source for articulation agreements
-- [BeautifulSoup Documentation](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
-- [Pandas Official Docs](https://pandas.pydata.org/docs/)
-- [Matplotlib Tutorials](https://matplotlib.org/stable/tutorials/index.html)
+## Legacy Notice
 
----
-
-## 🧭 Product Docs
-
-- `docs/PRD.md` – Product Requirements Document
-- `docs/IMPLEMENTATION_PLAN.md` – Incremental implementation plan and tickets
-- `docs/DATA_SPECS.md` – Data contracts and normalization specs
-- `docs/DATA_REFRESH_RUNBOOK.md` – Operational data refresh SOP, cadence, ownership, and failure handling
-- `docs/GOLDEN_WORKFLOW.md` – Reviewed workflow for golden candidate generation, diffs, and promotion
-
-Golden PR marker for golden updates:
-- Include `[golden-update-approved]` in PR description (or apply label `golden-update-approved`)
-
----
-
-## 👥 Team Acknowledgements
-
-- **Advisors**: Prof. Christine Alvarado, Prof. Mia Minnes, Prof. Diba Mirza, Prof. Phill Conrad
-- **Contributors**: JP Davalos, Yasmin Kabir, Brenda Ramirez, Anthony Rodriguez
-
----
+The repository previously hosted a research-focused workflow (scraping, district analysis, and research-question notebooks/scripts). That phase is archived under `legacy/` and is not the primary app scope.

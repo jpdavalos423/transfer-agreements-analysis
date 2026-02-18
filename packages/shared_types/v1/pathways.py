@@ -304,6 +304,156 @@ def validate_error_response_shape(payload: Any) -> list[str]:
     return shape_errors
 
 
+def validate_metrics_response_shape(payload: Any) -> list[str]:
+    shape_errors: list[str] = []
+    if not isinstance(payload, dict):
+        return ["metrics response must be an object."]
+    if payload.get("version") != API_VERSION:
+        shape_errors.append("metrics.version must be 'v1'.")
+    if payload.get("sli") != "valid_request_success_rate":
+        shape_errors.append("metrics.sli must be 'valid_request_success_rate'.")
+
+    totals = payload.get("totals")
+    if not isinstance(totals, dict):
+        shape_errors.append("metrics.totals must be an object.")
+    else:
+        for key in (
+            "request_count",
+            "success_count",
+            "error_count",
+            "valid_request_count",
+            "valid_success_count",
+            "valid_error_count",
+        ):
+            if not isinstance(totals.get(key), int):
+                shape_errors.append(f"metrics.totals.{key} must be an integer.")
+        if not isinstance(totals.get("error_count_by_code"), dict):
+            shape_errors.append("metrics.totals.error_count_by_code must be an object.")
+        rate = totals.get("valid_success_rate")
+        if rate is not None and not isinstance(rate, (int, float)):
+            shape_errors.append("metrics.totals.valid_success_rate must be number or null.")
+
+    by_route = payload.get("by_route")
+    if not isinstance(by_route, list):
+        shape_errors.append("metrics.by_route must be an array.")
+    else:
+        for i, item in enumerate(by_route):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.by_route[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("method")):
+                shape_errors.append(f"metrics.by_route[{i}].method must be a non-empty string.")
+            if not _is_non_empty_string(item.get("path")):
+                shape_errors.append(f"metrics.by_route[{i}].path must be a non-empty string.")
+            for key in (
+                "request_count",
+                "success_count",
+                "error_count",
+                "valid_request_count",
+                "valid_success_count",
+                "valid_error_count",
+            ):
+                if not isinstance(item.get(key), int):
+                    shape_errors.append(f"metrics.by_route[{i}].{key} must be an integer.")
+            if not isinstance(item.get("error_count_by_code"), dict):
+                shape_errors.append(f"metrics.by_route[{i}].error_count_by_code must be an object.")
+            rate = item.get("valid_success_rate")
+            if rate is not None and not isinstance(rate, (int, float)):
+                shape_errors.append(f"metrics.by_route[{i}].valid_success_rate must be number or null.")
+
+    product = payload.get("product")
+    if not isinstance(product, dict):
+        shape_errors.append("metrics.product must be an object.")
+        return shape_errors
+
+    for key in (
+        "pathway_generation_requests_total",
+        "pathway_generation_valid_requests_total",
+        "pathway_generation_success_total",
+    ):
+        if not isinstance(product.get(key), int):
+            shape_errors.append(f"metrics.product.{key} must be an integer.")
+
+    top_sets = product.get("top_target_uc_sets")
+    if not isinstance(top_sets, list):
+        shape_errors.append("metrics.product.top_target_uc_sets must be an array.")
+    else:
+        for i, item in enumerate(top_sets):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.top_target_uc_sets[{i}] must be an object.")
+                continue
+            if not isinstance(item.get("uc_targets"), list):
+                shape_errors.append(
+                    f"metrics.product.top_target_uc_sets[{i}].uc_targets must be an array."
+                )
+            else:
+                for j, uc in enumerate(item.get("uc_targets")):
+                    if not _is_non_empty_string(uc):
+                        shape_errors.append(
+                            f"metrics.product.top_target_uc_sets[{i}].uc_targets[{j}] must be non-empty string."
+                        )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(f"metrics.product.top_target_uc_sets[{i}].count must be an integer.")
+
+    ge_usage = product.get("ge_pattern_usage")
+    if not isinstance(ge_usage, list):
+        shape_errors.append("metrics.product.ge_pattern_usage must be an array.")
+    else:
+        for i, item in enumerate(ge_usage):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.ge_pattern_usage[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("ge_pattern")):
+                shape_errors.append(
+                    f"metrics.product.ge_pattern_usage[{i}].ge_pattern must be a non-empty string."
+                )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(f"metrics.product.ge_pattern_usage[{i}].count must be an integer.")
+
+    warnings = product.get("warnings")
+    if not isinstance(warnings, dict):
+        shape_errors.append("metrics.product.warnings must be an object.")
+    else:
+        if not isinstance(warnings.get("responses_with_warnings"), int):
+            shape_errors.append("metrics.product.warnings.responses_with_warnings must be an integer.")
+        rate = warnings.get("warning_rate")
+        if rate is not None and not isinstance(rate, (int, float)):
+            shape_errors.append("metrics.product.warnings.warning_rate must be number or null.")
+
+    plan_shape = product.get("plan_shape")
+    if not isinstance(plan_shape, dict):
+        shape_errors.append("metrics.product.plan_shape must be an object.")
+    else:
+        avg_terms = plan_shape.get("average_terms_generated")
+        if avg_terms is not None and not isinstance(avg_terms, (int, float)):
+            shape_errors.append(
+                "metrics.product.plan_shape.average_terms_generated must be number or null."
+            )
+        avg_courses = plan_shape.get("average_courses_per_term")
+        if avg_courses is not None and not isinstance(avg_courses, (int, float)):
+            shape_errors.append(
+                "metrics.product.plan_shape.average_courses_per_term must be number or null."
+            )
+
+    latency_hist = product.get("latency_histogram_ms")
+    if not isinstance(latency_hist, list):
+        shape_errors.append("metrics.product.latency_histogram_ms must be an array.")
+    else:
+        for i, item in enumerate(latency_hist):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.latency_histogram_ms[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("bucket")):
+                shape_errors.append(
+                    f"metrics.product.latency_histogram_ms[{i}].bucket must be a non-empty string."
+                )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(
+                    f"metrics.product.latency_histogram_ms[{i}].count must be an integer."
+                )
+    return shape_errors
+
+
 def sort_metadata_items(items: Iterable[dict[str, Any]]) -> list[dict[str, Any]]:
     out = []
     for item in items:

@@ -1,0 +1,145 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+import threading
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from apps.api.server import create_server  # noqa: E402
+from tests.golden.runner import load_scenarios  # noqa: E402
+
+
+def _post_json(base_url: str, path: str, payload: dict) -> tuple[int, dict]:
+    req = urllib.request.Request(
+        url=f"{base_url}{path}",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            return resp.status, json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        return exc.code, json.loads(exc.read().decode("utf-8"))
+
+
+def _get_json(base_url: str, path: str) -> tuple[int, dict]:
+    with urllib.request.urlopen(f"{base_url}{path}", timeout=10) as resp:
+        return resp.status, json.loads(resp.read().decode("utf-8"))
+
+
+def _find_route(metrics_payload: dict, *, method: str, path: str) -> dict:
+    for route in metrics_payload.get("by_route", []):
+        if route.get("method") == method and route.get("path") == path:
+            return route
+    return {}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Run API reliability SLO check using fixed golden scenario requests."
+    )
+    parser.add_argument(
+        "--suite",
+        choices=("phase_a", "full"),
+        default="phase_a",
+        help="Scenario suite used as the deterministic valid request set.",
+    )
+    parser.add_argument(
+        "--repeat",
+        type=int,
+        default=2,
+        help="How many times to execute the selected scenario set.",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.99,
+        help="Minimum acceptable success rate for valid requests.",
+    )
+    parser.add_argument(
+        "--scenarios-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        help="Directory containing golden scenario definitions.",
+    )
+    args = parser.parse_args()
+
+    if args.repeat < 1:
+        raise SystemExit("--repeat must be >= 1")
+    if args.threshold < 0 or args.threshold > 1:
+        raise SystemExit("--threshold must be in [0, 1].")
+
+    scenarios = load_scenarios(args.scenarios_dir, suite=args.suite)
+    if not scenarios:
+        raise SystemExit(f"No scenarios found for suite '{args.suite}'.")
+
+    server = create_server(host="127.0.0.1", port=0)
+    port = server.server_address[1]
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+
+    base_url = f"http://127.0.0.1:{port}"
+    path = "/v1/pathways/generate"
+    total_attempts = 0
+    unexpected_http_errors = 0
+
+    try:
+        for _ in range(args.repeat):
+            for scenario in scenarios:
+                total_attempts += 1
+                status, _ = _post_json(base_url, path, scenario.request)
+                if status != 200:
+                    unexpected_http_errors += 1
+
+        metrics_status, metrics = _get_json(base_url, "/v1/metrics")
+        if metrics_status != 200:
+            raise SystemExit(f"Failed to read /v1/metrics (status={metrics_status}).")
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=2)
+
+    route_metrics = _find_route(metrics, method="POST", path=path)
+    if not route_metrics:
+        raise SystemExit("Missing route metrics for POST /v1/pathways/generate.")
+
+    valid_request_count = int(route_metrics.get("valid_request_count", 0))
+    valid_success_count = int(route_metrics.get("valid_success_count", 0))
+    valid_success_rate = route_metrics.get("valid_success_rate")
+    if valid_success_rate is None:
+        valid_success_rate = (
+            float(valid_success_count) / float(valid_request_count)
+            if valid_request_count > 0
+            else 0.0
+        )
+    valid_success_rate = float(valid_success_rate)
+
+    print("Reliability report")
+    print(f"  suite={args.suite} repeat={args.repeat} threshold={args.threshold:.4f}")
+    print(f"  attempts={total_attempts} unexpected_http_errors={unexpected_http_errors}")
+    print(
+        "  route=POST /v1/pathways/generate "
+        f"valid_requests={valid_request_count} "
+        f"valid_successes={valid_success_count} "
+        f"valid_success_rate={valid_success_rate:.4f}"
+    )
+    print(
+        "  error_count_by_code="
+        f"{json.dumps(route_metrics.get('error_count_by_code', {}), sort_keys=True)}"
+    )
+
+    passes = valid_request_count > 0 and valid_success_rate >= args.threshold
+    print(f"  status={'PASS' if passes else 'FAIL'}")
+    return 0 if passes else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

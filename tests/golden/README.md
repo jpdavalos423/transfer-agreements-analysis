@@ -15,6 +15,8 @@ Semantic comparison is used (not raw JSON byte equality):
 scripts/golden --suite phase_a
 scripts/golden --suite full
 scripts/golden --suite full --repeat 5
+scripts/perf --suite phase_a --repeat 3 --warmup 1
+scripts/determinism --suite full --repeat 10
 ```
 
 ## Reviewed Golden Updates
@@ -40,6 +42,7 @@ CI policy marker for PRs changing `tests/golden/scenarios/` or `tests/golden/exp
 python3 -m unittest tests/golden/test_phase_a_scenarios.py
 python3 -m unittest tests/golden/test_full_suite_scenarios.py
 python3 -m unittest tests/golden/test_golden_runner.py
+python3 -m unittest tests/golden/test_determinism_runner.py
 python3 -m unittest tests/golden/test_golden_update_script.py
 python3 -m unittest tests/golden/test_legacy_pathway_units_golden.py
 ```
