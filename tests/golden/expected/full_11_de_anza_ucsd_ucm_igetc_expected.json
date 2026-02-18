@@ -1,19 +1,119 @@
 {
-  "version": "v1",
-  "plan": [],
-  "warnings": [
-    {
-      "code": "PLANNER_NOT_IMPLEMENTED",
-      "message": "Planner logic is not implemented yet; returning stub response."
-    }
-  ],
   "meta": {
     "college_id": "de_anza",
+    "completed_courses_count": 3,
+    "final_total_units": 71.0,
+    "ge_pattern": "IGETC",
+    "generated_terms": 5,
+    "runtime_manifest_version": "v1-08f4f06c5504",
     "target_ucs": [
       "UCM",
       "UCSD"
-    ],
-    "ge_pattern": "IGETC",
-    "completed_courses_count": 3
-  }
+    ]
+  },
+  "plan": [
+    {
+      "courses": [
+        {
+          "courseCode": "IG_1A",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_1B",
+          "units": 3
+        },
+        {
+          "courseCode": "MATH 1A",
+          "units": 5.0
+        },
+        {
+          "courseCode": "MATH 22",
+          "units": 5.0
+        }
+      ],
+      "term": "Term 1"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_2",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_3A",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_3B",
+          "units": 3
+        },
+        {
+          "courseCode": "MATH 1B",
+          "units": 5.0
+        }
+      ],
+      "term": "Term 2"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_3_Leftover",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_4",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_4__slot1",
+          "units": 3
+        },
+        {
+          "courseCode": "MATH 1C",
+          "units": 5.0
+        }
+      ],
+      "term": "Term 3"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_Biological",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_Lab",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_Physical",
+          "units": 3
+        },
+        {
+          "courseCode": "MATH 1D",
+          "units": 5.0
+        }
+      ],
+      "term": "Term 4"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_7",
+          "units": 3
+        },
+        {
+          "courseCode": "MATH 2A",
+          "units": 5.0
+        },
+        {
+          "courseCode": "MATH 2B",
+          "units": 5.0
+        }
+      ],
+      "term": "Term 5"
+    }
+  ],
+  "version": "v1",
+  "warnings": []
 }

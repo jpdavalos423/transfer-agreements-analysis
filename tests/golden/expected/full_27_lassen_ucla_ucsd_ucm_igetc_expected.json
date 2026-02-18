@@ -1,20 +1,91 @@
 {
-  "version": "v1",
-  "plan": [],
-  "warnings": [
-    {
-      "code": "PLANNER_NOT_IMPLEMENTED",
-      "message": "Planner logic is not implemented yet; returning stub response."
-    }
-  ],
   "meta": {
     "college_id": "lassen",
+    "completed_courses_count": 2,
+    "final_total_units": 36.0,
+    "ge_pattern": "IGETC",
+    "generated_terms": 3,
+    "runtime_manifest_version": "v1-08f4f06c5504",
     "target_ucs": [
       "UCLA",
       "UCM",
       "UCSD"
-    ],
-    "ge_pattern": "IGETC",
-    "completed_courses_count": 2
-  }
+    ]
+  },
+  "plan": [
+    {
+      "courses": [
+        {
+          "courseCode": "IG_1A",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_1B",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_2",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_3A",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_3B",
+          "units": 3
+        }
+      ],
+      "term": "Term 1"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_3_Leftover",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_4",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_4__slot1",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_Biological",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_Physical",
+          "units": 3
+        }
+      ],
+      "term": "Term 2"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "IG_7",
+          "units": 3
+        },
+        {
+          "courseCode": "IG_Lab",
+          "units": 3
+        }
+      ],
+      "term": "Term 3"
+    }
+  ],
+  "version": "v1",
+  "warnings": [
+    {
+      "code": "NO_PROGRESS",
+      "message": "No new eligible courses available; ending pathway generation early."
+    },
+    {
+      "code": "PREREQ_GAP",
+      "message": "No prerequisite records available for 'lassen'. Default units/fallback behavior may be used."
+    }
+  ]
 }

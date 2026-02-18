@@ -6,7 +6,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from packages.planner_core import canonicalize_for_comparison, generate_stub_plan
+from apps.api.planner_service import generate_pathway_response
+from packages.planner_core import canonicalize_for_comparison
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -40,7 +41,7 @@ class GoldenUpdateScriptTests(unittest.TestCase):
             )
 
             # Seed expected with intentionally different payload so candidate diff is non-empty.
-            bad_expected = canonicalize_for_comparison(generate_stub_plan(scenario["request"]))
+            bad_expected = canonicalize_for_comparison(generate_pathway_response(scenario["request"]))
             bad_expected["meta"]["completed_courses_count"] = 999
             (expected_dir / scenario["expected_file"]).write_text(
                 json.dumps(bad_expected, indent=2) + "\n", encoding="utf-8"

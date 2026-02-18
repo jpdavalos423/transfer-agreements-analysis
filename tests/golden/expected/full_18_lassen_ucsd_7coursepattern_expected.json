@@ -1,18 +1,85 @@
 {
-  "version": "v1",
-  "plan": [],
-  "warnings": [
-    {
-      "code": "PLANNER_NOT_IMPLEMENTED",
-      "message": "Planner logic is not implemented yet; returning stub response."
-    }
-  ],
   "meta": {
     "college_id": "lassen",
+    "completed_courses_count": 2,
+    "final_total_units": 33.0,
+    "ge_pattern": "7CoursePattern",
+    "generated_terms": 3,
+    "runtime_manifest_version": "v1-08f4f06c5504",
     "target_ucs": [
       "UCSD"
-    ],
-    "ge_pattern": "7CoursePattern",
-    "completed_courses_count": 2
-  }
+    ]
+  },
+  "plan": [
+    {
+      "courses": [
+        {
+          "courseCode": "GE_General",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_General__slot1",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_QuantReason",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_WrittenComm",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_WrittenComm__slot1",
+          "units": 3
+        }
+      ],
+      "term": "Term 1"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "GE_General_Leftover",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_General_Leftover__slot1",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_General__slot2",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_General__slot3",
+          "units": 3
+        },
+        {
+          "courseCode": "GE_General__slot4",
+          "units": 3
+        }
+      ],
+      "term": "Term 2"
+    },
+    {
+      "courses": [
+        {
+          "courseCode": "GE_General_Leftover__slot2",
+          "units": 3
+        }
+      ],
+      "term": "Term 3"
+    }
+  ],
+  "version": "v1",
+  "warnings": [
+    {
+      "code": "NO_PROGRESS",
+      "message": "No new eligible courses available; ending pathway generation early."
+    },
+    {
+      "code": "PREREQ_GAP",
+      "message": "No prerequisite records available for 'lassen'. Default units/fallback behavior may be used."
+    }
+  ]
 }

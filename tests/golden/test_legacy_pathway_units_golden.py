@@ -11,7 +11,7 @@ from pathlib import Path
 
 def _load_legacy_pathway_module():
     project_root = Path(__file__).resolve().parents[2]
-    legacy_dir = project_root / "pathway_generator"
+    legacy_dir = project_root / "legacy" / "pathway_generator"
     module_path = legacy_dir / "pathway_generator.py"
 
     import sys

@@ -5,7 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from packages.planner_core import canonicalize_for_comparison, generate_stub_plan
+from apps.api.planner_service import generate_pathway_response
+from packages.planner_core import canonicalize_for_comparison
 
 from .comparator import semantic_compare
 
@@ -45,7 +46,7 @@ def load_scenarios(
 def run_scenario(scenario: GoldenScenario, expected_dir: str | Path) -> dict[str, Any]:
     expected_path = Path(expected_dir) / scenario.expected_file
     expected = json.loads(expected_path.read_text(encoding="utf-8"))
-    actual = generate_stub_plan(scenario.request)
+    actual = generate_pathway_response(scenario.request)
 
     ok, diff = semantic_compare(actual, expected)
     if not ok:

@@ -102,7 +102,7 @@ def build_articulation_url(year, cc_id, uc_id, key):
 ############################################################
 # 5) Generate & Save All CS URLs for a Single UC
 ############################################################
-def generate_cs_urls_for_uc(uc_id, output_dir="cs_urls", year=75):
+def generate_cs_urls_for_uc(uc_id, output_dir="legacy/cs_urls", year=75):
     """
     For a given UC, iterates over all Community Colleges (CCs),
     finds the 'Computer Science' major key (if any),
@@ -137,13 +137,13 @@ def generate_cs_urls_for_uc(uc_id, output_dir="cs_urls", year=75):
 def main():
     """
     Example usage: build all Computer Science articulation URLs for each UC,
-    storing them in 'cs_urls/' (one file per UC).
+    storing them in 'legacy/cs_urls/' (one file per UC).
     """
     # Identify all UC IDs
     uc_ids = getUCIdList()
 
     for uc_id in uc_ids:
-        generate_cs_urls_for_uc(uc_id, output_dir="cs_urls", year=75)  # e.g. 2024-2025
+        generate_cs_urls_for_uc(uc_id, output_dir="legacy/cs_urls", year=75)  # e.g. 2024-2025
 
     print("Done generating Computer Science URLs for all UCs!")
 

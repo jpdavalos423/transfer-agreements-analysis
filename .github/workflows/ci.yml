@@ -85,6 +85,10 @@ jobs:
             tests/data_adapter/test_parsers.py \
             tests/data_adapter/test_runtime_builder.py \
             tests/golden/test_bootstrap_script.py \
+            tests/runtime_loader/test_runtime_data_loader.py \
+            tests/planner_core/test_pure_planner_parity.py \
+            tests/planner_core/test_runtime_loader_e2e.py \
+            tests/planner_core/test_locked_semantics.py \
             tests/api/test_generate_endpoint.py \
             tests/web/test_ui_smoke.py
 
