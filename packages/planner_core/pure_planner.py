@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from packages.data_adapter.models import ArticulationRow
+
 
 DEFAULT_MAX_UNITS = 16
 DEFAULT_TOTAL_UNITS_REQUIRED = 60
@@ -22,6 +24,42 @@ COLLEGE_CC_KEYS = {
     "de_anza": "De_Anza_College",
     "lassen": "Lassen_Community_College",
 }
+
+
+@dataclass(frozen=True)
+class PlannerRuntimeModel:
+    filtered_rows: tuple[ArticulationRow, ...]
+    district_rows: tuple[ArticulationRow, ...]
+    manifest: dict[str, Any] | None = None
+
+
+def _articulation_row_to_dict(row: ArticulationRow) -> dict[str, Any]:
+    return {
+        "source_file": row.source_file,
+        "row_number": row.row_number,
+        "mode": row.mode,
+        "college_name": row.college_name,
+        "uc_name": row.uc_name,
+        "group_id": row.group_id,
+        "set_id": row.set_id,
+        "num_required": row.num_required,
+        "receiving_raw": row.receiving_raw,
+        "receiving_courses": list(row.receiving_courses),
+        "articulation_status": row.articulation_status,
+        "alternatives": [
+            {
+                "block_index": block.block_index,
+                "courses": [
+                    {
+                        "course_code": course.course_code,
+                        "units": course.units,
+                    }
+                    for course in block.courses
+                ],
+            }
+            for block in row.alternatives
+        ],
+    }
 
 
 def _warning(code: str, message: str) -> dict[str, str]:
@@ -925,6 +963,44 @@ def _major_map_from_articulated(
     return uc_to_map
 
 
+def generate_plan_from_runtime_model(
+    *,
+    college_id: str,
+    target_ucs: list[str],
+    ge_pattern: str,
+    completed_courses: list[str],
+    runtime_model: PlannerRuntimeModel,
+    prereq_records: Any,
+    ge_data: dict[str, Any],
+    course_reqs_data: dict[str, Any],
+    max_units_per_term: int = DEFAULT_MAX_UNITS,
+    total_units_required: int = DEFAULT_TOTAL_UNITS_REQUIRED,
+    max_terms_safety_limit: int = DEFAULT_MAX_TERMS_SAFETY_LIMIT,
+    elective_padding_max_pool: int = DEFAULT_ELECTIVE_PADDING_MAX_POOL,
+) -> dict[str, Any]:
+    filtered_rows = [_articulation_row_to_dict(r) for r in runtime_model.filtered_rows]
+    district_rows = [_articulation_row_to_dict(r) for r in runtime_model.district_rows]
+    result = generate_plan_from_runtime(
+        college_id=college_id,
+        target_ucs=target_ucs,
+        ge_pattern=ge_pattern,
+        completed_courses=completed_courses,
+        filtered_rows=filtered_rows,
+        district_rows=district_rows,
+        prereq_records=prereq_records,
+        ge_data=ge_data,
+        course_reqs_data=course_reqs_data,
+        max_units_per_term=max_units_per_term,
+        total_units_required=total_units_required,
+        max_terms_safety_limit=max_terms_safety_limit,
+        elective_padding_max_pool=elective_padding_max_pool,
+    )
+    if runtime_model.manifest:
+        result.setdefault("meta", {})
+        result["meta"]["runtime_manifest_version"] = runtime_model.manifest.get("version")
+    return result
+
+
 def generate_plan_from_runtime(
     *,
     college_id: str,
@@ -1153,4 +1229,3 @@ def generate_plan_from_runtime(
             "generated_terms": len(pathway),
         },
     }
-

@@ -134,6 +134,22 @@ class PurePlannerParityTests(unittest.TestCase):
                 open_calls.append((node.lineno, node.col_offset))
         self.assertEqual(open_calls, [])
 
+    def test_planner_core_has_no_legacy_imports(self):
+        planner_core_dir = REPO_ROOT / "packages" / "planner_core"
+        py_files = sorted(planner_core_dir.glob("*.py"))
+        for path in py_files:
+            source = path.read_text(encoding="utf-8")
+            tree = ast.parse(source)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Import):
+                    for alias in node.names:
+                        self.assertNotIn("pathway_generator", alias.name)
+                        self.assertNotIn("legacy", alias.name)
+                if isinstance(node, ast.ImportFrom):
+                    mod = node.module or ""
+                    self.assertNotIn("pathway_generator", mod)
+                    self.assertNotIn("legacy", mod)
+
 
 if __name__ == "__main__":
     unittest.main()
