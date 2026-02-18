@@ -61,6 +61,24 @@ class APIIntegrationTest(unittest.TestCase):
         for warning in body.get("warnings", []):
             self.assertEqual(warning.get("trace_id"), request_id)
 
+    def test_generate_known_prereq_college_avoids_prereq_gap_warning(self):
+        payload = {
+            "college_id": "cabrillo",
+            "target_ucs": ["UCLA"],
+            "ge_pattern": "IGETC",
+            "completed_courses": [],
+        }
+        with self._post_json("/v1/pathways/generate", payload) as resp:
+            self.assertEqual(resp.status, 200)
+            body = json.loads(resp.read().decode("utf-8"))
+
+        warning_codes = [
+            warning.get("code")
+            for warning in body.get("warnings", [])
+            if isinstance(warning, dict)
+        ]
+        self.assertNotIn("PREREQ_GAP", warning_codes)
+
     def test_generate_reject_unknown_college(self):
         invalid_payload = {
             "college_id": "__unknown_college__",

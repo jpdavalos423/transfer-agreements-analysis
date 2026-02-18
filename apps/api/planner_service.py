@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,10 @@ class PlannerServiceError(RuntimeError):
     """Raised when planner dependencies cannot be loaded or executed."""
 
 
+_NON_ALNUM = re.compile(r"[^a-z0-9_]+")
+_REPEATED_UNDERSCORE = re.compile(r"_+")
+
+
 def _project_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
@@ -27,6 +32,25 @@ def _read_json(path: Path) -> Any:
         raise PlannerServiceError(f"Required planner input file not found: {path}") from exc
     except json.JSONDecodeError as exc:
         raise PlannerServiceError(f"Invalid JSON in planner input file: {path}") from exc
+
+
+def _normalize_id(value: str) -> str:
+    lowered = value.lower().replace("-", "_").replace(" ", "_")
+    lowered = _NON_ALNUM.sub("_", lowered)
+    lowered = _REPEATED_UNDERSCORE.sub("_", lowered).strip("_")
+    return lowered
+
+
+def _strip_suffixes(value: str, suffixes: tuple[str, ...]) -> str:
+    out = value
+    changed = True
+    while changed:
+        changed = False
+        for suffix in suffixes:
+            if out.endswith(suffix):
+                out = out[: -len(suffix)]
+                changed = True
+    return out.rstrip("_")
 
 
 @lru_cache(maxsize=1)
@@ -57,13 +81,38 @@ def _course_reqs_data() -> dict[str, Any]:
     return payload
 
 
+@lru_cache(maxsize=1)
+def _prereq_file_map() -> dict[str, str]:
+    prereq_dir = _project_root() / "prerequisites"
+    mapping: dict[str, str] = {}
+    for path in sorted(prereq_dir.glob("*_prereqs.json")):
+        if path.name == "ge_reqs.json":
+            continue
+        stem = path.stem
+        if not stem.endswith("_prereqs"):
+            continue
+        base = stem[: -len("_prereqs")]
+        normalized = _normalize_id(base)
+        college_id = _strip_suffixes(
+            normalized,
+            (
+                "_community_college",
+                "_college",
+            ),
+        )
+        if not college_id:
+            college_id = normalized
+        existing = mapping.get(college_id)
+        if existing is not None and existing != path.name:
+            raise PlannerServiceError(
+                f"Duplicate prerequisite files map to '{college_id}': '{existing}' and '{path.name}'."
+            )
+        mapping[college_id] = path.name
+    return mapping
+
+
 def _prereq_filename_for_college(college_id: str) -> str | None:
-    mapping = {
-        "de_anza": "de_anza_college_prereqs.json",
-        # Lassen prerequisite JSON is not yet available in source inputs.
-        "lassen": None,
-    }
-    return mapping.get(college_id)
+    return _prereq_file_map().get(_normalize_id(college_id))
 
 
 @lru_cache(maxsize=8)
@@ -100,4 +149,3 @@ def generate_pathway_response(request_payload: dict[str, Any]) -> dict[str, Any]
 
     response["version"] = API_VERSION
     return sort_generate_response(response)
-
