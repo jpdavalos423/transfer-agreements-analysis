@@ -17,11 +17,30 @@ scripts/golden --suite full
 scripts/golden --suite full --repeat 5
 ```
 
+## Reviewed Golden Updates
+Generate candidate outputs (writes to `tests/golden/_candidate/` and prints diffs):
+```bash
+scripts/golden_update candidate --suite full
+scripts/golden_update candidate --suite full --scenario-id full_17_lassen_ucsd_igetc
+```
+
+Promote candidates to expected outputs (explicit):
+```bash
+scripts/golden_update promote --suite full
+scripts/golden_update promote --suite full --yes
+```
+
+CI policy marker for PRs changing `tests/golden/scenarios/` or `tests/golden/expected/`:
+1. Include `[golden-update-approved]` in PR description, or
+2. Add label `golden-update-approved`, or
+3. Update `docs/GOLDEN_WORKFLOW.md` in the same PR.
+
 ## Unittest Targets
 ```bash
 python3 -m unittest tests/golden/test_phase_a_scenarios.py
 python3 -m unittest tests/golden/test_full_suite_scenarios.py
 python3 -m unittest tests/golden/test_golden_runner.py
+python3 -m unittest tests/golden/test_golden_update_script.py
 python3 -m unittest tests/golden/test_legacy_pathway_units_golden.py
 ```
 
