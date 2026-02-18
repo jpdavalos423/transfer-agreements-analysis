@@ -98,6 +98,7 @@ scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 - `docs/DATA_REFRESH_RUNBOOK.md`
 - `docs/GOLDEN_WORKFLOW.md`
 - `docs/RELIABILITY_SLO.md`
+- `docs/PRODUCT_METRICS.md`
 
 ## Legacy Notice
 

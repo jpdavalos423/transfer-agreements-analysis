@@ -6,6 +6,7 @@ import json
 import uuid
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from time import perf_counter
 from typing import Any
 
 from apps.api.metrics import APIMetrics
@@ -44,6 +45,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         path: str,
         error_code: str | None = None,
         valid_request: bool | None = None,
+        request_payload: Any = None,
+        latency_ms: float | None = None,
     ) -> None:
         body = json.dumps(payload).encode("utf-8")
         self._metrics().record(
@@ -52,6 +55,9 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             status_code=int(status_code),
             error_code=error_code,
             valid_request=valid_request,
+            request_payload=request_payload,
+            response_payload=payload,
+            latency_ms=latency_ms,
         )
         self.send_response(status_code)
         self._set_cors_headers()
@@ -85,20 +91,25 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         path: str,
         details: list[dict[str, str]] | None = None,
         valid_request: bool | None = None,
+        request_payload: Any = None,
+        latency_ms: float | None = None,
     ) -> None:
+        payload = build_error_response(
+            code,
+            message,
+            details=details,
+            status=status,
+            request_id=request_id,
+            path=path,
+        )
         self._send_json(
             status,
-            build_error_response(
-                code,
-                message,
-                details=details,
-                status=status,
-                request_id=request_id,
-                path=path,
-            ),
+            payload,
             path=path,
             error_code=code,
             valid_request=valid_request,
+            request_payload=request_payload,
+            latency_ms=latency_ms,
         )
 
     def _normalize_path(self) -> str:
@@ -124,6 +135,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        payload: dict[str, Any] | None = None
         metadata, metadata_err = self._runtime_metadata()
         if metadata_err is not None:
             self._send_error(
@@ -134,6 +146,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 path=path,
                 details=[{"field": "runtime_metadata", "message": str(metadata_err)}],
                 valid_request=True,
+                request_payload=payload,
             )
             return
 
@@ -146,6 +159,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 valid_request=False,
+                request_payload=payload,
             )
             return
 
@@ -160,6 +174,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 request_id=request_id,
                 path=path,
                 valid_request=False,
+                request_payload=payload,
             )
             return
 
@@ -178,12 +193,18 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 path=path,
                 details=validation_errors,
                 valid_request=False,
+                request_payload=payload,
             )
             return
 
+        latency_ms: float | None = None
         try:
+            start = perf_counter()
             response = generate_pathway_response(payload)
+            latency_ms = (perf_counter() - start) * 1000.0
         except PlannerServiceError as exc:
+            if latency_ms is None:
+                latency_ms = (perf_counter() - start) * 1000.0
             self._send_error(
                 HTTPStatus.INTERNAL_SERVER_ERROR,
                 code="PLANNER_RUNTIME_ERROR",
@@ -192,6 +213,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 path=path,
                 details=[{"field": "planner_service", "message": str(exc)}],
                 valid_request=True,
+                request_payload=payload,
+                latency_ms=latency_ms,
             )
             return
 
@@ -212,6 +235,8 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             response,
             path=path,
             valid_request=True,
+            request_payload=payload,
+            latency_ms=latency_ms,
         )
 
     def do_GET(self) -> None:  # noqa: N802 (stdlib naming)

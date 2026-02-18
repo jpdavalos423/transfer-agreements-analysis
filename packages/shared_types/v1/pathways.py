@@ -360,6 +360,97 @@ def validate_metrics_response_shape(payload: Any) -> list[str]:
             rate = item.get("valid_success_rate")
             if rate is not None and not isinstance(rate, (int, float)):
                 shape_errors.append(f"metrics.by_route[{i}].valid_success_rate must be number or null.")
+
+    product = payload.get("product")
+    if not isinstance(product, dict):
+        shape_errors.append("metrics.product must be an object.")
+        return shape_errors
+
+    for key in (
+        "pathway_generation_requests_total",
+        "pathway_generation_valid_requests_total",
+        "pathway_generation_success_total",
+    ):
+        if not isinstance(product.get(key), int):
+            shape_errors.append(f"metrics.product.{key} must be an integer.")
+
+    top_sets = product.get("top_target_uc_sets")
+    if not isinstance(top_sets, list):
+        shape_errors.append("metrics.product.top_target_uc_sets must be an array.")
+    else:
+        for i, item in enumerate(top_sets):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.top_target_uc_sets[{i}] must be an object.")
+                continue
+            if not isinstance(item.get("uc_targets"), list):
+                shape_errors.append(
+                    f"metrics.product.top_target_uc_sets[{i}].uc_targets must be an array."
+                )
+            else:
+                for j, uc in enumerate(item.get("uc_targets")):
+                    if not _is_non_empty_string(uc):
+                        shape_errors.append(
+                            f"metrics.product.top_target_uc_sets[{i}].uc_targets[{j}] must be non-empty string."
+                        )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(f"metrics.product.top_target_uc_sets[{i}].count must be an integer.")
+
+    ge_usage = product.get("ge_pattern_usage")
+    if not isinstance(ge_usage, list):
+        shape_errors.append("metrics.product.ge_pattern_usage must be an array.")
+    else:
+        for i, item in enumerate(ge_usage):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.ge_pattern_usage[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("ge_pattern")):
+                shape_errors.append(
+                    f"metrics.product.ge_pattern_usage[{i}].ge_pattern must be a non-empty string."
+                )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(f"metrics.product.ge_pattern_usage[{i}].count must be an integer.")
+
+    warnings = product.get("warnings")
+    if not isinstance(warnings, dict):
+        shape_errors.append("metrics.product.warnings must be an object.")
+    else:
+        if not isinstance(warnings.get("responses_with_warnings"), int):
+            shape_errors.append("metrics.product.warnings.responses_with_warnings must be an integer.")
+        rate = warnings.get("warning_rate")
+        if rate is not None and not isinstance(rate, (int, float)):
+            shape_errors.append("metrics.product.warnings.warning_rate must be number or null.")
+
+    plan_shape = product.get("plan_shape")
+    if not isinstance(plan_shape, dict):
+        shape_errors.append("metrics.product.plan_shape must be an object.")
+    else:
+        avg_terms = plan_shape.get("average_terms_generated")
+        if avg_terms is not None and not isinstance(avg_terms, (int, float)):
+            shape_errors.append(
+                "metrics.product.plan_shape.average_terms_generated must be number or null."
+            )
+        avg_courses = plan_shape.get("average_courses_per_term")
+        if avg_courses is not None and not isinstance(avg_courses, (int, float)):
+            shape_errors.append(
+                "metrics.product.plan_shape.average_courses_per_term must be number or null."
+            )
+
+    latency_hist = product.get("latency_histogram_ms")
+    if not isinstance(latency_hist, list):
+        shape_errors.append("metrics.product.latency_histogram_ms must be an array.")
+    else:
+        for i, item in enumerate(latency_hist):
+            if not isinstance(item, dict):
+                shape_errors.append(f"metrics.product.latency_histogram_ms[{i}] must be an object.")
+                continue
+            if not _is_non_empty_string(item.get("bucket")):
+                shape_errors.append(
+                    f"metrics.product.latency_histogram_ms[{i}].bucket must be a non-empty string."
+                )
+            if not isinstance(item.get("count"), int):
+                shape_errors.append(
+                    f"metrics.product.latency_histogram_ms[{i}].count must be an integer."
+                )
     return shape_errors
 
 
