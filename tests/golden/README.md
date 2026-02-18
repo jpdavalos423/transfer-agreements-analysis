@@ -15,6 +15,7 @@ Semantic comparison is used (not raw JSON byte equality):
 scripts/golden --suite phase_a
 scripts/golden --suite full
 scripts/golden --suite full --repeat 5
+scripts/perf --suite phase_a --repeat 3 --warmup 1
 ```
 
 ## Reviewed Golden Updates
