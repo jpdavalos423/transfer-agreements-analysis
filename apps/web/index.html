@@ -9,20 +9,20 @@
   <body>
     <main class="container">
       <h1>Transfer Pathway Planner</h1>
-      <p class="subtle">Vertical-slice UI (P0-2)</p>
+      <p class="subtle">Student planner setup workflow (P5-1)</p>
 
       <form id="planner-form" class="panel">
         <div class="field">
-          <label for="college_id">College ID</label>
-          <input id="college_id" name="college_id" value="de_anza" required />
+          <label for="college_id">College</label>
+          <select id="college_id" name="college_id" required>
+            <option value="">Loading colleges...</option>
+          </select>
         </div>
 
         <div class="field">
           <label for="target_ucs">Target UCs</label>
           <select id="target_ucs" name="target_ucs" multiple size="3" required>
-            <option value="UCLA" selected>UCLA</option>
-            <option value="UCSD" selected>UCSD</option>
-            <option value="UCM">UCM</option>
+            <option value="">Loading UCs...</option>
           </select>
           <small>Hold Ctrl/Cmd to select multiple</small>
         </div>
@@ -45,8 +45,19 @@
           ></textarea>
         </div>
 
-        <button type="submit">Generate Pathway</button>
+        <button id="submit-button" type="submit">Generate Pathway</button>
       </form>
+
+      <section id="setup-errors-panel" class="panel panel-error" aria-live="polite" hidden>
+        <h2>Form Validation</h2>
+        <ul id="setup-errors-list"></ul>
+      </section>
+
+      <section id="api-error-panel" class="panel panel-error" aria-live="polite" hidden>
+        <h2>Request Error</h2>
+        <p id="api-error-headline"></p>
+        <ul id="api-error-details"></ul>
+      </section>
 
       <section id="warnings-panel" class="panel" aria-live="polite">
         <h2>Warnings</h2>
@@ -62,4 +73,3 @@
     <script type="module" src="./app.js"></script>
   </body>
 </html>
-
