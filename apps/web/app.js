@@ -3,6 +3,8 @@ import {
   extractApiError,
   validateSetupInput,
 } from "./planner_form.js";
+import { renderResults } from "./results_view.js";
+import { renderStatusPanel } from "./status_panel.js";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
 const GENERATE_URL = `${API_BASE_URL}/v1/pathways/generate`;
@@ -21,8 +23,18 @@ const setupErrorsList = document.getElementById("setup-errors-list");
 const apiErrorPanel = document.getElementById("api-error-panel");
 const apiErrorHeadline = document.getElementById("api-error-headline");
 const apiErrorDetails = document.getElementById("api-error-details");
+const confidenceLabel = document.getElementById("confidence-label");
 const warningsList = document.getElementById("warnings-list");
+const unmetSection = document.getElementById("unmet-section");
+const unmetList = document.getElementById("unmet-list");
 const responseJson = document.getElementById("response-json");
+const resultsContent = document.getElementById("results-content");
+const statusElements = {
+  confidenceLabel,
+  warningsList,
+  unmetSection,
+  unmetList,
+};
 
 function clearElementChildren(el) {
   if (!el) {
@@ -83,23 +95,15 @@ function hideApiError() {
   clearElementChildren(apiErrorDetails);
 }
 
-function renderWarnings(warnings) {
-  clearElementChildren(warningsList);
-  if (!Array.isArray(warnings) || warnings.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = "No warnings.";
-    warningsList.appendChild(li);
+function renderResultsPlaceholder(message) {
+  if (!resultsContent) {
     return;
   }
-
-  for (const warning of warnings) {
-    const li = document.createElement("li");
-    const severity = warning?.severity ? `[${warning.severity}] ` : "";
-    const code = warning?.code || "UNKNOWN";
-    const message = warning?.message || "Unknown warning.";
-    li.textContent = `${severity}${code}: ${message}`;
-    warningsList.appendChild(li);
-  }
+  resultsContent.innerHTML = "";
+  const p = document.createElement("p");
+  p.className = "results-placeholder";
+  p.textContent = message;
+  resultsContent.appendChild(p);
 }
 
 async function fetchJson(url) {
@@ -166,6 +170,7 @@ async function loadMetadata() {
     setSelectError(ucSelect, "Unable to load UC options.");
     renderApiError(errorPayload);
     responseJson.textContent = JSON.stringify(errorPayload, null, 2);
+    renderResultsPlaceholder("Results will appear after a successful generation.");
   }
 }
 
@@ -199,20 +204,24 @@ form.addEventListener("submit", async (event) => {
 
   setSubmittingState(true);
   responseJson.textContent = "Loading...";
-  renderWarnings([]);
+  renderStatusPanel(statusElements, { plan: [], warnings: [] });
+  renderResultsPlaceholder("Generating pathway...");
 
   try {
     const data = await submitPlannerRequest(payload);
-    renderWarnings(data.warnings || []);
+    renderStatusPanel(statusElements, data);
     responseJson.textContent = JSON.stringify(data, null, 2);
+    renderResults(resultsContent, data);
   } catch (errorPayload) {
-    renderWarnings([]);
+    renderStatusPanel(statusElements, { plan: [], warnings: [] });
     renderApiError(errorPayload);
     responseJson.textContent = JSON.stringify(errorPayload, null, 2);
+    renderResultsPlaceholder("Results will appear after a successful generation.");
   } finally {
     setSubmittingState(false);
   }
 });
 
+renderResultsPlaceholder("Results will appear after a successful generation.");
+renderStatusPanel(statusElements, { plan: [], warnings: [] });
 loadMetadata();
-

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <a class="skip-link" href="#planner-form">Skip to planner form</a>
     <main class="container">
       <h1>Transfer Pathway Planner</h1>
       <p class="subtle">Student planner setup workflow (P5-1)</p>
@@ -21,10 +22,17 @@
 
         <div class="field">
           <label for="target_ucs">Target UCs</label>
-          <select id="target_ucs" name="target_ucs" multiple size="3" required>
+          <select
+            id="target_ucs"
+            name="target_ucs"
+            multiple
+            size="3"
+            required
+            aria-describedby="target-ucs-help"
+          >
             <option value="">Loading UCs...</option>
           </select>
-          <small>Hold Ctrl/Cmd to select multiple</small>
+          <small id="target-ucs-help">Hold Ctrl/Cmd to select multiple</small>
         </div>
 
         <div class="field">
@@ -59,10 +67,28 @@
         <ul id="api-error-details"></ul>
       </section>
 
-      <section id="warnings-panel" class="panel" aria-live="polite">
-        <h2>Warnings</h2>
-        <ul id="warnings-list"></ul>
-      </section>
+      <div class="results-layout">
+        <section id="status-panel" class="panel" aria-live="polite">
+          <h2>Plan Status</h2>
+          <p class="confidence-row">
+            Confidence:
+            <span id="confidence-label" class="confidence-label confidence-incomplete"
+              >Incomplete</span
+            >
+          </p>
+          <h3>Warnings</h3>
+          <ul id="warnings-list"></ul>
+          <div id="unmet-section" hidden>
+            <h3>Unmet Requirements</h3>
+            <ul id="unmet-list"></ul>
+          </div>
+        </section>
+
+        <section id="results-panel" class="panel" aria-live="polite">
+          <h2>Pathway Results</h2>
+          <div id="results-content"></div>
+        </section>
+      </div>
 
       <section class="panel">
         <h2>Raw Response</h2>
