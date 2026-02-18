@@ -14,7 +14,7 @@ def count_total_courses(row, course_group_cols):
 
 # --- Determine paths based on script location ---
 script_dir = os.path.dirname(os.path.abspath(__file__))
-root_dir   = os.path.dirname(script_dir)
+root_dir   = os.path.dirname(os.path.dirname(script_dir))
 
 districts_json_path = os.path.join(script_dir, 'districts.json')
 input_folder        = os.path.join(root_dir, 'filtered_results')

@@ -2,8 +2,11 @@ import pandas as pd
 from itertools import permutations
 import os
 import math
+from pathlib import Path
 
 uc_schools = ["UCSD", "UCSB", "UCSC", "UCLA", "UCB", "UCI", "UCD", "UCR", "UCM"]
+PROJECT_ROOT = Path(__file__).resolve().parents[4]
+DEFAULT_DISTRICT_DIR = PROJECT_ROOT / "district_csvs"
 
 def generate_combinations(uc_schools):
     # Change the number here for different permutation sizes
@@ -341,5 +344,5 @@ def process_all_csvs(folder_path):
             f.write("\n")
 
 if __name__ == "__main__":
-    folder_path = "/Users/yasminkabir/transfer-agreements-analysis/district_csvs"
+    folder_path = os.environ.get("DISTRICT_CSV_DIR", str(DEFAULT_DISTRICT_DIR))
     process_all_csvs(folder_path)

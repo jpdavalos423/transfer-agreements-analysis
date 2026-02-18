@@ -10,11 +10,13 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import logging
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # where your per‐CC URL lists live:
-CC_AGREEMENTS_DIR = "cc_agreements"
+CC_AGREEMENTS_DIR = os.path.join(BASE_DIR, "..", "legacy", "cc_agreements")
 
 # where we dump the per‐CC CSVs
-RESULTS_DIR = "results"
+RESULTS_DIR = os.path.join(BASE_DIR, "..", "legacy", "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 logging.basicConfig(

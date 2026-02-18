@@ -5,8 +5,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # === CONFIGURATION ===
-json_path = "question_4/data/min_units/pathway_results_IGETC_20250810_154201.json"
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION4_ROOT = SCRIPT_DIR.parent
+json_path = QUESTION4_ROOT / "data" / "min_units" / "pathway_results_IGETC_20250810_154201.json"
 exclude_ccs = ["de_anza", "foothill","mt_san_jacinto"]   # CC codes to exclude
+OUTPUT_DIR = QUESTION4_ROOT / "figures" / "min-units"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # === LOAD DATA ===
 with open(json_path, "r", encoding="utf-8") as f:
@@ -56,7 +60,7 @@ ax.set_ylim(0, 100)
 
 plt.tight_layout()
 
-out_png = Path("cc_pathway_durations.png")
+out_png = OUTPUT_DIR / "cc_pathway_durations.png"
 plt.savefig(out_png, dpi=300)
 plt.show()
 

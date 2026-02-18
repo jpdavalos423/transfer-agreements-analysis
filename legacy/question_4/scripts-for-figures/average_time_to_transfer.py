@@ -1,9 +1,14 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 # === CONFIGURATION ===
-json_path = "question_4/data/min_units/pathway_results_IGETC_20250810_154201.json"
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION4_ROOT = SCRIPT_DIR.parent
+json_path = QUESTION4_ROOT / "data" / "min_units" / "pathway_results_IGETC_20250810_154201.json"
+OUTPUT_DIR = QUESTION4_ROOT / "figures" / "min-units"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # === MANUAL CC EXCLUSION ===
 # Add the community college codes you want to exclude here
@@ -14,7 +19,7 @@ exclude_ccs = [
 ]
 
 # === LOAD DATA ===
-with open(json_path, 'r') as f:
+with open(json_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 df = pd.DataFrame(data['results'])
@@ -49,7 +54,7 @@ plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 
 # Save plot
-plt.savefig("cc_avg_terms_transfer.png", dpi=300)
+plt.savefig(OUTPUT_DIR / "cc_avg_terms_transfer.png", dpi=300)
 
 plt.show()
 

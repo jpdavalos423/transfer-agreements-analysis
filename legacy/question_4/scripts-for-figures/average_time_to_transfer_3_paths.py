@@ -5,16 +5,20 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 
 # === CONFIGURATION ===
-json_12 = "question_4/data/min_units/pathway_results_IGETC_20250810_154201.json"    # 12 units (min full-time)
-json_15 = "question_4/data/average_units/pathway_results_IGETC_20250810_125719.json" # 15 units (average)
-json_18 = "question_4/data/max-units/pathway_results_IGETC_20250810_145038.json"     # 18 units (max)
-out_png = "cc_avg_terms_transfer_GROUPED_18_15_12.png"
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION4_ROOT = SCRIPT_DIR.parent
+json_12 = QUESTION4_ROOT / "data" / "min_units" / "pathway_results_IGETC_20250810_154201.json"      # 12 units (min full-time)
+json_15 = QUESTION4_ROOT / "data" / "average_units" / "pathway_results_IGETC_20250810_125719.json"   # 15 units (average)
+json_18 = QUESTION4_ROOT / "data" / "max-units" / "pathway_results_IGETC_20250810_145038.json"       # 18 units (max)
+OUTPUT_DIR = QUESTION4_ROOT / "figures" / "average-units"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+out_png = OUTPUT_DIR / "cc_avg_terms_transfer_GROUPED_18_15_12.png"
 
 # === MANUAL CC EXCLUSION ===
 exclude_ccs = ["de_anza", "foothill", "mt_san_jacinto"]
 
-def load_avg_terms(json_path: str, exclude=None) -> pd.DataFrame:
-    p = Path(json_path)
+def load_avg_terms(json_path: Path, exclude=None) -> pd.DataFrame:
+    p = json_path
     with p.open("r", encoding="utf-8") as f:
         data = json.load(f)
 

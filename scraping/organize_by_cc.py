@@ -1,9 +1,11 @@
 import os
 from collections import defaultdict
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Directories
-input_directory = "cs_urls"  # Directory containing UC text files
-output_directory = "cc_agreements"  # Main output folder for community colleges
+input_directory = os.path.join(BASE_DIR, "..", "legacy", "cs_urls")  # Directory containing UC text files
+output_directory = os.path.join(BASE_DIR, "..", "legacy", "cc_agreements")  # Main output folder for community colleges
 
 # Ensure the output directory exists
 os.makedirs(output_directory, exist_ok=True)

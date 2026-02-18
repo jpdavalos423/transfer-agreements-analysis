@@ -4,9 +4,11 @@ import time
 import traceback
 import scraping  # Importing existing scraping functions
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # Directories
-AGREEMENTS_DIR = "cc_agreements"
-RESULTS_DIR = "results"
+AGREEMENTS_DIR = os.path.join(BASE_DIR, "..", "legacy", "cc_agreements")
+RESULTS_DIR = os.path.join(BASE_DIR, "..", "legacy", "results")
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
 def find_agreement_urls(cc_name):

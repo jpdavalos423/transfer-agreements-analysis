@@ -97,7 +97,7 @@ def create_simple_bar_plot(data):
 def main():
     # Directory containing the filtered CSV files
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    directory = os.path.normpath(os.path.join(script_dir, '../../filtered_results'))
+    directory = os.path.normpath(os.path.join(script_dir, '../../../filtered_results'))
     
     # Analyze all colleges
     combined_data = analyze_all_colleges(directory)

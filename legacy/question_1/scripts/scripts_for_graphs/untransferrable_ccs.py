@@ -1,14 +1,20 @@
 import matplotlib.pyplot as plt
+import os
+from pathlib import Path
 
-# File path to your TXT file
-file_path = "/workspaces/assist_web_scraping/question_1/data_txts/untrasferrable_ccs.txt"  # <-- update this!
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION1_ROOT = SCRIPT_DIR.parents[2]
+DEFAULT_TXT = QUESTION1_ROOT / "txts" / "data_5_greedy_txts" / "greedy_excluded_cc_uc_pairs.txt"
+file_path = Path(os.environ.get("UNTRANSFERABLE_TXT_PATH", str(DEFAULT_TXT)))
+OUTPUT_DIR = QUESTION1_ROOT / "graphs"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Initialize count for each UC
 uc_list = ["UCSD", "UCSB", "UCSC", "UCLA", "UCB", "UCI", "UCD", "UCR", "UCM"]
 untransferrable_counts = {uc: 0 for uc in uc_list}
 
 # Read the file and count untransferrable UCs
-with open(file_path, 'r') as f:
+with open(file_path, 'r', encoding='utf-8') as f:
     for line in f:
         if ':' not in line:
             continue
@@ -35,5 +41,5 @@ plt.xlabel("UC")
 plt.ylabel("Untransferrable District Count")
 plt.xticks(rotation=45)
 plt.tight_layout()
-plt.savefig("untransferrable_districts_from_txt.png")
+plt.savefig(OUTPUT_DIR / "untransferrable_districts_from_txt.png")
 plt.show()

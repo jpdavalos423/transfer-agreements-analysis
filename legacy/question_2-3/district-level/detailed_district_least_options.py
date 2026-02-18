@@ -173,7 +173,7 @@ def create_heatmap(data):
 def main():
     # Directory containing the district CSV files
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    directory = os.path.normpath(os.path.join(script_dir, '../../district_csvs'))
+    directory = os.path.normpath(os.path.join(script_dir, '../../../district_csvs'))
     
     # Analyze all districts
     combined_data = analyze_all_districts(directory)

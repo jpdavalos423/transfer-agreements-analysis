@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Iterate over every *_allUC.csv in results/ and create a single filtered
+Iterate over every *_allUC.csv in legacy/results/ and create a single filtered
 CSV per CC under filtered_results/.
 
 Usage:  python post_process.py          # no args needed
@@ -26,7 +26,7 @@ UC_ABBREVIATIONS = {
 
 # ----- Base directory configuration --------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-RESULTS_DIR = os.path.join(BASE_DIR, "..", "results")
+RESULTS_DIR = os.path.join(BASE_DIR, "..", "legacy", "results")
 FILTERED_DIR = os.path.join(BASE_DIR, "..", "filtered_results")
 
 # ------------------------------------------------------------------
@@ -131,7 +131,7 @@ def save_filtered_csv(cc_name, rows):
 
 def main():
     if not os.path.isdir(RESULTS_DIR):
-        print(f"❌ No 'results/' directory found at expected path: {RESULTS_DIR}")
+        print(f"❌ No 'legacy/results/' directory found at expected path: {RESULTS_DIR}")
         return
 
     csv_files = [
@@ -141,7 +141,7 @@ def main():
     ]
 
     if not csv_files:
-        print("❌ No *_allUC.csv files found in 'results/'.")
+        print("❌ No *_allUC.csv files found in 'legacy/results/'.")
         return
 
     for csv_path in csv_files:

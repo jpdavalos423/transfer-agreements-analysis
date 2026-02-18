@@ -3,14 +3,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import cm
 import os
+from pathlib import Path
 
-os.makedirs("question1/graphs", exist_ok=True)
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION1_ROOT = SCRIPT_DIR.parents[2]
+GRAPHS_DIR = QUESTION1_ROOT / "graphs"
+GRAPHS_DIR.mkdir(parents=True, exist_ok=True)
 
 # List of UC campuses
 uc_schools = ["UCSD", "UCSB", "UCSC", "UCLA", "UCB", "UCI", "UCD", "UCR", "UCM"]
 
 # Specify the folder containing the CSVs
-csv_folder = "/Users/yasminkabir/transfer-agreements-analysis/question_1/csvs/order_9_csvs"
+csv_folder = QUESTION1_ROOT / "csvs" / "order_9_csvs"
 
 # Track which prefix was used for each order
 order_sources = []
@@ -23,7 +27,7 @@ order_dfs = []
 for i in order_range:
     found = False
     for prefix in ["order", "greedy_order", "optimal_order"]:
-        filename = f"{csv_folder}/{prefix}_{i}_averages.csv"
+        filename = csv_folder / f"{prefix}_{i}_averages.csv"
         try:
             df = pd.read_csv(filename)
             transferable_row = df[df["Community College"] == "TRANSFERABLE AVERAGE"]
@@ -228,5 +232,5 @@ ax.legend([h for h, l in unique], [l for h, l in unique], title="Order/Requireme
 #     wrap=True, horizontalalignment='center', fontsize=14, color='gray'
 # )
 
-plt.savefig("transferable_averages_by_uc_all_orders.png", dpi=300, bbox_inches='tight')
+plt.savefig(GRAPHS_DIR / "transferable_averages_by_uc_all_orders.png", dpi=300, bbox_inches='tight')
 plt.show()

@@ -2,14 +2,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.patches as mpatches
+from pathlib import Path
 
 sns.set(style="white", font_scale=0.9)
 
 uc_schools = ["UCSD", "UCSB", "UCSC", "UCLA", "UCB", "UCI", "UCD", "UCR", "UCM"]
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION1_ROOT = SCRIPT_DIR.parents[2]
+ORDER_CSV_DIR = QUESTION1_ROOT / "csvs" / "order_3_csvs"
+OUTPUT_DIR = QUESTION1_ROOT / "graphs" / "heat_maps_per_order"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Load and prepare data for heatmap per order
 for order in range(1, 4):
-    df = pd.read_csv(f"question_1/order_csvs/order_{order}_averages.csv")
+    df = pd.read_csv(ORDER_CSV_DIR / f"order_{order}_averages.csv")
 
     # Remove average rows
     df_filtered = df[~df["Community College"].isin(["AVERAGE", "TRANSFERABLE AVERAGE"])]
@@ -72,5 +78,5 @@ for order in range(1, 4):
     plt.xticks(rotation=30, ha='right')
     plt.yticks(rotation=0)
     plt.tight_layout()
-    plt.savefig(f"heatmap_order_{order}.png", dpi=300)
+    plt.savefig(OUTPUT_DIR / f"heatmap_order_{order}.png", dpi=300)
     plt.show()

@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from collections import defaultdict
+from pathlib import Path
 
 def load_and_process_data(json_file_path):
     """
@@ -85,11 +86,10 @@ def main():
     Main function to run the analysis and create visualization
     """
     # Replace 'your_data.json' with the path to your JSON file
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.dirname(script_dir)
+    script_dir = Path(__file__).resolve().parent
+    project_root = script_dir.parent
 
-    # json_file_path = os.path.join(project_root, 'data', 'chill_workload', 'sem-qtr_pathway_results_IGETC_20250808_102557.json')
-    json_file_path = os.path.join(project_root, 'data', 'intense_workload', 'sem-qtr_pathway_results_IGETC_20250808_094422.json')
+    json_file_path = project_root / 'data' / 'min_units' / 'pathway_results_IGETC_20250810_154201.json'
 
     print(f"Looking for data file at: {json_file_path}")
     print(f"File exists: {os.path.exists(json_file_path)}")
@@ -106,11 +106,10 @@ def main():
         print("\nCreating visualization...")
         plt = create_visualization(uc_counts, avg_terms)
         
-        # save_dir = 'question_4/figures/chill_workload'
-        save_dir = 'question_4/figures/intense_workload'
+        save_dir = project_root / 'figures' / 'min-units'
         os.makedirs(save_dir, exist_ok=True)
         
-        save_path = os.path.join(save_dir, 'uc_transfer_analysis.png')
+        save_path = save_dir / 'uc_transfer_analysis.png'
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"\nVisualization saved as '{save_path}'")
         

@@ -1,10 +1,11 @@
 # test_prereq_resolver.py
 
 from prereq_resolver import get_eligible_courses, load_prereq_data
+from pathlib import Path
 
 def main():
-    # TODO: Replace this path with the actual path to your JSON prereqs file
-    prereq_json_path = "/Users/yasminkabir/GitHub/transfer-agreements-analysis-3/prerequisites/cabrillo_college_prereqs.json"
+    project_root = Path(__file__).resolve().parents[2]
+    prereq_json_path = project_root / "prerequisites" / "cabrillo_college_prereqs.json"
 
     course_data = load_prereq_data(prereq_json_path)
 

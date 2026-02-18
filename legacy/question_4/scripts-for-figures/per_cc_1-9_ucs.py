@@ -1,12 +1,16 @@
 import json
 import pandas as pd
 import matplotlib.pyplot as plt
+from pathlib import Path
 
-# Replace this with the path to your JSON file
-json_file_path = "question_4/data/max-units/los_angeles_city_college/los_angeles_city_college_IGETC_semester_20250810_145038.json"
+SCRIPT_DIR = Path(__file__).resolve().parent
+QUESTION4_ROOT = SCRIPT_DIR.parent
+json_file_path = QUESTION4_ROOT / "data" / "max-units" / "los_angeles_city_college" / "los_angeles_city_college_IGETC_semester_20250810_145038.json"
+OUTPUT_DIR = QUESTION4_ROOT / "figures" / "max-units" / "ccs"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Load JSON data from file
-with open(json_file_path, 'r') as f:
+with open(json_file_path, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 # Extract the 'results' list
@@ -30,6 +34,6 @@ plt.ylabel("Average Number of Terms (total_terms)")
 plt.title(f"Average Total Terms by UC Count for CC: {data.get('cc_name', '')}")
 plt.xticks(range(1, 10))  # Assuming uc_count is between 1 and 9
 cc_name = data.get("cc_name", "unknown_cc").replace(" ", "_").lower()
-output_file = f"{cc_name}_average_terms_by_uc_count.png"
+output_file = OUTPUT_DIR / f"{cc_name}_average_terms_by_uc_count.png"
 plt.savefig(output_file, dpi=300, bbox_inches='tight')
 plt.show()
