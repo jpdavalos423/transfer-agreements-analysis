@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 # Make pathway_generator importable
-sys.path.append(str(Path(__file__).resolve().parents[1] / "pathway_generator"))
+sys.path.append(str(Path(__file__).resolve().parents[1] / "legacy" / "pathway_generator"))
 from pathway_generator import (
     generate_pathway,
     ARTICULATION_DIR,

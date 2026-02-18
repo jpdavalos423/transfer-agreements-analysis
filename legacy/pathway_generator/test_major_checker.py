@@ -15,8 +15,8 @@ from pathlib import Path
 from major_checker import get_major_requirements, get_cc_to_uc_map
 
 # ─── 1) Locate directories ────────────────────────────────────────────────────
-SCRIPT_DIR       = Path(__file__).parent.resolve()  # .../pathway_generator
-PROJECT_ROOT     = SCRIPT_DIR.parent               # .../transfer-agreements-analysis
+SCRIPT_DIR       = Path(__file__).parent.resolve()  # .../legacy/pathway_generator
+PROJECT_ROOT     = SCRIPT_DIR.parent.parent         # .../transfer-agreements-analysis
 ARTICULATION_DIR = PROJECT_ROOT / "articulated_courses_json"
 PREREQS_DIR      = PROJECT_ROOT / "prerequisites"
 COURSE_REQS_FILE = PROJECT_ROOT / "scraping" / "files" / "course_reqs.json"

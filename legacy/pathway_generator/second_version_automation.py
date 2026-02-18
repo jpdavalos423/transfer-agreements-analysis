@@ -48,7 +48,7 @@ SEMESTER_SYSTEM_CCS = [
 
 # ─── Directory Setup ───────────────────────────────────────────────────────────
 SCRIPT_DIR       = Path(__file__).parent.resolve()
-PROJECT_ROOT     = SCRIPT_DIR.parent
+PROJECT_ROOT     = SCRIPT_DIR.parent.parent
 ARTICULATION_DIR = PROJECT_ROOT / "articulated_courses_json"
 PREREQS_DIR      = PROJECT_ROOT / "prerequisites"
 COURSE_REQS_FILE = PROJECT_ROOT / "scraping" / "files" / "course_reqs.json"

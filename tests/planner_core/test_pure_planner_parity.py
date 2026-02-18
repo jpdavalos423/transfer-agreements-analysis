@@ -16,7 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _load_legacy_pathway_module():
-    legacy_dir = REPO_ROOT / "pathway_generator"
+    legacy_dir = REPO_ROOT / "legacy" / "pathway_generator"
     module_path = legacy_dir / "pathway_generator.py"
 
     import sys

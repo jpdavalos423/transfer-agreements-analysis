@@ -46,8 +46,8 @@ def save_debug_log(filepath="pathway_debug.txt"):
     print(f"Debug log saved to {filepath}")
 
 # ─── 1) Locate directories ────────────────────────────────────────────────────
-SCRIPT_DIR       = Path(__file__).parent.resolve()  # .../pathway_generator
-PROJECT_ROOT     = SCRIPT_DIR.parent               # .../transfer-agreements-analysis
+SCRIPT_DIR       = Path(__file__).parent.resolve()  # .../legacy/pathway_generator
+PROJECT_ROOT     = SCRIPT_DIR.parent.parent         # .../transfer-agreements-analysis
 ARTICULATION_DIR = PROJECT_ROOT / "articulated_courses_json"
 PREREQS_DIR      = PROJECT_ROOT / "prerequisites"
 COURSE_REQS_FILE = PROJECT_ROOT / "scraping" / "files" / "course_reqs.json"
