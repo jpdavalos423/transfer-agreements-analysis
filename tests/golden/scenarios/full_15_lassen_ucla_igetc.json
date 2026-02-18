@@ -1,0 +1,19 @@
+{
+  "id": "full_15_lassen_ucla_igetc",
+  "description": "Matrix scenario 15: lassen -> ['UCLA'] (IGETC)",
+  "tags": [
+    "full"
+  ],
+  "request": {
+    "college_id": "lassen",
+    "target_ucs": [
+      "UCLA"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "MATH 1A",
+      "MATH 1B"
+    ]
+  },
+  "expected_file": "full_15_lassen_ucla_igetc_expected.json"
+}

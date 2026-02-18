@@ -1,0 +1,21 @@
+{
+  "id": "phase_a_05_de_anza_ucm_igetc",
+  "description": "Matrix scenario 5: de_anza -> ['UCM'] (IGETC)",
+  "tags": [
+    "phase_a",
+    "full"
+  ],
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCM"
+    ],
+    "ge_pattern": "IGETC",
+    "completed_courses": [
+      "CIS 22C",
+      "MATH 1A",
+      "MATH 1AH"
+    ]
+  },
+  "expected_file": "phase_a_05_de_anza_ucm_igetc_expected.json"
+}

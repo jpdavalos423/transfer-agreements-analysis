@@ -1,0 +1,221 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import difflib
+import json
+import shutil
+import sys
+from pathlib import Path
+from typing import Iterable
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from packages.planner_core import canonicalize_for_comparison, generate_stub_plan  # noqa: E402
+from tests.golden.runner import GoldenScenario, load_scenarios  # noqa: E402
+
+
+def _write_json_deterministic(path: Path, payload: dict) -> None:
+    text = json.dumps(payload, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def _filter_scenarios(
+    scenarios: list[GoldenScenario],
+    scenario_ids: list[str] | None,
+) -> list[GoldenScenario]:
+    if not scenario_ids:
+        return scenarios
+    requested = set(scenario_ids)
+    found_ids = {s.scenario_id for s in scenarios}
+    missing = sorted(requested - found_ids)
+    if missing:
+        raise SystemExit(f"Unknown scenario id(s): {missing}")
+    return [s for s in scenarios if s.scenario_id in requested]
+
+
+def _diff_summary(expected_text: str, candidate_text: str, max_lines: int) -> tuple[bool, str]:
+    if expected_text == candidate_text:
+        return False, ""
+
+    expected_lines = expected_text.splitlines()
+    candidate_lines = candidate_text.splitlines()
+    diff_lines = list(
+        difflib.unified_diff(
+            expected_lines,
+            candidate_lines,
+            fromfile="expected",
+            tofile="candidate",
+            lineterm="",
+        )
+    )
+    if len(diff_lines) > max_lines:
+        shown = diff_lines[:max_lines]
+        shown.append(f"... ({len(diff_lines) - max_lines} more diff lines omitted)")
+        diff_lines = shown
+    return True, "\n".join(diff_lines)
+
+
+def _select_scenarios(args: argparse.Namespace) -> list[GoldenScenario]:
+    scenarios = load_scenarios(args.scenarios_dir, suite=args.suite)
+    scenarios = _filter_scenarios(scenarios, args.scenario_id)
+    if not scenarios:
+        raise SystemExit("No scenarios selected.")
+    return scenarios
+
+
+def _iter_selected_expected_files(scenarios: Iterable[GoldenScenario]) -> list[str]:
+    return [s.expected_file for s in scenarios]
+
+
+def cmd_candidate(args: argparse.Namespace) -> int:
+    scenarios = _select_scenarios(args)
+    candidate_dir = Path(args.candidate_dir)
+    expected_dir = Path(args.expected_dir)
+
+    changed = 0
+    unchanged = 0
+    missing_expected = 0
+
+    print(f"Generating candidate outputs for {len(scenarios)} scenario(s)...")
+    for scenario in scenarios:
+        payload = canonicalize_for_comparison(generate_stub_plan(scenario.request))
+        candidate_path = candidate_dir / scenario.expected_file
+        _write_json_deterministic(candidate_path, payload)
+        candidate_text = candidate_path.read_text(encoding="utf-8")
+
+        expected_path = expected_dir / scenario.expected_file
+        if not expected_path.exists():
+            missing_expected += 1
+            print(
+                f"[NEW] {scenario.scenario_id}: no expected file at "
+                f"{expected_path}; candidate written to {candidate_path}"
+            )
+            continue
+
+        expected_text = expected_path.read_text(encoding="utf-8")
+        is_changed, diff_text = _diff_summary(expected_text, candidate_text, args.max_diff_lines)
+        if is_changed:
+            changed += 1
+            print(f"[CHANGED] {scenario.scenario_id}")
+            print(diff_text)
+        else:
+            unchanged += 1
+            print(f"[UNCHANGED] {scenario.scenario_id}")
+
+    print(
+        f"\nSummary: unchanged={unchanged}, changed={changed}, "
+        f"new_expected={missing_expected}, total={len(scenarios)}"
+    )
+    print(f"Candidate directory: {candidate_dir}")
+    print(
+        "Promote command: "
+        f"scripts/golden_update promote --suite {args.suite} --yes"
+        + (
+            " " + " ".join(f"--scenario-id {sid}" for sid in (args.scenario_id or []))
+            if args.scenario_id
+            else ""
+        )
+    )
+    return 0
+
+
+def cmd_promote(args: argparse.Namespace) -> int:
+    scenarios = _select_scenarios(args)
+    candidate_dir = Path(args.candidate_dir)
+    expected_dir = Path(args.expected_dir)
+
+    selected_expected = _iter_selected_expected_files(scenarios)
+    missing_candidates = [
+        name for name in selected_expected if not (candidate_dir / name).exists()
+    ]
+    if missing_candidates:
+        raise SystemExit(
+            "Missing candidate file(s); run candidate generation first: "
+            f"{missing_candidates}"
+        )
+
+    if not args.yes:
+        print("Promotion preview (no files changed):")
+        for name in selected_expected:
+            print(f"  - {candidate_dir / name} -> {expected_dir / name}")
+        print("Re-run with --yes to promote candidates into expected outputs.")
+        return 2
+
+    promoted = 0
+    for name in selected_expected:
+        src = candidate_dir / name
+        dst = expected_dir / name
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dst)
+        promoted += 1
+        print(f"[PROMOTED] {src} -> {dst}")
+
+    print(f"Promoted {promoted} expected file(s).")
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description="Reviewed golden update workflow: generate candidates and explicitly promote."
+    )
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    def add_common(p: argparse.ArgumentParser) -> None:
+        p.add_argument(
+            "--suite",
+            choices=("phase_a", "full", "all"),
+            default="full",
+            help="Scenario suite selector.",
+        )
+        p.add_argument(
+            "--scenario-id",
+            action="append",
+            default=[],
+            help="Specific scenario id to include (repeatable).",
+        )
+        p.add_argument(
+            "--scenarios-dir",
+            default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        )
+        p.add_argument(
+            "--expected-dir",
+            default=str(REPO_ROOT / "tests" / "golden" / "expected"),
+        )
+        p.add_argument(
+            "--candidate-dir",
+            default=str(REPO_ROOT / "tests" / "golden" / "_candidate"),
+        )
+
+    candidate = sub.add_parser("candidate", help="Generate candidate outputs under _candidate and print diffs.")
+    add_common(candidate)
+    candidate.add_argument(
+        "--max-diff-lines",
+        type=int,
+        default=80,
+        help="Maximum diff lines printed per changed scenario.",
+    )
+    candidate.set_defaults(func=cmd_candidate)
+
+    promote = sub.add_parser("promote", help="Promote candidate outputs into expected outputs.")
+    add_common(promote)
+    promote.add_argument(
+        "--yes",
+        action="store_true",
+        help="Required to actually copy candidate files into expected outputs.",
+    )
+    promote.set_defaults(func=cmd_promote)
+    return parser
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

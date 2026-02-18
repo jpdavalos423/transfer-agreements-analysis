@@ -1,0 +1,21 @@
+{
+  "id": "phase_a_06_de_anza_ucm_7coursepattern",
+  "description": "Matrix scenario 6: de_anza -> ['UCM'] (7CoursePattern)",
+  "tags": [
+    "phase_a",
+    "full"
+  ],
+  "request": {
+    "college_id": "de_anza",
+    "target_ucs": [
+      "UCM"
+    ],
+    "ge_pattern": "7CoursePattern",
+    "completed_courses": [
+      "CIS 22C",
+      "MATH 1A",
+      "MATH 1AH"
+    ]
+  },
+  "expected_file": "phase_a_06_de_anza_ucm_7coursepattern_expected.json"
+}

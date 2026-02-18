@@ -1,65 +1,44 @@
-[2025-08-10 12:20:45] USER INPUT COLLECTED
+[2026-02-16 20:08:32] USER INPUT COLLECTED
 {
   "cc": "de_anza",
   "uc_list": [
     "UCSD",
-    "UCLA",
-    "UCI",
-    "UCR",
-    "UCSB",
-    "UCD",
-    "UCB",
-    "UCSC",
-    "UCM"
+    "UCLA"
   ],
   "ge_pattern": "IGETC"
 }
 ================================================================================
-[2025-08-10 12:20:45] BUILDING FILE PATHS
+[2026-02-16 20:08:32] BUILDING FILE PATHS
 {
   "cc": "de_anza",
   "uc": [
     "UCSD",
-    "UCLA",
-    "UCI",
-    "UCR",
-    "UCSB",
-    "UCD",
-    "UCB",
-    "UCSC",
-    "UCM"
+    "UCLA"
   ],
   "ge_pattern": "IGETC"
 }
 ================================================================================
-[2025-08-10 12:20:45] FILE PATHS BUILT
+[2026-02-16 20:08:32] FILE PATHS BUILT
 {
-  "articulation_file": "C:\\Users\\chris\\Project\\transfer-agreements-analysis\\articulated_courses_json\\De_Anza_College_articulation.json",
-  "prereq_file": "C:\\Users\\chris\\Project\\transfer-agreements-analysis\\prerequisites\\de_anza_college_prereqs.json",
-  "ge_file": "C:\\Users\\chris\\Project\\transfer-agreements-analysis\\prerequisites\\ge_reqs.json",
-  "course_reqs_file": "C:\\Users\\chris\\Project\\transfer-agreements-analysis\\scraping\\files\\course_reqs.json"
+  "articulation_file": "/Users/jpdavalos/Documents/transfer-pathways-website/transfer-agreements-analysis/articulated_courses_json/De_Anza_College_articulation.json",
+  "prereq_file": "/Users/jpdavalos/Documents/transfer-pathways-website/transfer-agreements-analysis/prerequisites/de_anza_college_prereqs.json",
+  "ge_file": "/Users/jpdavalos/Documents/transfer-pathways-website/transfer-agreements-analysis/prerequisites/ge_reqs.json",
+  "course_reqs_file": "/Users/jpdavalos/Documents/transfer-pathways-website/transfer-agreements-analysis/scraping/files/course_reqs.json"
 }
 ================================================================================
-[2025-08-10 12:20:45] PATHWAY GENERATION STARTED
+[2026-02-16 20:08:32] PATHWAY GENERATION STARTED
 {
   "cc_id": "de_anza",
   "uc_list": [
     "UCSD",
-    "UCLA",
-    "UCI",
-    "UCR",
-    "UCSB",
-    "UCD",
-    "UCB",
-    "UCSC",
-    "UCM"
+    "UCLA"
   ],
   "ge_pattern": "IGETC",
   "max_units_per_term": 16,
   "total_units_required": 60
 }
 ================================================================================
-[2025-08-10 12:20:45] LOADED ARTICULATED COURSES
+[2026-02-16 20:08:32] LOADED ARTICULATED COURSES
 {
   "uc_campuses_in_data": [
     "De_Anza_College"
@@ -67,7 +46,7 @@
   "total_entries": 9
 }
 ================================================================================
-[2025-08-10 12:20:45] UC REQUIREMENTS CC NOT FOUND
+[2026-02-16 20:08:32] UC REQUIREMENTS CC NOT FOUND
 {
   "cc_id": "de_anza",
   "available_ccs": [
@@ -83,13 +62,13 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] LOADED PREREQUISITES
+[2026-02-16 20:08:32] LOADED PREREQUISITES
 {
   "total_courses": 33,
   "prereq_type": "dict"
 }
 ================================================================================
-[2025-08-10 12:20:45] LOADED GE DATA
+[2026-02-16 20:08:32] LOADED GE DATA
 {
   "ge_patterns_available": [
     "requirementPatterns"
@@ -97,7 +76,7 @@
   "selected_pattern": "IGETC"
 }
 ================================================================================
-[2025-08-10 12:20:45] GE TRACKER INITIALIZED
+[2026-02-16 20:08:32] GE TRACKER INITIALIZED
 {
   "pattern_loaded": "IGETC",
   "initial_requirements": {
@@ -148,7 +127,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR REQUIREMENTS LOADED
+[2026-02-16 20:08:32] MAJOR REQUIREMENTS LOADED
 {
   "major_reqs_type": "MajorRequirements",
   "available_methods": [
@@ -159,32 +138,25 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] INITIAL PATHWAY STATE
+[2026-02-16 20:08:32] INITIAL PATHWAY STATE
 {
   "completed_courses": [],
   "total_units": 0,
   "term_number": 1
 }
 ================================================================================
-[2025-08-10 12:20:45] GE LOOKUP LOADED
+[2026-02-16 20:08:32] GE LOOKUP LOADED
 {
   "total_ge_courses": 19
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR MAP GENERATED
+[2026-02-16 20:08:32] MAJOR MAP GENERATED
 {
   "uc_campuses": [
     "UCSD",
-    "UCLA",
-    "UCI",
-    "UCR",
-    "UCSB",
-    "UCD",
-    "UCB",
-    "UCSC",
-    "UCM"
+    "UCLA"
   ],
-  "total_mappings": 54,
+  "total_mappings": 15,
   "sample_mappings": {
     "UCSD": [
       "CSE 8B",
@@ -199,59 +171,11 @@
       "MATH 31B",
       "MATH 32A",
       "MATH 32B"
-    ],
-    "UCI": [
-      "I&C SCI 31",
-      "I&C SCI 32",
-      "I&C SCI 33",
-      "MATH 2A",
-      "MATH 2B"
-    ],
-    "UCR": [
-      "CS 10A",
-      "CS 10B",
-      "MATH 9A",
-      "MATH 9B",
-      "MATH 9C"
-    ],
-    "UCSB": [
-      "MATH 3A",
-      "MATH 3B",
-      "MATH 4A",
-      "MATH 4B",
-      "CMPSC 16"
-    ],
-    "UCD": [
-      "ECS 020",
-      "ECS 036A",
-      "ECS 036B",
-      "ECS 036C",
-      "ECS 050"
-    ],
-    "UCB": [
-      "MATH 1A",
-      "MATH 1B",
-      "MATH 53",
-      "MATH 54"
-    ],
-    "UCSC": [
-      "CSE 12",
-      "CSE 16",
-      "CSE 30",
-      "MATH 19A",
-      "MATH 19B"
-    ],
-    "UCM": [
-      "CSE 030",
-      "MATH 021",
-      "MATH 022",
-      "MATH 023",
-      "MATH 024"
     ]
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] COURSE REQUIREMENTS ANALYSIS
+[2026-02-16 20:08:32] COURSE REQUIREMENTS ANALYSIS
 {
   "cc_found": false,
   "available_ccs": [
@@ -260,9 +184,9 @@
   "looking_for": "de_anza"
 }
 ================================================================================
-[2025-08-10 12:20:45] UC TO CC MAP CREATED
+[2026-02-16 20:08:32] UC TO CC MAP CREATED
 {
-  "total_uc_courses": 53,
+  "total_uc_courses": 15,
   "uc_courses": [
     "CSE 8B",
     "CSE 11",
@@ -317,7 +241,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 1
+[2026-02-16 20:08:32] STARTING TERM 1
 {
   "current_total_units": 0,
   "target_units": 60,
@@ -325,9 +249,9 @@
   "completed_courses": []
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 1 - FRESH MAJOR CANDIDATES
 {
-  "count": 70,
+  "count": 18,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -346,70 +270,18 @@
     "MATH 2A",
     "CIS 22B",
     "CIS 22BH",
-    "CIS 29",
-    "MATH 1A",
-    "MATH 1B",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 36A",
-    "CIS 36B",
-    "CIS 36A",
-    "CIS 36B",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1BH",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "CIS 22C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "CIS 29"
   ],
   "duplicates_analysis": {
-    "total_candidates": 70,
-    "unique_courses": 19,
-    "duplicate_count": 51
+    "total_candidates": 18,
+    "unique_courses": 12,
+    "duplicate_count": 6
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 1 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 22,
+  "count": 18,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -423,22 +295,18 @@
     "CIS 22B",
     "CIS 22BH",
     "CIS 29",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
     "CIS 36A",
-    "MATH 1BH",
-    "CIS 22A",
-    "CIS 21JA",
     "MATH 1AH",
+    "MATH 1BH",
     "MATH 1CH",
-    "MATH 1DH"
+    "MATH 1DH",
+    "CIS 22A"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 70,
+  "remaining_courses_count": 18,
   "remaining_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -457,64 +325,12 @@
     "MATH 2A",
     "CIS 22B",
     "CIS 22BH",
-    "CIS 29",
-    "MATH 1A",
-    "MATH 1B",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 36A",
-    "CIS 36B",
-    "CIS 36A",
-    "CIS 36B",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1BH",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1C",
-    "CIS 22C",
-    "MATH 1A",
-    "MATH 1B",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "CIS 29"
   ],
   "completed_courses": []
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 1 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_1A",
@@ -577,7 +393,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 1 - GE COURSES BUILT (base)
 {
   "count": 11,
   "course_codes": [
@@ -641,7 +457,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_1A": 1,
@@ -673,9 +489,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 1 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 22,
+  "major_candidates_remaining": 18,
   "major_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -689,21 +505,17 @@
     "CIS 22B",
     "CIS 22BH",
     "CIS 29",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
     "CIS 36A",
-    "MATH 1BH",
-    "CIS 22A",
-    "CIS 21JA",
     "MATH 1AH",
+    "MATH 1BH",
     "MATH 1CH",
-    "MATH 1DH"
+    "MATH 1DH",
+    "CIS 22A"
   ],
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 1 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -711,7 +523,7 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - UNLOCKER COURSES FOUND
+[2026-02-16 20:08:32] TERM 1 - UNLOCKER COURSES FOUND
 {
   "unlocker_codes": [
     "CIS 22A",
@@ -721,20 +533,19 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 1 - ELIGIBLE MAJOR COURSES
 {
-  "count": 6,
+  "count": 5,
   "course_codes": [
     "CIS 22A",
     "MATH 1A",
     "MATH 1AH",
     "CIS 36A",
-    "MATH 22",
-    "CIS 40"
+    "MATH 22"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 1 - AVAILABLE GE COURSES
 {
   "total_ge_built": 12,
   "available_ge_after_filter": 12,
@@ -754,107 +565,99 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "CIS 40",
-    "CIS 22A",
     "MATH 22",
-    "CIS 36A",
     "MATH 1AH",
-    "MATH 1A"
+    "MATH 1A",
+    "CIS 36A",
+    "CIS 22A"
   ],
   "eligible_ge_codes": [
-    "IG_3_Leftover",
-    "IG_4",
+    "IG_7",
     "IG_1A",
     "IG_Physical",
+    "IG_4",
+    "IG_3A",
     "IG_2",
-    "IG_4__slot1",
     "IG_3B",
+    "IG_1B",
+    "IG_4__slot1",
+    "IG_3_Leftover",
+    "IG_Biological",
+    "IG_Lab"
+  ],
+  "all_eligible_codes": [
+    "MATH 22",
+    "IG_3A",
+    "IG_4__slot1",
+    "IG_3_Leftover",
     "IG_Biological",
     "IG_Lab",
     "IG_7",
-    "IG_3A",
-    "IG_1B"
-  ],
-  "all_eligible_codes": [
-    "CIS 40",
-    "IG_4",
-    "CIS 22A",
-    "MATH 22",
-    "IG_Physical",
-    "IG_2",
-    "IG_4__slot1",
-    "CIS 36A",
-    "IG_3B",
-    "IG_Lab",
-    "MATH 1AH",
-    "IG_7",
-    "MATH 1A",
-    "IG_3A",
-    "IG_1B",
-    "IG_3_Leftover",
     "IG_1A",
-    "IG_Biological"
+    "IG_Physical",
+    "IG_4",
+    "MATH 1AH",
+    "MATH 1A",
+    "IG_2",
+    "IG_3B",
+    "IG_1B",
+    "CIS 36A",
+    "CIS 22A"
   ],
   "completed_before_term": [],
   "new_courses_available": [
-    "CIS 40",
-    "IG_4",
-    "CIS 22A",
     "MATH 22",
-    "IG_Physical",
-    "IG_2",
-    "IG_4__slot1",
-    "CIS 36A",
-    "IG_3B",
-    "IG_Lab",
-    "MATH 1AH",
-    "IG_7",
-    "MATH 1A",
     "IG_3A",
-    "IG_1B",
+    "IG_4__slot1",
     "IG_3_Leftover",
+    "IG_Biological",
+    "IG_Lab",
+    "IG_7",
     "IG_1A",
-    "IG_Biological"
+    "IG_Physical",
+    "IG_4",
+    "MATH 1AH",
+    "MATH 1A",
+    "IG_2",
+    "IG_3B",
+    "IG_1B",
+    "CIS 36A",
+    "CIS 22A"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 22A in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 22A in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1A in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1A in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1AH in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1AH in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 36A in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 36A in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 22 in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 22 in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 1 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 1 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 6,
+  "count": 5,
   "courses": [
     [
       "CIS 22A",
@@ -875,26 +678,21 @@
     [
       "MATH 22",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 1 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 6,
+  "major_eligible": 5,
   "ge_eligible": 12,
-  "total_eligible": 18,
+  "total_eligible": 17,
   "all_eligible_codes": [
     "CIS 22A",
     "MATH 1A",
     "MATH 1AH",
     "CIS 36A",
     "MATH 22",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -910,14 +708,14 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 1 - CALLING UNIT BALANCER
 {
-  "total_eligible": 18,
+  "total_eligible": 17,
   "max_units": 16,
   "completed_before_balancer": []
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 1 - UNIT BALANCER RESULTS
 {
   "selected_count": 4,
   "selected_courses": [
@@ -927,7 +725,7 @@
     "IG_1B"
   ],
   "total_units": 15.5,
-  "pruned_codes": "{'CIS 27', 'CIS 29', 'CIS 22B', 'CIS 22BH'}",
+  "pruned_codes": "{'CIS 29', 'CIS 22B', 'CIS 22BH', 'CIS 27'}",
   "completed_after_balancer": [
     "CIS 22A",
     "IG_1A",
@@ -937,7 +735,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 1 - FINAL SELECTED COURSES
 {
   "count": 4,
   "total_units": 15.5,
@@ -961,7 +759,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 1 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -978,55 +776,55 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 1 - ADDED TO COMPLETED
 {
   "course_code": "IG_1A",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 1 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_1A",
   "credited_ge_key": "IG_1A"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 1 - ADDED TO COMPLETED
 {
   "course_code": "CIS 22A",
   "course_units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 1 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "CIS 22A",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 1 - ADDED TO COMPLETED
 {
   "course_code": "MATH 1A",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 1 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 1A",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 1 - ADDED TO COMPLETED
 {
   "course_code": "IG_1B",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 1 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_1B",
   "credited_ge_key": "IG_1B"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 1 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -1038,7 +836,7 @@
   "completed_count": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 1 COMPLETED
+[2026-02-16 20:08:32] TERM 1 COMPLETED
 {
   "term_units": 15.5,
   "running_total_units": 15.5,
@@ -1046,7 +844,7 @@
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 2
+[2026-02-16 20:08:32] STARTING TERM 2
 {
   "current_total_units": 15.5,
   "target_units": 60,
@@ -1060,9 +858,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 2 - FRESH MAJOR CANDIDATES
 {
-  "count": 51,
+  "count": 13,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1076,56 +874,18 @@
     "MATH 1C",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "MATH 1B",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 36A",
-    "CIS 36B",
-    "MATH 1B",
-    "MATH 1BH",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "MATH 1B",
-    "MATH 1C",
-    "CIS 22C",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "duplicates_analysis": {
-    "total_candidates": 51,
-    "unique_courses": 16,
-    "duplicate_count": 35
+    "total_candidates": 13,
+    "unique_courses": 8,
+    "duplicate_count": 5
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 2 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 19,
+  "count": 14,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1135,23 +895,18 @@
     "MATH 1D",
     "MATH 2B",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
     "CIS 36A",
-    "MATH 1BH",
     "CIS 22B",
-    "CIS 29",
-    "CIS 21JA",
     "CIS 22BH",
+    "MATH 1BH",
     "MATH 1CH",
     "MATH 1DH"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 51,
+  "remaining_courses_count": 13,
   "remaining_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1165,45 +920,7 @@
     "MATH 1C",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "MATH 1B",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 36A",
-    "CIS 36B",
-    "MATH 1B",
-    "MATH 1BH",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22B",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "MATH 1B",
-    "MATH 1C",
-    "CIS 22C",
-    "MATH 1B",
-    "MATH 1C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "completed_courses": [
     "CIS 22A",
@@ -1214,7 +931,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 2 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_2",
@@ -1267,7 +984,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 2 - GE COURSES BUILT (base)
 {
   "count": 9,
   "course_codes": [
@@ -1321,7 +1038,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_2": 1,
@@ -1349,9 +1066,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 2 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 19,
+  "major_candidates_remaining": 14,
   "major_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1361,22 +1078,17 @@
     "MATH 1D",
     "MATH 2B",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
     "CIS 36A",
-    "MATH 1BH",
     "CIS 22B",
-    "CIS 29",
-    "CIS 21JA",
     "CIS 22BH",
+    "MATH 1BH",
     "MATH 1CH",
     "MATH 1DH"
   ],
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 2 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -1384,7 +1096,7 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - UNLOCKER COURSES FOUND
+[2026-02-16 20:08:32] TERM 2 - UNLOCKER COURSES FOUND
 {
   "unlocker_codes": [
     "MATH 1B",
@@ -1395,21 +1107,20 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 2 - ELIGIBLE MAJOR COURSES
 {
-  "count": 7,
+  "count": 6,
   "course_codes": [
     "MATH 1B",
     "MATH 1BH",
     "CIS 22B",
     "CIS 22BH",
     "CIS 36A",
-    "MATH 22",
-    "CIS 40"
+    "MATH 22"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 2 - AVAILABLE GE COURSES
 {
   "total_ge_built": 10,
   "available_ge_after_filter": 10,
@@ -1427,47 +1138,45 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "CIS 40",
-    "MATH 1BH",
+    "CIS 22B",
     "MATH 22",
     "CIS 22BH",
-    "CIS 22B",
-    "CIS 36A",
-    "MATH 1B"
+    "MATH 1B",
+    "MATH 1BH",
+    "CIS 36A"
   ],
   "eligible_ge_codes": [
-    "IG_4",
-    "IG_3_Leftover",
+    "IG_7",
     "IG_Physical",
+    "IG_4",
+    "IG_3A",
     "IG_2",
-    "IG_4__slot1",
     "IG_3B",
+    "IG_4__slot1",
+    "IG_3_Leftover",
+    "IG_Biological",
+    "IG_Lab"
+  ],
+  "all_eligible_codes": [
+    "CIS 22B",
+    "MATH 22",
+    "IG_3A",
+    "MATH 1B",
+    "MATH 1BH",
+    "IG_4__slot1",
+    "IG_3_Leftover",
     "IG_Biological",
     "IG_Lab",
     "IG_7",
-    "IG_3A"
-  ],
-  "all_eligible_codes": [
-    "CIS 40",
-    "IG_4",
-    "MATH 22",
     "IG_Physical",
     "CIS 22BH",
+    "IG_4",
     "IG_2",
-    "IG_4__slot1",
-    "CIS 36A",
     "IG_3B",
-    "MATH 1B",
-    "IG_Lab",
-    "IG_7",
-    "IG_3A",
-    "IG_3_Leftover",
-    "MATH 1BH",
-    "CIS 22B",
-    "IG_Biological"
+    "CIS 36A"
   ],
   "completed_before_term": [
     "CIS 22A",
@@ -1477,65 +1186,59 @@
     "MATH 1AH"
   ],
   "new_courses_available": [
-    "CIS 40",
-    "IG_4",
-    "IG_3_Leftover",
-    "MATH 22",
-    "MATH 1BH",
-    "IG_Physical",
-    "CIS 22BH",
-    "IG_2",
-    "IG_4__slot1",
     "CIS 22B",
-    "CIS 36A",
-    "IG_3B",
-    "MATH 1B",
-    "IG_Biological",
-    "IG_Lab",
+    "MATH 22",
     "IG_7",
-    "IG_3A"
+    "IG_Physical",
+    "IG_3_Leftover",
+    "CIS 22BH",
+    "IG_4",
+    "IG_3A",
+    "IG_2",
+    "MATH 1B",
+    "IG_3B",
+    "CIS 36A",
+    "MATH 1BH",
+    "IG_4__slot1",
+    "IG_Biological",
+    "IG_Lab"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1B in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1B in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1BH in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1BH in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 22B in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 22B in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 22BH in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 22BH in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 36A in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 36A in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 22 in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 22 in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 2 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 2 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 7,
+  "count": 6,
   "courses": [
     [
       "MATH 1B",
@@ -1560,19 +1263,15 @@
     [
       "MATH 22",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 2 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 7,
+  "major_eligible": 6,
   "ge_eligible": 10,
-  "total_eligible": 17,
+  "total_eligible": 16,
   "all_eligible_codes": [
     "MATH 1B",
     "MATH 1BH",
@@ -1580,7 +1279,6 @@
     "CIS 22BH",
     "CIS 36A",
     "MATH 22",
-    "CIS 40",
     "IG_2",
     "IG_3A",
     "IG_3B",
@@ -1594,9 +1292,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 2 - CALLING UNIT BALANCER
 {
-  "total_eligible": 17,
+  "total_eligible": 16,
   "max_units": 16,
   "completed_before_balancer": [
     "CIS 22A",
@@ -1607,7 +1305,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 2 - UNIT BALANCER RESULTS
 {
   "selected_count": 4,
   "selected_courses": [
@@ -1633,7 +1331,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 2 - FINAL SELECTED COURSES
 {
   "count": 4,
   "total_units": 15.5,
@@ -1657,7 +1355,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 2 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -1680,55 +1378,55 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 2 - ADDED TO COMPLETED
 {
   "course_code": "IG_2",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 2 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_2",
   "credited_ge_key": "IG_2"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 2 - ADDED TO COMPLETED
 {
   "course_code": "MATH 1B",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 2 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 1B",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 2 - ADDED TO COMPLETED
 {
   "course_code": "CIS 22B",
   "course_units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 2 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "CIS 22B",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 2 - ADDED TO COMPLETED
 {
   "course_code": "IG_3A",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 2 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_3A",
   "credited_ge_key": "IG_3A"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 2 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -1746,7 +1444,7 @@
   "completed_count": 11
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 2 COMPLETED
+[2026-02-16 20:08:32] TERM 2 COMPLETED
 {
   "term_units": 15.5,
   "running_total_units": 31.0,
@@ -1754,7 +1452,7 @@
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 3
+[2026-02-16 20:08:32] STARTING TERM 3
 {
   "current_total_units": 31.0,
   "target_units": 60,
@@ -1774,9 +1472,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 3 - FRESH MAJOR CANDIDATES
 {
-  "count": 34,
+  "count": 10,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1787,42 +1485,18 @@
     "MATH 1C",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 22C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "duplicates_analysis": {
-    "total_candidates": 34,
-    "unique_courses": 12,
-    "duplicate_count": 22
+    "total_candidates": 10,
+    "unique_courses": 7,
+    "duplicate_count": 3
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 3 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 15,
+  "count": 10,
   "course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1831,20 +1505,15 @@
     "MATH 1D",
     "MATH 2B",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 29",
-    "CIS 21JA",
     "CIS 36A",
     "MATH 1CH",
     "MATH 1DH"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 34,
+  "remaining_courses_count": 10,
   "remaining_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -1855,31 +1524,7 @@
     "MATH 1C",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 1C",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 22C",
-    "MATH 1C",
-    "MATH 1D",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "completed_courses": [
     "CIS 22A",
@@ -1896,7 +1541,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 3 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_3B",
@@ -1939,7 +1584,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 3 - GE COURSES BUILT (base)
 {
   "count": 7,
   "course_codes": [
@@ -1983,7 +1628,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_3B": 1,
@@ -2007,9 +1652,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 3 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 15,
+  "major_candidates_remaining": 10,
   "major_course_codes": [
     "CIS 36B",
     "CIS 22C",
@@ -2018,11 +1663,6 @@
     "MATH 1D",
     "MATH 2B",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 29",
-    "CIS 21JA",
     "CIS 36A",
     "MATH 1CH",
     "MATH 1DH"
@@ -2030,7 +1670,7 @@
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 3 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -2038,7 +1678,7 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - UNLOCKER COURSES FOUND
+[2026-02-16 20:08:32] TERM 3 - UNLOCKER COURSES FOUND
 {
   "unlocker_codes": [
     "MATH 1C",
@@ -2047,20 +1687,19 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 3 - ELIGIBLE MAJOR COURSES
 {
-  "count": 6,
+  "count": 5,
   "course_codes": [
     "MATH 1C",
     "MATH 1CH",
     "CIS 36A",
     "CIS 22C",
-    "MATH 22",
-    "CIS 40"
+    "MATH 22"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 3 - AVAILABLE GE COURSES
 {
   "total_ge_built": 8,
   "available_ge_after_filter": 8,
@@ -2076,41 +1715,39 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "CIS 40",
     "MATH 22",
     "MATH 1CH",
+    "MATH 1C",
     "CIS 22C",
-    "CIS 36A",
-    "MATH 1C"
+    "CIS 36A"
   ],
   "eligible_ge_codes": [
+    "IG_7",
+    "IG_Physical",
     "IG_3_Leftover",
     "IG_4",
-    "IG_Physical",
-    "IG_4__slot1",
     "IG_3B",
+    "IG_4__slot1",
     "IG_Biological",
-    "IG_Lab",
-    "IG_7"
+    "IG_Lab"
   ],
   "all_eligible_codes": [
-    "CIS 40",
-    "IG_3_Leftover",
-    "IG_4",
     "MATH 22",
-    "IG_Physical",
-    "IG_4__slot1",
-    "CIS 36A",
     "MATH 1CH",
-    "CIS 22C",
-    "IG_3B",
-    "IG_Biological",
-    "IG_Lab",
     "MATH 1C",
-    "IG_7"
+    "IG_7",
+    "CIS 22C",
+    "IG_Physical",
+    "IG_4",
+    "IG_Biological",
+    "IG_3B",
+    "IG_4__slot1",
+    "IG_3_Leftover",
+    "CIS 36A",
+    "IG_Lab"
   ],
   "completed_before_term": [
     "CIS 22A",
@@ -2126,57 +1763,51 @@
     "MATH 1BH"
   ],
   "new_courses_available": [
-    "CIS 40",
+    "MATH 22",
+    "MATH 1CH",
+    "IG_7",
+    "MATH 1C",
+    "CIS 22C",
+    "IG_Physical",
     "IG_4",
     "IG_3_Leftover",
-    "MATH 22",
-    "IG_Physical",
-    "IG_4__slot1",
-    "CIS 36A",
-    "MATH 1CH",
-    "CIS 22C",
     "IG_3B",
+    "CIS 36A",
+    "IG_4__slot1",
     "IG_Biological",
-    "IG_Lab",
-    "MATH 1C",
-    "IG_7"
+    "IG_Lab"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1C in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1C in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1CH in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1CH in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 36A in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 36A in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 22C in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 22C in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 22 in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 22 in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 3 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 3 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 6,
+  "count": 5,
   "courses": [
     [
       "MATH 1C",
@@ -2197,26 +1828,21 @@
     [
       "MATH 22",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 3 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 6,
+  "major_eligible": 5,
   "ge_eligible": 8,
-  "total_eligible": 14,
+  "total_eligible": 13,
   "all_eligible_codes": [
     "MATH 1C",
     "MATH 1CH",
     "CIS 36A",
     "CIS 22C",
     "MATH 22",
-    "CIS 40",
     "IG_3B",
     "IG_3_Leftover",
     "IG_4",
@@ -2228,9 +1854,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 3 - CALLING UNIT BALANCER
 {
-  "total_eligible": 14,
+  "total_eligible": 13,
   "max_units": 16,
   "completed_before_balancer": [
     "CIS 22A",
@@ -2247,7 +1873,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 3 - UNIT BALANCER RESULTS
 {
   "selected_count": 4,
   "selected_courses": [
@@ -2278,7 +1904,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 3 - FINAL SELECTED COURSES
 {
   "count": 4,
   "total_units": 15.5,
@@ -2302,7 +1928,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 3 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -2330,55 +1956,55 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 3 - ADDED TO COMPLETED
 {
   "course_code": "IG_3B",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 3 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_3B",
   "credited_ge_key": "IG_3B"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 3 - ADDED TO COMPLETED
 {
   "course_code": "MATH 1C",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 3 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 1C",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 3 - ADDED TO COMPLETED
 {
   "course_code": "CIS 36A",
   "course_units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 3 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "CIS 36A",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 3 - ADDED TO COMPLETED
 {
   "course_code": "IG_3_Leftover",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 3 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_3_Leftover",
   "credited_ge_key": "IG_3_Leftover"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 3 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -2401,7 +2027,7 @@
   "completed_count": 16
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 3 COMPLETED
+[2026-02-16 20:08:32] TERM 3 COMPLETED
 {
   "term_units": 15.5,
   "running_total_units": 46.5,
@@ -2409,7 +2035,7 @@
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 4
+[2026-02-16 20:08:32] STARTING TERM 4
 {
   "current_total_units": 46.5,
   "target_units": 60,
@@ -2434,90 +2060,47 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 4 - FRESH MAJOR CANDIDATES
 {
-  "count": 25,
+  "count": 6,
   "course_codes": [
     "CIS 22C",
     "MATH 22",
     "MATH 2B",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 22C",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "duplicates_analysis": {
-    "total_candidates": 25,
-    "unique_courses": 10,
-    "duplicate_count": 15
+    "total_candidates": 6,
+    "unique_courses": 5,
+    "duplicate_count": 1
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 4 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 11,
+  "count": 6,
   "course_codes": [
     "CIS 22C",
     "MATH 22",
     "MATH 2B",
     "MATH 1D",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 29",
-    "CIS 21JA",
     "MATH 1DH"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 25,
+  "remaining_courses_count": 6,
   "remaining_course_codes": [
     "CIS 22C",
     "MATH 22",
     "MATH 2B",
     "MATH 1D",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "CIS 22C",
-    "CIS 29",
-    "MATH 22",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 21JA",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "CIS 22C",
-    "CIS 22C",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "completed_courses": [
     "CIS 22A",
@@ -2539,7 +2122,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 4 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_4",
@@ -2572,7 +2155,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 4 - GE COURSES BUILT (base)
 {
   "count": 5,
   "course_codes": [
@@ -2606,7 +2189,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_4": 2,
@@ -2626,26 +2209,21 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 4 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 11,
+  "major_candidates_remaining": 6,
   "major_course_codes": [
     "CIS 22C",
     "MATH 22",
     "MATH 2B",
     "MATH 1D",
     "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 29",
-    "CIS 21JA",
     "MATH 1DH"
   ],
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 4 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -2653,7 +2231,7 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - UNLOCKER COURSES FOUND
+[2026-02-16 20:08:32] TERM 4 - UNLOCKER COURSES FOUND
 {
   "unlocker_codes": [
     "MATH 1D",
@@ -2661,19 +2239,18 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 4 - ELIGIBLE MAJOR COURSES
 {
-  "count": 5,
+  "count": 4,
   "course_codes": [
     "MATH 1D",
     "MATH 1DH",
     "CIS 22C",
-    "MATH 22",
-    "CIS 40"
+    "MATH 22"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 4 - AVAILABLE GE COURSES
 {
   "total_ge_built": 6,
   "available_ge_after_filter": 6,
@@ -2687,35 +2264,33 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "CIS 40",
-    "MATH 22",
-    "MATH 1D",
     "CIS 22C",
+    "MATH 1D",
+    "MATH 22",
     "MATH 1DH"
   ],
   "eligible_ge_codes": [
-    "IG_4",
+    "IG_7",
     "IG_Physical",
+    "IG_4",
     "IG_4__slot1",
     "IG_Biological",
-    "IG_Lab",
-    "IG_7"
+    "IG_Lab"
   ],
   "all_eligible_codes": [
-    "CIS 40",
-    "IG_4",
-    "MATH 22",
-    "IG_Physical",
-    "IG_4__slot1",
     "MATH 1D",
-    "CIS 22C",
-    "IG_Biological",
-    "IG_Lab",
+    "MATH 22",
     "IG_7",
-    "MATH 1DH"
+    "IG_Physical",
+    "CIS 22C",
+    "IG_4",
+    "MATH 1DH",
+    "IG_4__slot1",
+    "IG_Biological",
+    "IG_Lab"
   ],
   "completed_before_term": [
     "CIS 22A",
@@ -2736,49 +2311,43 @@
     "MATH 1CH"
   ],
   "new_courses_available": [
-    "CIS 40",
-    "IG_4",
-    "MATH 22",
-    "IG_Physical",
-    "IG_4__slot1",
     "MATH 1D",
-    "CIS 22C",
-    "IG_Biological",
-    "IG_Lab",
+    "MATH 22",
     "IG_7",
-    "MATH 1DH"
+    "IG_Physical",
+    "CIS 22C",
+    "IG_4",
+    "MATH 1DH",
+    "IG_4__slot1",
+    "IG_Biological",
+    "IG_Lab"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1D in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1D in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 1DH in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 1DH in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 22C in prereqs dict
+[2026-02-16 20:08:32] Found units for CIS 22C in prereqs dict
 {
   "units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 22 in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 22 in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 4 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 4 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 5,
+  "count": 4,
   "courses": [
     [
       "MATH 1D",
@@ -2795,25 +2364,20 @@
     [
       "MATH 22",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 4 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 5,
+  "major_eligible": 4,
   "ge_eligible": 6,
-  "total_eligible": 11,
+  "total_eligible": 10,
   "all_eligible_codes": [
     "MATH 1D",
     "MATH 1DH",
     "CIS 22C",
     "MATH 22",
-    "CIS 40",
     "IG_4",
     "IG_4__slot1",
     "IG_Physical",
@@ -2823,9 +2387,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 4 - CALLING UNIT BALANCER
 {
-  "total_eligible": 11,
+  "total_eligible": 10,
   "max_units": 16,
   "completed_before_balancer": [
     "CIS 22A",
@@ -2847,7 +2411,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 4 - UNIT BALANCER RESULTS
 {
   "selected_count": 4,
   "selected_courses": [
@@ -2857,7 +2421,7 @@
     "IG_4__slot1"
   ],
   "total_units": 15.5,
-  "pruned_codes": "{'CIS 21JA', 'CIS 21JB'}",
+  "pruned_codes": "set()",
   "completed_after_balancer": [
     "CIS 22A",
     "CIS 22B",
@@ -2884,7 +2448,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 4 - FINAL SELECTED COURSES
 {
   "count": 4,
   "total_units": 15.5,
@@ -2908,7 +2472,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 4 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -2942,55 +2506,55 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 4 - ADDED TO COMPLETED
 {
   "course_code": "IG_4",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 4 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_4",
   "credited_ge_key": "IG_4"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 4 - ADDED TO COMPLETED
 {
   "course_code": "MATH 1D",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 4 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 1D",
   "credited_key": "UNLOCKER"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 4 - ADDED TO COMPLETED
 {
   "course_code": "CIS 22C",
   "course_units": 4.5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 4 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "CIS 22C",
   "credited_key": "CIS 22C"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 4 - ADDED TO COMPLETED
 {
   "course_code": "IG_4__slot1",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 4 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_4__slot1",
   "credited_ge_key": "IG_4"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 4 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -3019,7 +2583,7 @@
   "completed_count": 22
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 4 COMPLETED
+[2026-02-16 20:08:32] TERM 4 COMPLETED
 {
   "term_units": 15.5,
   "running_total_units": 62.0,
@@ -3027,7 +2591,7 @@
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 5
+[2026-02-16 20:08:32] STARTING TERM 5
 {
   "current_total_units": 62.0,
   "target_units": 60,
@@ -3058,72 +2622,40 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 5 - FRESH MAJOR CANDIDATES
 {
-  "count": 18,
+  "count": 4,
   "course_codes": [
     "MATH 22",
     "MATH 2B",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "MATH 22",
-    "MATH 22",
-    "CIS 21JA",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "duplicates_analysis": {
-    "total_candidates": 18,
-    "unique_courses": 7,
-    "duplicate_count": 11
+    "total_candidates": 4,
+    "unique_courses": 3,
+    "duplicate_count": 1
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 5 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 7,
+  "count": 3,
   "course_codes": [
     "MATH 22",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 21JA"
+    "MATH 2A"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 18,
+  "remaining_courses_count": 4,
   "remaining_course_codes": [
     "MATH 22",
     "MATH 2B",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2B",
-    "MATH 2A",
-    "MATH 22",
-    "MATH 22",
-    "CIS 21JA",
-    "MATH 2A",
-    "MATH 2B",
-    "CIS 21JA",
-    "MATH 22",
-    "MATH 2A",
-    "MATH 2B"
+    "MATH 2A"
   ],
   "completed_courses": [
     "CIS 22A",
@@ -3151,7 +2683,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 5 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_Physical",
@@ -3179,7 +2711,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 5 - GE COURSES BUILT (base)
 {
   "count": 4,
   "course_codes": [
@@ -3208,7 +2740,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_Physical": 1,
@@ -3225,22 +2757,18 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 5 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 7,
+  "major_candidates_remaining": 3,
   "major_course_codes": [
     "MATH 22",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 21JA"
+    "MATH 2A"
   ],
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 5 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -3248,18 +2776,17 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 5 - ELIGIBLE MAJOR COURSES
 {
-  "count": 4,
+  "count": 3,
   "course_codes": [
     "MATH 22",
     "MATH 2B",
-    "MATH 2A",
-    "CIS 40"
+    "MATH 2A"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 5 - AVAILABLE GE COURSES
 {
   "total_ge_built": 4,
   "available_ge_after_filter": 4,
@@ -3271,29 +2798,27 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "MATH 2A",
     "MATH 2B",
     "MATH 22",
-    "CIS 40"
+    "MATH 2A"
   ],
   "eligible_ge_codes": [
+    "IG_7",
     "IG_Biological",
     "IG_Lab",
-    "IG_7",
     "IG_Physical"
   ],
   "all_eligible_codes": [
-    "MATH 2A",
-    "CIS 40",
-    "MATH 22",
-    "IG_Physical",
     "MATH 2B",
+    "MATH 22",
+    "MATH 2A",
+    "IG_7",
+    "IG_Physical",
     "IG_Biological",
-    "IG_Lab",
-    "IG_7"
+    "IG_Lab"
   ],
   "completed_before_term": [
     "CIS 22A",
@@ -3320,41 +2845,35 @@
     "MATH 1DH"
   ],
   "new_courses_available": [
-    "MATH 2A",
-    "CIS 40",
     "MATH 22",
+    "IG_7",
+    "MATH 2A",
     "IG_Physical",
     "MATH 2B",
     "IG_Biological",
-    "IG_Lab",
-    "IG_7"
+    "IG_Lab"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 22 in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 22 in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 2B in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 2B in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 2A in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 2A in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 5 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 5 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 4,
+  "count": 3,
   "courses": [
     [
       "MATH 22",
@@ -3367,24 +2886,19 @@
     [
       "MATH 2A",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 5 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 4,
+  "major_eligible": 3,
   "ge_eligible": 4,
-  "total_eligible": 8,
+  "total_eligible": 7,
   "all_eligible_codes": [
     "MATH 22",
     "MATH 2B",
     "MATH 2A",
-    "CIS 40",
     "IG_Physical",
     "IG_Biological",
     "IG_Lab",
@@ -3392,9 +2906,9 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 5 - CALLING UNIT BALANCER
 {
-  "total_eligible": 8,
+  "total_eligible": 7,
   "max_units": 16,
   "completed_before_balancer": [
     "CIS 22A",
@@ -3422,7 +2936,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 5 - UNIT BALANCER RESULTS
 {
   "selected_count": 4,
   "selected_courses": [
@@ -3465,7 +2979,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 5 - FINAL SELECTED COURSES
 {
   "count": 4,
   "total_units": 16,
@@ -3489,7 +3003,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 5 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -3529,55 +3043,55 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 5 - ADDED TO COMPLETED
 {
   "course_code": "IG_Physical",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 5 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_Physical",
   "credited_ge_key": "IG_Physical"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 5 - ADDED TO COMPLETED
 {
   "course_code": "MATH 22",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 5 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 22",
   "credited_key": "MATH 22"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 5 - ADDED TO COMPLETED
 {
   "course_code": "MATH 2B",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 5 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 2B",
   "credited_key": "MATH 2B"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 5 - ADDED TO COMPLETED
 {
   "course_code": "IG_Biological",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 5 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_Biological",
   "credited_ge_key": "IG_Biological"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 5 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -3612,7 +3126,7 @@
   "completed_count": 28
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 5 COMPLETED
+[2026-02-16 20:08:32] TERM 5 COMPLETED
 {
   "term_units": 16,
   "running_total_units": 78.0,
@@ -3620,7 +3134,7 @@
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 6
+[2026-02-16 20:08:32] STARTING TERM 6
 {
   "current_total_units": 78.0,
   "target_units": 60,
@@ -3657,48 +3171,32 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 6 - FRESH MAJOR CANDIDATES
 {
-  "count": 7,
+  "count": 1,
   "course_codes": [
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2A",
-    "CIS 21JA",
-    "CIS 21JA"
+    "MATH 2A"
   ],
   "duplicates_analysis": {
-    "total_candidates": 7,
-    "unique_courses": 5,
-    "duplicate_count": 2
+    "total_candidates": 1,
+    "unique_courses": 1,
+    "duplicate_count": 0
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 6 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 5,
+  "count": 1,
   "course_codes": [
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 21JA"
+    "MATH 2A"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 7,
+  "remaining_courses_count": 1,
   "remaining_course_codes": [
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "MATH 2A",
-    "CIS 21JA",
-    "CIS 21JA"
+    "MATH 2A"
   ],
   "completed_courses": [
     "CIS 22A",
@@ -3732,7 +3230,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 6 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [
     "IG_Lab",
@@ -3750,7 +3248,7 @@
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 6 - GE COURSES BUILT (base)
 {
   "count": 2,
   "course_codes": [
@@ -3769,7 +3267,7 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {
     "IG_Lab": 1,
@@ -3782,20 +3280,16 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 6 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 5,
+  "major_candidates_remaining": 1,
   "major_course_codes": [
-    "MATH 2A",
-    "CIS 40",
-    "CIS 41A",
-    "CIS 41B",
-    "CIS 21JA"
+    "MATH 2A"
   ],
   "major_complete": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 6 - TERMINATION CONDITIONS
 {
   "major_complete": false,
   "ge_complete": false,
@@ -3803,16 +3297,15 @@
   "will_terminate": false
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] TERM 6 - ELIGIBLE MAJOR COURSES
 {
-  "count": 2,
+  "count": 1,
   "course_codes": [
-    "MATH 2A",
-    "CIS 40"
+    "MATH 2A"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] TERM 6 - AVAILABLE GE COURSES
 {
   "total_ge_built": 2,
   "available_ge_after_filter": 2,
@@ -3822,21 +3315,19 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
+[2026-02-16 20:08:32] PROGRESS CHECK
 {
   "eligible_major_codes": [
-    "MATH 2A",
-    "CIS 40"
+    "MATH 2A"
   ],
   "eligible_ge_codes": [
-    "IG_Lab",
-    "IG_7"
+    "IG_7",
+    "IG_Lab"
   ],
   "all_eligible_codes": [
-    "MATH 2A",
     "IG_Lab",
     "IG_7",
-    "CIS 40"
+    "MATH 2A"
   ],
   "completed_before_term": [
     "CIS 22A",
@@ -3870,54 +3361,43 @@
   ],
   "new_courses_available": [
     "MATH 2A",
-    "IG_Lab",
     "IG_7",
-    "CIS 40"
+    "IG_Lab"
   ],
   "can_make_progress": true
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for MATH 2A in prereqs dict
+[2026-02-16 20:08:32] Found units for MATH 2A in prereqs dict
 {
   "units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] Found units for CIS 40 in prereqs dict
+[2026-02-16 20:08:32] TERM 6 - ELIGIBLE COURSES WITH UNITS
 {
-  "units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 6 - ELIGIBLE COURSES WITH UNITS
-{
-  "count": 2,
+  "count": 1,
   "courses": [
     [
       "MATH 2A",
       5
-    ],
-    [
-      "CIS 40",
-      4.5
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - TOTAL ELIGIBLE COURSES
+[2026-02-16 20:08:32] TERM 6 - TOTAL ELIGIBLE COURSES
 {
-  "major_eligible": 2,
+  "major_eligible": 1,
   "ge_eligible": 2,
-  "total_eligible": 4,
+  "total_eligible": 3,
   "all_eligible_codes": [
     "MATH 2A",
-    "CIS 40",
     "IG_Lab",
     "IG_7"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - CALLING UNIT BALANCER
+[2026-02-16 20:08:32] TERM 6 - CALLING UNIT BALANCER
 {
-  "total_eligible": 4,
+  "total_eligible": 3,
   "max_units": 16,
   "completed_before_balancer": [
     "CIS 22A",
@@ -3951,16 +3431,15 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - UNIT BALANCER RESULTS
+[2026-02-16 20:08:32] TERM 6 - UNIT BALANCER RESULTS
 {
-  "selected_count": 4,
+  "selected_count": 3,
   "selected_courses": [
     "IG_Lab",
     "MATH 2A",
-    "CIS 40",
     "IG_7"
   ],
-  "total_units": 15.5,
+  "total_units": 11,
   "pruned_codes": "set()",
   "completed_after_balancer": [
     "CIS 22A",
@@ -3969,7 +3448,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -3999,10 +3477,10 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - FINAL SELECTED COURSES
+[2026-02-16 20:08:32] TERM 6 - FINAL SELECTED COURSES
 {
-  "count": 4,
-  "total_units": 15.5,
+  "count": 3,
+  "total_units": 11,
   "courses_with_units": [
     [
       "IG_Lab",
@@ -4013,17 +3491,13 @@
       5
     ],
     [
-      "CIS 40",
-      4.5
-    ],
-    [
       "IG_7",
       3
     ]
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - UPDATING STATE
+[2026-02-16 20:08:32] TERM 6 - UPDATING STATE
 {
   "completed_before": [
     "CIS 22A",
@@ -4032,7 +3506,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4063,60 +3536,47 @@
   "courses_to_add": [
     "IG_Lab",
     "MATH 2A",
-    "CIS 40",
     "IG_7"
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 6 - ADDED TO COMPLETED
 {
   "course_code": "IG_Lab",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 6 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_Lab",
   "credited_ge_key": "IG_Lab"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 6 - ADDED TO COMPLETED
 {
   "course_code": "MATH 2A",
   "course_units": 5
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - NON-GE OR TAGGED COURSE CREDITED
+[2026-02-16 20:08:32] TERM 6 - NON-GE OR TAGGED COURSE CREDITED
 {
   "course_code": "MATH 2A",
   "credited_key": "MATH 2A"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - ADDED TO COMPLETED
-{
-  "course_code": "CIS 40",
-  "course_units": 4.5
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 6 - NON-GE OR TAGGED COURSE CREDITED
-{
-  "course_code": "CIS 40",
-  "credited_key": "CIS 40"
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 6 - ADDED TO COMPLETED
+[2026-02-16 20:08:32] TERM 6 - ADDED TO COMPLETED
 {
   "course_code": "IG_7",
   "course_units": 3
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - GE REQUIREMENT FULFILLED (normalized)
+[2026-02-16 20:08:32] TERM 6 - GE REQUIREMENT FULFILLED (normalized)
 {
   "course_code": "IG_7",
   "credited_ge_key": "IG_7"
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 - STATE AFTER UPDATE
+[2026-02-16 20:08:32] TERM 6 - STATE AFTER UPDATE
 {
   "completed_after": [
     "CIS 22A",
@@ -4125,7 +3585,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4153,22 +3612,22 @@
     "MATH 2B",
     "MATH 2BH"
   ],
-  "completed_count": 33
+  "completed_count": 32
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 6 COMPLETED
+[2026-02-16 20:08:32] TERM 6 COMPLETED
 {
-  "term_units": 15.5,
-  "running_total_units": 93.5,
-  "completed_courses_count": 33,
+  "term_units": 11,
+  "running_total_units": 89.0,
+  "completed_courses_count": 32,
   "remaining_major_candidates": "will be recalculated next term"
 }
 ================================================================================
-[2025-08-10 12:20:45] STARTING TERM 7
+[2026-02-16 20:08:32] STARTING TERM 7
 {
-  "current_total_units": 93.5,
+  "current_total_units": 89.0,
   "target_units": 60,
-  "completed_courses_count": 33,
+  "completed_courses_count": 32,
   "completed_courses": [
     "CIS 22A",
     "CIS 22B",
@@ -4176,7 +3635,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4206,35 +3664,27 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - FRESH MAJOR CANDIDATES
+[2026-02-16 20:08:32] TERM 7 - FRESH MAJOR CANDIDATES
 {
-  "count": 2,
-  "course_codes": [
-    "CIS 21JA",
-    "CIS 21JA"
-  ],
+  "count": 0,
+  "course_codes": [],
   "duplicates_analysis": {
-    "total_candidates": 2,
-    "unique_courses": 1,
-    "duplicate_count": 1
+    "total_candidates": 0,
+    "unique_courses": 0,
+    "duplicate_count": 0
   }
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - MAJOR CANDIDATES AFTER ADDING PREREQS
+[2026-02-16 20:08:32] TERM 7 - MAJOR CANDIDATES AFTER ADDING PREREQS
 {
-  "count": 1,
-  "course_codes": [
-    "CIS 21JA"
-  ]
+  "count": 0,
+  "course_codes": []
 }
 ================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "remaining_courses_count": 2,
-  "remaining_course_codes": [
-    "CIS 21JA",
-    "CIS 21JA"
-  ],
+  "remaining_courses_count": 0,
+  "remaining_course_codes": [],
   "completed_courses": [
     "CIS 22A",
     "CIS 22B",
@@ -4242,7 +3692,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4272,115 +3721,54 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - GE REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 7 - GE REQUIREMENTS CHECK
 {
   "remaining_ge_categories": [],
   "ge_requirements_detail": {}
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - GE COURSES BUILT (base)
+[2026-02-16 20:08:32] TERM 7 - GE COURSES BUILT (base)
 {
   "count": 0,
   "course_codes": [],
   "courses_with_units": []
 }
 ================================================================================
-[2025-08-10 12:20:45] GE SLOT EXPANSION
+[2026-02-16 20:08:32] GE SLOT EXPANSION
 {
   "areas_with_need": {},
   "expanded_count": 0,
   "expanded_codes": []
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - MAJOR REQUIREMENTS CHECK
+[2026-02-16 20:08:32] TERM 7 - MAJOR REQUIREMENTS CHECK
 {
-  "major_candidates_remaining": 1,
-  "major_course_codes": [
-    "CIS 21JA"
-  ],
-  "major_complete": false
+  "major_candidates_remaining": 0,
+  "major_course_codes": [],
+  "major_complete": true
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - TERMINATION CONDITIONS
+[2026-02-16 20:08:32] TERM 7 - TERMINATION CONDITIONS
 {
-  "major_complete": false,
+  "major_complete": true,
   "ge_complete": true,
   "min_units_met_60+": true,
-  "will_terminate": false
+  "will_terminate": true
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - ELIGIBLE MAJOR COURSES
+[2026-02-16 20:08:32] PATHWAY GENERATION COMPLETED
 {
-  "count": 0,
-  "course_codes": []
+  "reason": "Major + GE complete and 60+ units reached",
+  "final_units": 89.0,
+  "total_terms": 6,
+  "major_complete": true,
+  "ge_complete": true
 }
 ================================================================================
-[2025-08-10 12:20:45] TERM 7 - AVAILABLE GE COURSES
+[2026-02-16 20:08:32] MAJOR COMPLETION CHECK
 {
-  "total_ge_built": 0,
-  "available_ge_after_filter": 0,
-  "available_ge_codes": []
-}
-================================================================================
-[2025-08-10 12:20:45] PROGRESS CHECK
-{
-  "eligible_major_codes": [],
-  "eligible_ge_codes": [],
-  "all_eligible_codes": [],
-  "completed_before_term": [
-    "CIS 22A",
-    "CIS 22B",
-    "CIS 22BH",
-    "CIS 22C",
-    "CIS 22CH",
-    "CIS 36A",
-    "CIS 40",
-    "IG_1A",
-    "IG_1B",
-    "IG_2",
-    "IG_3A",
-    "IG_3B",
-    "IG_3_Leftover",
-    "IG_4",
-    "IG_4__slot1",
-    "IG_7",
-    "IG_Biological",
-    "IG_Lab",
-    "IG_Physical",
-    "MATH 1A",
-    "MATH 1AH",
-    "MATH 1B",
-    "MATH 1BH",
-    "MATH 1C",
-    "MATH 1CH",
-    "MATH 1D",
-    "MATH 1DH",
-    "MATH 22",
-    "MATH 22H",
-    "MATH 2A",
-    "MATH 2AH",
-    "MATH 2B",
-    "MATH 2BH"
-  ],
-  "new_courses_available": [],
-  "can_make_progress": false
-}
-================================================================================
-[2025-08-10 12:20:45] TERM 7 - CANNOT MAKE PROGRESS
-{
-  "reason": "No new courses available that aren't already completed",
-  "eligible_major_count": 0,
-  "available_ge_count": 0,
-  "completed_courses": 33
-}
-================================================================================
-[2025-08-10 12:20:45] MAJOR COMPLETION CHECK
-{
-  "remaining_courses_count": 2,
-  "remaining_course_codes": [
-    "CIS 21JA",
-    "CIS 21JA"
-  ],
+  "remaining_courses_count": 0,
+  "remaining_course_codes": [],
   "completed_courses": [
     "CIS 22A",
     "CIS 22B",
@@ -4388,7 +3776,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4418,12 +3805,12 @@
   ]
 }
 ================================================================================
-[2025-08-10 12:20:45] PATHWAY GENERATION FINAL RESULTS
+[2026-02-16 20:08:32] PATHWAY GENERATION FINAL RESULTS
 {
   "total_terms": 6,
-  "final_total_units": 93.5,
+  "final_total_units": 89.0,
   "target_units_minimum": 60,
-  "average_units_per_term": 15.583333333333334,
+  "average_units_per_term": 14.833333333333334,
   "final_completed_courses": [
     "CIS 22A",
     "CIS 22B",
@@ -4431,7 +3818,6 @@
     "CIS 22C",
     "CIS 22CH",
     "CIS 36A",
-    "CIS 40",
     "IG_1A",
     "IG_1B",
     "IG_2",
@@ -4459,8 +3845,8 @@
     "MATH 2B",
     "MATH 2BH"
   ],
-  "final_completed_count": 33,
-  "major_requirements_complete": false,
+  "final_completed_count": 32,
+  "major_requirements_complete": true,
   "ge_requirements_remaining": {}
 }
 ================================================================================

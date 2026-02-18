@@ -71,7 +71,10 @@ class MajorRequirements:
                     for cc_course in block:
                         remaining.append({
                             "courseCode": cc_course,
-                            "units": articulated.get(cc_course, {}).get("units", 3),
+                            # Do not seed a default unit fallback here.
+                            # pathway_generator.ensure_course_has_units() is the
+                            # canonical unit resolver and should own fallback behavior.
+                            "units": articulated.get(cc_course, {}).get("units"),
                             "tag": f"{uc}:{group}"
                         })
                     break
