@@ -10,14 +10,21 @@ from time import perf_counter
 from typing import Any
 
 from apps.api.metrics import APIMetrics
+from apps.api.services import (
+    GeneratePathwayInput,
+    PathwayServiceError,
+    build_health_response,
+    build_metadata_aggregate_response,
+    build_metadata_colleges_response,
+    build_metadata_districts_response,
+    build_metadata_ucs_response,
+    generate_pathway,
+)
 from packages.shared_types.v1 import (
     ALLOWED_GE_PATTERNS,
-    API_VERSION,
     build_error_response,
-    normalize_warning_payloads,
     validate_generate_request,
 )
-from apps.api.planner_service import PlannerServiceError, generate_pathway_response
 from apps.api.metadata_service import load_runtime_metadata
 
 
@@ -200,36 +207,35 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         latency_ms: float | None = None
         try:
             start = perf_counter()
-            response = generate_pathway_response(payload)
+            response = generate_pathway(
+                GeneratePathwayInput(
+                    college_id=str(payload["college_id"]),
+                    target_ucs=tuple(str(uc) for uc in payload["target_ucs"]),
+                    ge_pattern=str(payload["ge_pattern"]),
+                    completed_courses=tuple(
+                        str(course) for course in payload["completed_courses"]
+                    ),
+                    request_id=request_id,
+                ),
+                runtime_manifest=metadata.manifest,
+            )
             latency_ms = (perf_counter() - start) * 1000.0
-        except PlannerServiceError as exc:
+        except PathwayServiceError as exc:
             if latency_ms is None:
                 latency_ms = (perf_counter() - start) * 1000.0
             self._send_error(
-                HTTPStatus.INTERNAL_SERVER_ERROR,
-                code="PLANNER_RUNTIME_ERROR",
-                message="Unable to generate pathway response from runtime artifacts.",
+                exc.status,
+                code=exc.code,
+                message=exc.message,
                 request_id=request_id,
                 path=path,
-                details=[{"field": "planner_service", "message": str(exc)}],
+                details=exc.details,
                 valid_request=True,
                 request_payload=payload,
                 latency_ms=latency_ms,
             )
             return
 
-        response.setdefault("meta", {})
-        response["request_id"] = request_id
-        response["warnings"] = normalize_warning_payloads(
-            response.get("warnings"),
-            trace_id=request_id,
-            default_source="planner_core",
-            default_severity="WARN",
-        )
-        response["meta"]["runtime"] = {
-            "dataset_version": metadata.manifest.get("version"),
-            "generated_at": metadata.manifest.get("generated_at"),
-        }
         self._send_json(
             HTTPStatus.OK,
             response,
@@ -271,10 +277,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/metadata/colleges":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.colleges,
-                },
+                build_metadata_colleges_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -282,10 +285,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/metadata/districts":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.districts,
-                },
+                build_metadata_districts_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -293,10 +293,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/metadata/ucs":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.ucs,
-                },
+                build_metadata_ucs_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -305,13 +302,10 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             # Backward-compatible aggregate metadata endpoint.
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "colleges": metadata.colleges,
-                    "districts": metadata.districts,
-                    "ucs": metadata.ucs,
-                    "ge_patterns": sorted(ALLOWED_GE_PATTERNS),
-                },
+                build_metadata_aggregate_response(
+                    metadata,
+                    allowed_ge_patterns=ALLOWED_GE_PATTERNS,
+                ),
                 path=path,
                 valid_request=True,
             )
@@ -319,15 +313,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/health":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "status": "ok",
-                    "runtime": {
-                        "dataset_version": metadata.manifest.get("version", ""),
-                        "generated_at": metadata.manifest.get("generated_at", ""),
-                        "row_counts": metadata.manifest.get("row_counts", {}),
-                    },
-                },
+                build_health_response(metadata),
                 path=path,
                 valid_request=True,
             )

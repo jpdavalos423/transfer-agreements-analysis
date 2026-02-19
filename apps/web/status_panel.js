@@ -67,6 +67,25 @@ function formatWarningContext(warning) {
   return "";
 }
 
+function normalizeWarningSeverity(value) {
+  if (typeof value !== "string" || value.trim() === "") {
+    return "WARN";
+  }
+  const normalized = value.trim().toUpperCase();
+  return normalized;
+}
+
+function stableStringifyObject(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return JSON.stringify(value);
+  }
+  const sorted = {};
+  for (const key of Object.keys(value).sort()) {
+    sorted[key] = value[key];
+  }
+  return JSON.stringify(sorted);
+}
+
 function formatUnmetRequirement(item) {
   if (typeof item === "string" && item.trim() !== "") {
     return item;
@@ -100,7 +119,7 @@ function formatUnmetRequirement(item) {
   if (pieces.length > 0) {
     return pieces.join(" | ");
   }
-  return JSON.stringify(item);
+  return stableStringifyObject(item);
 }
 
 export function buildStatusViewModel(responsePayload) {
@@ -108,17 +127,24 @@ export function buildStatusViewModel(responsePayload) {
   const warningsRaw = Array.isArray(responsePayload?.warnings)
     ? responsePayload.warnings
     : [];
-  const warnings = warningsRaw.map((warning) => ({
-    severity:
-      typeof warning?.severity === "string" && warning.severity.trim() !== ""
-        ? warning.severity
-        : "WARN",
-    message:
-      typeof warning?.message === "string" && warning.message.trim() !== ""
-        ? warning.message
-        : "Unknown warning.",
-    context: formatWarningContext(warning),
-  }));
+  const warningDedup = new Set();
+  const warnings = [];
+  for (const warning of warningsRaw) {
+    const normalized = {
+      severity: normalizeWarningSeverity(warning?.severity),
+      message:
+        typeof warning?.message === "string" && warning.message.trim() !== ""
+          ? warning.message
+          : "Unknown warning.",
+      context: formatWarningContext(warning),
+    };
+    const dedupKey = `${normalized.severity}|${normalized.message}|${normalized.context}`;
+    if (warningDedup.has(dedupKey)) {
+      continue;
+    }
+    warningDedup.add(dedupKey);
+    warnings.push(normalized);
+  }
 
   const unmetRaw = Array.isArray(responsePayload?.unmet_requirements)
     ? responsePayload.unmet_requirements
@@ -184,4 +210,3 @@ export function renderStatusPanel(elements, responsePayload) {
     }
   }
 }
-

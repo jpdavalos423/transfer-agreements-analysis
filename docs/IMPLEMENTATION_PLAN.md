@@ -1,16 +1,16 @@
 # Implementation Plan
 
-## Transfer Pathway Planner (PRD-Aligned)
+## Transfer Pathway Planner (Unified Phases 0-8)
 
-Version: v0.1  
+Version: v0.2  
 Status: Approved for execution
 
 ## 1. Summary
-Transform the existing script-based repository into a web app using an incremental, low-risk path:
-1. Ship a thin vertical slice first.
-2. Build a CSV normalization layer.
-3. Gate planner behavior with golden-truth tests on a subset.
-4. Expand only after deterministic and NFR compliance.
+This unified plan combines the existing delivery roadmap with new Phase 7 (Fixes/QOL) and Phase 8 (Framework Migration):
+1. Ship and stabilize MVP behavior first.
+2. Lock behavior with deterministic golden truth and NFR gates.
+3. Clean QOL and migration seams before framework swap.
+4. Migrate to FastAPI + React/Vite with parity-first, parallel-run cutover.
 
 ## 2. Locked Scope and Assumptions
 1. Student-first MVP.
@@ -20,24 +20,25 @@ Transform the existing script-based repository into a web app using an increment
 5. Honors/base equivalence retained globally.
 6. GE remains bucket-tracked (IGETC / 7CoursePattern), not concrete GE course suggestion.
 7. No mixed quarter/semester conversion logic in MVP.
+8. `/v1` API contracts remain stable through migration.
 
 ## 3. Target Architecture
 1. `apps/api/`:
-   - pathway generation API and metadata endpoints.
+   - Current stdlib API transport and handlers.
 2. `apps/web/`:
-   - student-facing UI for input, output, warnings.
+   - Current student-facing UI.
 3. `packages/planner_core/`:
-   - extracted planner domain logic, no CLI I/O.
+   - Extracted planner domain logic, no CLI I/O.
 4. `packages/data_adapter/`:
    - CSV parser/validator/normalizer.
 5. `packages/shared_types/`:
-   - shared request/response/domain schemas.
+   - Shared request/response/domain schemas.
 6. `data/runtime/`:
-   - canonical runtime dataset + manifest metadata.
+   - Canonical runtime dataset + manifest metadata.
 7. `legacy/`:
-   - preserved research scripts outside runtime path.
+   - Preserved research scripts outside runtime path.
 8. `tests/golden/`:
-   - scenario definitions, expected outputs, comparator.
+   - Scenario definitions, expected outputs, comparator.
 
 ## 4. Delivery Phases
 
@@ -54,6 +55,8 @@ Exit criteria:
 1. One full student flow works end-to-end.
 
 ## Phase 1: Data Adapter and Runtime Canonicalization
+Goal: normalize source CSVs into deterministic runtime artifacts.
+
 Tickets:
 1. P1-1 Implement parser for `filtered_results`.
 2. P1-2 Implement parser for `district_csvs`.
@@ -65,6 +68,8 @@ Exit criteria:
 1. Runtime reads only normalized data artifacts.
 
 ## Phase 2: Golden Truth Harness (Phased)
+Goal: lock planner behavior and prevent drift.
+
 Tickets:
 1. P2-1 Build golden runner + semantic comparator + deterministic sort utilities.
 2. P2-2 Create scenario schema and fixture loader.
@@ -77,6 +82,8 @@ Exit criteria:
 1. Planner drift is CI-gated.
 
 ## Phase 3: Planner Core Migration
+Goal: isolate and preserve planner semantics in pure core.
+
 Tickets:
 1. P3-1 Extract pure planner core from existing scripts.
 2. P3-2 Swap JSON articulation dependency for CSV-normalized model.
@@ -92,6 +99,8 @@ Exit criteria:
 1. CSV-driven planner passes active goldens.
 
 ## Phase 4: Backend API Expansion
+Goal: complete API surface for UI and operations.
+
 Tickets:
 1. P4-1 `GET /v1/metadata/colleges`
 2. P4-2 `GET /v1/metadata/districts`
@@ -103,6 +112,8 @@ Exit criteria:
 1. Frontend options are fully API-driven.
 
 ## Phase 5: Frontend MVP Completion
+Goal: complete student UX for setup/results/confidence.
+
 Tickets:
 1. P5-1 Planner setup workflow.
 2. P5-2 Results view with deterministic ordering.
@@ -116,6 +127,8 @@ Exit criteria:
 1. Student can interpret output confidence and gaps clearly.
 
 ## Phase 6: NFR and Release Hardening
+Goal: enforce performance, reliability, determinism, and operability.
+
 Tickets:
 1. P6-1 Performance tests and p95 latency enforcement.
 2. P6-2 Reliability SLI/SLO checks and alerts.
@@ -125,6 +138,80 @@ Tickets:
 
 Exit criteria:
 1. MVP NFR targets are met and monitored.
+
+## Phase 7: Fixes/QOL and Migration Readiness
+Goal: remove MVP debug friction, clean architecture seams, and prepare for framework migration.
+
+Tickets:
+1. P7-1 Remove raw response section from web UI.
+2. P7-2 Frontend cleanup for migration:
+   - Introduce explicit UI state transitions (`idle/loading/success/error`).
+   - Centralize API client calls behind a single module.
+3. P7-3 API seam extraction:
+   - Refactor stdlib transport handlers to call reusable route service functions.
+4. P7-4 QOL bugfix pass:
+   - Form flow stability, warnings/unmet edge cases, ordering regressions.
+5. P7-12 Separate form and pathway pages:
+   - Keep setup form on primary page.
+   - Navigate in same tab to dedicated `/pathway` page after submit.
+   - Pathway page refetches using submitted request payload.
+   - Preserve warnings/confidence/results readability and error messaging.
+6. P7-5 Migration readiness checklist doc.
+7. P7-6 Remove all leftover raw-response plumbing (HTML/CSS/JS/tests/docs).
+8. P7-7 Externalize config:
+   - Frontend API base URL.
+   - Backend host/port/CORS/log-level settings.
+9. P7-8 CORS hardening via allowlist (retain local-dev defaults).
+10. P7-9 Request lifecycle hygiene:
+   - Prevent duplicate in-flight submissions.
+   - Stable loading/error transitions.
+11. P7-10 Safe-mode metadata fallback:
+   - Metadata remains available when runtime planner path is degraded.
+   - Pathway generation remains unavailable while degraded.
+12. P7-11 Framework dependency/tooling baseline:
+   - Python dependency setup for FastAPI/uvicorn.
+   - JS dependency setup for React/Vite.
+
+Exit criteria:
+1. Student UI is cleaned (no raw debug response section).
+2. Migration seams are explicit and reusable.
+3. Safe-mode behavior is defined and implemented.
+4. Setup form and pathway output are separated into dedicated pages.
+
+## Phase 8: Framework Migration
+Goal: migrate to framework stack with no contract drift and controlled cutover.
+
+Locked migration choices:
+1. Backend framework: FastAPI (parity-first).
+2. Frontend framework: React + Vite.
+3. Cutover strategy: parallel run then switch.
+
+Tickets:
+1. P8-1 Stand up FastAPI app in parallel with route parity.
+2. P8-2 Preserve parity for:
+   - Structured error envelope
+   - Warning payload normalization
+   - Metadata/health/metrics shapes
+3. P8-3 Stand up React + Vite app in parallel with setup/results/status parity.
+4. P8-4 Preserve accessibility/mobile baseline in React app.
+5. P8-5 Expand CI for dual-stack checks.
+6. P8-6 Cutover switch from stdlib stack to framework stack.
+7. P8-7 Add hard old-vs-new contract parity gate:
+   - Same scenario requests
+   - Semantic comparison on outputs
+8. P8-8 Shared typed API client for React (enforced against `shared_types`).
+9. P8-9 Observability parity:
+   - Keep `/v1/metrics` keys/types/order deterministic.
+10. P8-10 Production serving profile:
+   - uvicorn/gunicorn worker/timeouts/readiness behavior.
+11. P8-11 React resilience:
+   - Error boundary/loading boundary/network failure parity.
+12. P8-12 Dual-run rollback window and stdlib deprecation plan.
+
+Exit criteria:
+1. Framework stack passes all active golden/NFR/contract tests.
+2. Parity checks are green for defined scenario sets.
+3. Rollback path is validated before stdlib retirement.
 
 ## 5. Golden Subset Test Plan
 1. Colleges: `de_anza`, `lassen`
@@ -146,61 +233,28 @@ Exit criteria:
 3. Determinism: 100% semantic stability across 10 repeat runs per scenario.
 4. Golden CI stability: 0 flaky failures across last 20 main runs.
 
-## 7. Edge-Case Coverage Backlog
-1. Duplicate row keys with conflicting alternatives.
-2. Course-code formatting anomalies (spacing/casing/punctuation).
-3. Multi-course `Receiving` plus repeated-row cardinality handling.
-4. District-mode duplicate/equivalent course double-count prevention.
-5. GE leftover/subrequirement counting under repeated tags.
-6. No-progress termination and user-facing warning quality.
-
-## 8. Scope Guardrails
+## 7. Scope Guardrails
 1. No auth/roles in MVP.
 2. No counselor workflow in MVP.
 3. No mixed quarter/semester conversion in MVP.
-4. No advanced optimization controls in MVP.
-5. Defer heavy package split if vertical slice and core migration do not require it.
+4. No data contract changes outside versioned process.
 
-## 9. MVP Definition of Done
-1. Student pathway generation works for subset schools via web UI/API.
-2. Planner is CSV-driven from normalized runtime data.
-3. Golden suite protects behavior in CI.
-4. Functional + edge-case coverage exists for locked semantics.
-5. NFR thresholds and product metrics are implemented and observable.
-6. Data refresh/deploy runbooks are documented.
+## 8. Cross-Phase Validation Gates
+1. Golden suites:
+   - `scripts/golden --suite phase_a`
+   - `scripts/golden --suite full`
+2. Determinism:
+   - `scripts/determinism --suite full --repeat 10`
+3. Reliability:
+   - `scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99`
+4. Performance:
+   - `scripts/perf --suite phase_a --repeat 3 --warmup 1 --threshold-seconds 2.0`
+5. API/web regression:
+   - `python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py`
 
-## 10. Framework Migration Plan (Post-Vertical-Slice)
-Goal: move from minimal stdlib servers to production frameworks after contracts and behavior stabilize.
-
-### 10.1 Trigger Criteria
-Proceed with framework migration only after:
-1. Phase 0 vertical slice is stable.
-2. Phase 2 golden CI gate is active (at least Phase A scenarios).
-3. Core request/response contracts are stable (`/v1` schemas).
-4. No unresolved P0/P1 blocking defects.
-
-### 10.2 Target Stack
-1. Backend framework: FastAPI
-2. Frontend framework: React (Vite preferred for MVP speed; Next.js optional if SSR needs emerge)
-
-### 10.3 Migration Scope
-1. Backend:
-   - Replace stdlib `http.server` transport with FastAPI routes.
-   - Keep existing `/v1` endpoint paths and payload contracts unchanged.
-   - Preserve structured error envelope and warning semantics.
-2. Frontend:
-   - Port current static form flow into React components.
-   - Preserve input/output behavior, warnings panel, and raw JSON debug view initially.
-   - Add framework test runner and retain smoke coverage.
-
-### 10.4 Non-Goals During Migration
-1. No auth introduction.
-2. No counselor workflow introduction.
-3. No planner logic redesign.
-4. No data-contract changes outside versioned process.
-
-### 10.5 Validation Requirements
-1. Existing API integration tests must pass with no schema regressions.
-2. Golden tests must remain green before and after migration.
-3. UI smoke tests must pass against framework frontend.
-4. Local run commands and docs must be updated in lockstep.
+## 9. Unified Definition of Done
+1. Student pathway generation works via web UI/API with stable contracts.
+2. Planner remains CSV-runtime-driven with locked semantics preserved.
+3. Golden + determinism + reliability + performance gates are green.
+4. Product metrics and operational docs are complete and current.
+5. Framework stack is primary runtime after parity and rollback validation.

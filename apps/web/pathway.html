@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Pathway Planner - Pathway</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Your Transfer Pathway</h1>
+      <p class="subtle"><a href="/">Back to setup form</a></p>
+
+      <section id="pathway-empty-state" class="panel" aria-live="polite" hidden>
+        <h2>No pathway request found</h2>
+        <p>Submit the planner form first to generate your pathway.</p>
+        <p><a href="/">Go to setup form</a></p>
+      </section>
+
+      <section id="pathway-loading-state" class="panel" aria-live="polite" hidden>
+        <h2>Generating pathway...</h2>
+        <p>Please wait while we load your pathway.</p>
+      </section>
+
+      <section id="pathway-error-panel" class="panel panel-error" aria-live="polite" hidden>
+        <h2>Request Error</h2>
+        <p id="pathway-error-headline"></p>
+        <ul id="pathway-error-details"></ul>
+        <div class="pathway-actions">
+          <button id="pathway-retry-button" type="button">Retry</button>
+          <a href="/">Back to form</a>
+        </div>
+      </section>
+
+      <div id="pathway-content" class="results-layout" hidden>
+        <section id="status-panel" class="panel" aria-live="polite">
+          <h2>Plan Status</h2>
+          <p class="confidence-row">
+            Confidence:
+            <span id="confidence-label" class="confidence-label confidence-incomplete"
+              >Incomplete</span
+            >
+          </p>
+          <h3>Warnings</h3>
+          <ul id="warnings-list"></ul>
+          <div id="unmet-section" hidden>
+            <h3>Unmet Requirements</h3>
+            <ul id="unmet-list"></ul>
+          </div>
+        </section>
+
+        <section id="results-panel" class="panel" aria-live="polite">
+          <h2>Pathway Results</h2>
+          <div id="results-content"></div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="./pathway.js"></script>
+  </body>
+</html>

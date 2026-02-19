@@ -18,7 +18,7 @@ test("buildGeneratePayload returns shared_types-compatible request shape", () =>
     college_id: " de_anza ",
     target_ucs: ["UCLA", "UCSD", "UCLA"],
     ge_pattern: "IGETC",
-    completed_courses: "MATH 1A\nCIS 22A\n",
+    completed_courses: "MATH 1A\nCIS 22A\nMATH 1A\n",
   });
 
   assert.deepEqual(Object.keys(payload).sort(), [
@@ -70,4 +70,3 @@ test("extractApiError reads structured error envelope", () => {
     { field: "college_id", message: "Select a college." },
   ]);
 });
-

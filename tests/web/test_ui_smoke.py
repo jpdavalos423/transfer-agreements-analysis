@@ -42,6 +42,13 @@ class WebUISmokeTest(unittest.TestCase):
         self.assertIn('id="ge_pattern"', html)
         self.assertIn('id="completed_courses"', html)
 
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.web_port}/pathway", timeout=5) as resp:
+            self.assertEqual(resp.status, 200)
+            pathway_html = resp.read().decode("utf-8")
+
+        self.assertIn("No pathway request found", pathway_html)
+        self.assertIn("Go to setup form", pathway_html)
+
         # Submit-equivalent API check (basic smoke until browser automation is added).
         payload = {
             "college_id": "de_anza",
@@ -66,4 +73,3 @@ class WebUISmokeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

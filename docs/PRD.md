@@ -2,8 +2,8 @@
 
 ## Transfer Pathway Planner
 
-Version: v0.1  
-Status: Draft (MVP-approved scope)
+Version: v0.2  
+Status: Approved (Unified Phase 0-8 roadmap)
 
 ## 1. Overview
 Transfer Pathway Planner is a student-focused web app that generates community-college-to-UC transfer pathways for Computer Science preparation. It uses articulation agreements, prerequisite structures, and GE requirement patterns to produce term-by-term plans and clear warnings when full completion is not possible.
@@ -79,9 +79,11 @@ MVP focus is student planning. Counselor workflows are future phases.
    - `GET /v1/metadata/districts`
    - `GET /v1/metadata/ucs`
    - `GET /v1/health`
+   - `GET /v1/metrics`
 2. Data adapter layer from CSV inputs to normalized planner model.
 3. Runtime data manifests (checksums, row counts, version metadata).
 4. Golden-truth CI suite to gate behavior regressions.
+5. Framework migration must preserve `/v1` contracts and locked planner semantics.
 
 ## 10. Success Metrics
 1. Pathway completion rate (major + GE + target units).
@@ -109,19 +111,23 @@ MVP focus is student planning. Counselor workflows are future phases.
 6. Golden truth source: manually authored expected plans
 7. Assertion mode: semantic + stable ordering
 
-## 13. Roadmap
-### MVP
-1. Student-first planner flow.
-2. CSV adapter + deterministic planner API.
-3. Golden CI gate and warning transparency.
+## 13. Implementation Roadmap (Aligned to `IMPLEMENTATION_PLAN.md`)
+### Phase 0-6 (Completed MVP Foundation and Hardening)
+1. Vertical slice, runtime normalization, golden harness, planner-core migration, API/UI completion, and NFR hardening.
+2. Determinism/reliability/performance/product metrics gates established.
+3. Operational docs in place (deployment/runbook/fallback/data refresh/golden workflow).
 
-### v1 (Future)
+### Phase 7 (Fixes/QOL + Migration Readiness)
+1. Remove raw response debug UX and related plumbing.
+2. Cleanup API/UI seams for framework transition.
+3. Complete migration-readiness tasks (config externalization, CORS hardening, request lifecycle hygiene, safe-mode fallback workstream).
+
+### Phase 8 (Framework Migration)
+1. Backend migration to FastAPI (parity-first).
+2. Frontend migration to React + Vite.
+3. Parallel-run then switch cutover strategy with parity gates and rollback path.
+
+### Post-Migration Future (Beyond Phase 8)
 1. Enhanced explainability per planning decision.
-2. Better data quality dashboards and advisor-ready outputs.
-3. Early counselor review mode.
-
-### v2 (Future)
-1. Counselor workflows and collaboration tooling.
-2. Scenario comparison and richer policy constraints.
-3. Expanded optimization controls.
-
+2. Advisor/counselor workflow expansion.
+3. Scenario comparison and richer optimization/policy constraints.

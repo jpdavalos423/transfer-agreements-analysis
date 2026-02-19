@@ -175,12 +175,6 @@ textarea:focus-visible {
   min-width: 0;
 }
 
-#response-json {
-  overflow: auto;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
 .results-placeholder,
 .results-empty {
   margin: 0;

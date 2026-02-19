@@ -26,7 +26,9 @@ export function buildGeneratePayload(formState) {
     college_id: String(formState?.college_id || "").trim(),
     target_ucs: dedupeStrings(formState?.target_ucs || []),
     ge_pattern: String(formState?.ge_pattern || "").trim(),
-    completed_courses: parseCompletedCourses(formState?.completed_courses || ""),
+    completed_courses: dedupeStrings(
+      parseCompletedCourses(formState?.completed_courses || ""),
+    ),
   };
 }
 
@@ -72,4 +74,3 @@ export function extractApiError(payload) {
     : [];
   return { code, message, details };
 }
-
