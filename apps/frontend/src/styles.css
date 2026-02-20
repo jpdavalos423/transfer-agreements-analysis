@@ -12,12 +12,34 @@
 
 body {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .container {
   max-width: 960px;
   margin: 0 auto;
   padding: 1rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.skip-link:focus-visible {
+  left: 1rem;
+  top: 1rem;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #1f2937;
+  z-index: 1000;
 }
 
 h1 {
@@ -214,6 +236,13 @@ a:focus-visible {
 .pathway-actions button {
   width: auto;
   min-width: 140px;
+}
+
+.pathway-actions a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0.6rem 0.8rem;
 }
 
 @media (max-width: 760px) {

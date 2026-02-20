@@ -7,9 +7,9 @@ on:
       - main
 
 jobs:
-  smoke:
+  unit-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 6
 
     steps:
       - name: Checkout
@@ -70,15 +70,6 @@ jobs:
         run: |
           python -m compileall -q apps packages tests
 
-      - name: Golden gate (fail fast)
-        run: |
-          python -m unittest -f \
-            tests/golden/test_golden_runner.py \
-            tests/golden/test_phase_a_scenarios.py \
-            tests/golden/test_full_suite_scenarios.py \
-            tests/golden/test_golden_update_script.py \
-            tests/golden/test_legacy_pathway_units_golden.py
-
       - name: Unit tests
         run: |
           python -m unittest \
@@ -92,13 +83,9 @@ jobs:
             tests/api/test_generate_endpoint.py \
             tests/web/test_ui_smoke.py
 
-      - name: Reliability SLO check
+      - name: Stdlib E2E request smoke
         run: |
-          scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
-
-      - name: E2E request smoke
-        run: |
-          python -m apps.api.server > /tmp/api.log 2>&1 &
+          python -m apps.api.server > /tmp/api-stdlib.log 2>&1 &
           API_PID=$!
           trap "kill $API_PID" EXIT
           sleep 1
@@ -119,3 +106,94 @@ jobs:
           assert isinstance(data.get("warnings"), list)
           print("E2E smoke response OK")
           PY
+
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Golden suites gate
+        run: |
+          scripts/golden --suite phase_a
+          scripts/golden --suite full
+
+      - name: Determinism gate
+        run: |
+          scripts/determinism --suite full --repeat 10
+
+      - name: Reliability gate
+        run: |
+          scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
+
+      - name: Perf gate
+        run: |
+          scripts/perf --suite phase_a --repeat 3 --warmup 1 --threshold-seconds 2.0
+
+  fastapi-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install fastapi uvicorn
+
+      - name: Start FastAPI backend and hit smoke routes
+        run: |
+          uvicorn apps.backend.main:app --host 127.0.0.1 --port 8100 > /tmp/api-fastapi.log 2>&1 &
+          API_PID=$!
+          trap "kill $API_PID" EXIT
+          sleep 2
+
+          curl -fsS http://127.0.0.1:8100/v1/health > /tmp/fastapi-health.json
+          curl -fsS http://127.0.0.1:8100/v1/metadata/ucs > /tmp/fastapi-ucs.json
+
+          python - <<'PY'
+          import json
+
+          with open("/tmp/fastapi-health.json", "r", encoding="utf-8") as f:
+              health = json.load(f)
+          with open("/tmp/fastapi-ucs.json", "r", encoding="utf-8") as f:
+              ucs = json.load(f)
+
+          assert health.get("version") == "v1"
+          assert health.get("status") in {"ok", "degraded"}
+          assert ucs.get("version") == "v1"
+          assert isinstance(ucs.get("data"), list)
+          print("FastAPI smoke routes OK")
+          PY
+
+  parity-placeholder:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs:
+      - unit-lint
+      - gates
+      - fastapi-smoke
+
+    steps:
+      - name: P8-7 parity gate placeholder
+        run: |
+          echo "Parity heavy suite (P8-7) not wired yet."
+          echo "CI plumbing is active via this placeholder job."

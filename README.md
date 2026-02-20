@@ -115,6 +115,24 @@ Reliability check:
 scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 ```
 
+Golden/determinism/perf gates:
+
+```bash
+scripts/golden --suite phase_a
+scripts/golden --suite full
+scripts/determinism --suite full --repeat 10
+scripts/perf --suite phase_a --repeat 3 --warmup 1 --threshold-seconds 2.0
+```
+
+FastAPI smoke (parallel stack):
+
+```bash
+python3 -m pip install fastapi uvicorn
+uvicorn apps.backend.main:app --host 127.0.0.1 --port 8100
+curl -fsS http://127.0.0.1:8100/v1/health
+curl -fsS http://127.0.0.1:8100/v1/metadata/ucs
+```
+
 ## Product and Engineering Docs
 
 - `docs/PRD.md`
@@ -129,6 +147,7 @@ scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 - `docs/FALLBACKS.md`
 - `docs/MIGRATION_READINESS.md`
 - `docs/DEV_SETUP.md`
+- `docs/FRONTEND_A11Y_CHECKLIST.md`
 
 ## Legacy Notice
 

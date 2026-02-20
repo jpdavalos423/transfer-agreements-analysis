@@ -76,13 +76,16 @@ export function PathwayPage() {
 
   return (
     <main className="container">
+      <a className="skip-link" href="#pathway-content-anchor">
+        Skip to pathway content
+      </a>
       <h1>Your Transfer Pathway</h1>
       <p className="subtle">
         <Link to="/">Back to setup form</Link>
       </p>
 
       {uiState === "idle" ? (
-        <section className="panel" aria-live="polite">
+        <section className="panel" aria-live="polite" role="status">
           <h2>No pathway request found</h2>
           <p>Submit the planner form first to generate your pathway.</p>
           <p>
@@ -92,14 +95,14 @@ export function PathwayPage() {
       ) : null}
 
       {uiState === "loading" ? (
-        <section className="panel" aria-live="polite">
+        <section className="panel" aria-live="polite" role="status" aria-busy="true">
           <h2>Generating pathway...</h2>
           <p>Please wait while we load your pathway.</p>
         </section>
       ) : null}
 
       {uiState === "error" && error ? (
-        <section className="panel panel-error" aria-live="polite">
+        <section className="panel panel-error" aria-live="assertive" role="alert">
           <h2>Request Error</h2>
           <p>
             {error.code}: {error.message}
@@ -123,7 +126,7 @@ export function PathwayPage() {
       ) : null}
 
       {uiState === "success" && response ? (
-        <div className="results-layout">
+        <div id="pathway-content-anchor" className="results-layout">
           <StatusPanel response={response} />
           <section className="panel" aria-live="polite">
             <h2>Pathway Results</h2>

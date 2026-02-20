@@ -126,11 +126,14 @@ export function SetupPage() {
 
   return (
     <main className="container">
+      <a className="skip-link" href="#planner-setup-form">
+        Skip to planner setup form
+      </a>
       <h1>Transfer Pathway Planner</h1>
       <p className="subtle">React + Vite parallel app (migration path)</p>
 
       {metadataError ? (
-        <section className="panel panel-error" aria-live="polite">
+        <section className="panel panel-error" aria-live="assertive" role="alert">
           <h2>Setup Error</h2>
           <p>{metadataError}</p>
           <p className="subtle">
@@ -139,7 +142,20 @@ export function SetupPage() {
         </section>
       ) : null}
 
-      <form className="panel" onSubmit={onSubmit} noValidate>
+      <form
+        id="planner-setup-form"
+        className="panel"
+        onSubmit={onSubmit}
+        noValidate
+        aria-busy={isSubmitting}
+        aria-describedby={
+          validationErrors.length > 0
+            ? "setup-validation-errors"
+            : requestError
+              ? "setup-request-error"
+              : undefined
+        }
+      >
         <div className="field">
           <label htmlFor="college_id">College</label>
           <select
@@ -148,6 +164,7 @@ export function SetupPage() {
             value={formState.college_id}
             onChange={(event) => onCollegeChange(event.currentTarget.value)}
             disabled={isMetadataLoading || isSubmitting}
+            aria-invalid={validationErrors.some((error) => error.field === "college_id")}
             required
           >
             <option value="">{isMetadataLoading ? "Loading colleges..." : "Select a college..."}</option>
@@ -171,6 +188,7 @@ export function SetupPage() {
             size={Math.max(3, Math.min(8, ucs.length || 3))}
             required
             aria-describedby="target-ucs-help"
+            aria-invalid={validationErrors.some((error) => error.field === "target_ucs")}
           >
             {ucs.map((uc) => (
               <option key={uc.id} value={uc.id}>
@@ -189,6 +207,7 @@ export function SetupPage() {
             value={formState.ge_pattern}
             onChange={(event) => onGePatternChange(event.currentTarget.value)}
             disabled={isSubmitting}
+            aria-invalid={validationErrors.some((error) => error.field === "ge_pattern")}
             required
           >
             <option value="IGETC">IGETC</option>
@@ -215,7 +234,7 @@ export function SetupPage() {
       </form>
 
       {validationErrors.length > 0 ? (
-        <section className="panel panel-error" aria-live="polite">
+        <section id="setup-validation-errors" className="panel panel-error" aria-live="assertive" role="alert">
           <h2>Form Validation</h2>
           <ul className="status-list">
             {validationErrors.map((error, index) => (
@@ -226,7 +245,7 @@ export function SetupPage() {
       ) : null}
 
       {requestError ? (
-        <section className="panel panel-error" aria-live="polite">
+        <section id="setup-request-error" className="panel panel-error" aria-live="assertive" role="alert">
           <h2>Request Error</h2>
           <p>{requestError}</p>
         </section>

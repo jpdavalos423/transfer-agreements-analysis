@@ -44,6 +44,14 @@ cd apps/frontend
 VITE_API_BASE_URL=http://127.0.0.1:9000 npm run dev
 ```
 
+## Verification
+
+```bash
+cd apps/frontend
+npm run typecheck
+npm run a11y:check
+```
+
 ## Flow Implemented
 
 - Setup workflow (`/`): college + UC targets + GE pattern + completed courses
