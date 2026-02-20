@@ -18,6 +18,7 @@ This repository is now application-first (API + web + runtime data pipeline). Pr
 |---|---|
 | `apps/api/` | Backend API service (`/v1/pathways/generate`, metadata, health, metrics) |
 | `apps/web/` | Student-facing frontend |
+| `apps/frontend/` | Parallel React + Vite frontend (Phase 8 migration track) |
 | `packages/planner_core/` | Core planning logic |
 | `packages/data_adapter/` | CSV parser/validation/normalization layer |
 | `packages/shared_types/` | Shared contracts and schemas |
@@ -44,9 +45,18 @@ Start web app (second terminal):
 python3 -m apps.web.server
 ```
 
+Start React + Vite app (optional parallel frontend):
+
+```bash
+cd apps/frontend
+npm install
+npm run dev
+```
+
 Open:
 
-- `http://127.0.0.1:5173`
+- Existing web: `http://127.0.0.1:5173`
+- React + Vite web: `http://127.0.0.1:5174` (or the port Vite prints)
 
 Configurable environment variables (optional):
 

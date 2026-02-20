@@ -215,7 +215,7 @@ Phase 7 baseline adds framework tooling without cutover:
    - `uvicorn[standard]`
    - `ruff`
    - `mypy`
-2. JS migration scaffold in `apps/web_react/package.json`:
+2. JS migration scaffold in `apps/frontend/package.json`:
    - `react`
    - `react-dom`
    - `vite`

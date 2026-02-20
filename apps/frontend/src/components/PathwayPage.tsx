@@ -1,0 +1,136 @@
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "react-router-dom";
+
+import { submitGeneratePathway } from "../api/client";
+import { ApiRequestError, GeneratePathwayRequest, GeneratePathwayResponse } from "../types";
+import { loadPathwayRequest } from "../utils/pathwayRequestStorage";
+import { ResultsView } from "./ResultsView";
+import { StatusPanel } from "./StatusPanel";
+
+type PathwayUiState = "idle" | "loading" | "success" | "error";
+
+function normalizeError(error: unknown): ApiRequestError {
+  if (error instanceof ApiRequestError) {
+    return error;
+  }
+  return new ApiRequestError({
+    code: "REQUEST_FAILED",
+    message: "Unable to complete request. Please try again.",
+    details: [],
+  });
+}
+
+export function PathwayPage() {
+  const [uiState, setUiState] = useState<PathwayUiState>("idle");
+  const [payload, setPayload] = useState<GeneratePathwayRequest | null>(null);
+  const [response, setResponse] = useState<GeneratePathwayResponse | null>(null);
+  const [error, setError] = useState<ApiRequestError | null>(null);
+  const inFlightRef = useRef(false);
+
+  const hasPayload = payload !== null;
+
+  const runRequest = useCallback(async (requestPayload: GeneratePathwayRequest) => {
+    if (inFlightRef.current) {
+      return;
+    }
+
+    inFlightRef.current = true;
+    setUiState("loading");
+    setError(null);
+    setResponse(null);
+
+    try {
+      const apiResponse = await submitGeneratePathway(requestPayload);
+      setResponse(apiResponse);
+      setUiState("success");
+    } catch (err) {
+      setError(normalizeError(err));
+      setUiState("error");
+    } finally {
+      inFlightRef.current = false;
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedPayload = loadPathwayRequest();
+    if (!storedPayload) {
+      setUiState("idle");
+      return;
+    }
+
+    setPayload(storedPayload);
+    void runRequest(storedPayload);
+  }, [runRequest]);
+
+  const canRetry = useMemo(
+    () => hasPayload && (uiState === "idle" || uiState === "error"),
+    [hasPayload, uiState],
+  );
+
+  async function handleRetry() {
+    if (!payload) {
+      return;
+    }
+    await runRequest(payload);
+  }
+
+  return (
+    <main className="container">
+      <h1>Your Transfer Pathway</h1>
+      <p className="subtle">
+        <Link to="/">Back to setup form</Link>
+      </p>
+
+      {uiState === "idle" ? (
+        <section className="panel" aria-live="polite">
+          <h2>No pathway request found</h2>
+          <p>Submit the planner form first to generate your pathway.</p>
+          <p>
+            <Link to="/">Go to setup form</Link>
+          </p>
+        </section>
+      ) : null}
+
+      {uiState === "loading" ? (
+        <section className="panel" aria-live="polite">
+          <h2>Generating pathway...</h2>
+          <p>Please wait while we load your pathway.</p>
+        </section>
+      ) : null}
+
+      {uiState === "error" && error ? (
+        <section className="panel panel-error" aria-live="polite">
+          <h2>Request Error</h2>
+          <p>
+            {error.code}: {error.message}
+          </p>
+          {error.details.length > 0 ? (
+            <ul className="status-list">
+              {error.details.map((detail, index) => (
+                <li key={`${detail.field}-${index}`}>
+                  {detail.field}: {detail.message}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <div className="pathway-actions">
+            <button type="button" onClick={() => void handleRetry()} disabled={!canRetry}>
+              Retry
+            </button>
+            <Link to="/">Back to form</Link>
+          </div>
+        </section>
+      ) : null}
+
+      {uiState === "success" && response ? (
+        <div className="results-layout">
+          <StatusPanel response={response} />
+          <section className="panel" aria-live="polite">
+            <h2>Pathway Results</h2>
+            <ResultsView response={response} />
+          </section>
+        </div>
+      ) : null}
+    </main>
+  );
+}
