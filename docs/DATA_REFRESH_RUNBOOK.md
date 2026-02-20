@@ -90,9 +90,11 @@ Run data adapter tests:
 python3 -m unittest discover -s tests/data_adapter -p 'test_*.py'
 ```
 
-Run API/web regression smoke:
+Run API/frontend regression smoke:
 ```bash
-python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+python3 -m unittest tests/api/test_generate_endpoint.py
+npm --prefix apps/frontend run test:client
+npm --prefix apps/frontend run test:ui
 ```
 
 Run CI-equivalent quick checks:
@@ -191,9 +193,11 @@ Data adapter tests:
 python3 -m unittest discover -s tests/data_adapter -p 'test_*.py'
 ```
 
-API/web smoke:
+API/frontend smoke:
 ```bash
-python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+python3 -m unittest tests/api/test_generate_endpoint.py
+npm --prefix apps/frontend run test:client
+npm --prefix apps/frontend run test:ui
 ```
 
 CI-style syntax check:

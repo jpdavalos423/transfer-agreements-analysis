@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { fetchColleges, fetchUcs } from "../api/client";
+import { getColleges, getUcs } from "../api/client";
 import { MetadataItem } from "../types";
 import {
   SetupFormState,
@@ -42,7 +42,7 @@ export function SetupPage() {
       setIsMetadataLoading(true);
       setMetadataError("");
       try {
-        const [collegePayload, ucPayload] = await Promise.all([fetchColleges(), fetchUcs()]);
+        const [collegePayload, ucPayload] = await Promise.all([getColleges(), getUcs()]);
         if (!active) {
           return;
         }
@@ -130,7 +130,7 @@ export function SetupPage() {
         Skip to planner setup form
       </a>
       <h1>Transfer Pathway Planner</h1>
-      <p className="subtle">React + Vite parallel app (migration path)</p>
+      <p className="subtle">For California CC to UC transfer planning</p>
 
       {metadataError ? (
         <section className="panel panel-error" aria-live="assertive" role="alert">

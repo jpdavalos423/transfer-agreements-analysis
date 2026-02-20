@@ -1,12 +1,23 @@
+import type {
+  HealthResponseV1,
+  MetadataResponseV1,
+} from "@shared_types/v1";
+
 import {
   ApiErrorEnvelope,
   ApiRequestError,
   GeneratePathwayRequest,
   GeneratePathwayResponse,
-  MetadataResponse,
 } from "../types";
+import { mapApiErrorToUiStateRuntime } from "./error_mapping.js";
 
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:8000";
+
+export interface UiApiErrorState {
+  code: string;
+  message: string;
+  details: Array<{ field: string; message: string }>;
+}
 
 function normalizeBaseUrl(value: string): string {
   return value.endsWith("/") ? value.slice(0, -1) : value;
@@ -60,6 +71,17 @@ function toApiRequestError(payload: unknown, fallback: { status: number; path: s
   });
 }
 
+export function mapApiErrorToUiState(error: unknown): UiApiErrorState {
+  if (error instanceof ApiRequestError) {
+    return mapApiErrorToUiStateRuntime({
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    });
+  }
+  return mapApiErrorToUiStateRuntime(error);
+}
+
 async function requestJson<T>(path: string, options: RequestInit): Promise<T> {
   const response = await fetch(`${getApiBaseUrl()}${path}`, options);
   let payload: unknown = null;
@@ -77,15 +99,23 @@ async function requestJson<T>(path: string, options: RequestInit): Promise<T> {
   return payload as T;
 }
 
-export async function fetchColleges(): Promise<MetadataResponse> {
-  return requestJson<MetadataResponse>("/v1/metadata/colleges", { method: "GET" });
+export async function getColleges(): Promise<MetadataResponseV1> {
+  return requestJson<MetadataResponseV1>("/v1/metadata/colleges", { method: "GET" });
 }
 
-export async function fetchUcs(): Promise<MetadataResponse> {
-  return requestJson<MetadataResponse>("/v1/metadata/ucs", { method: "GET" });
+export async function getUcs(): Promise<MetadataResponseV1> {
+  return requestJson<MetadataResponseV1>("/v1/metadata/ucs", { method: "GET" });
 }
 
-export async function submitGeneratePathway(
+export async function getDistricts(): Promise<MetadataResponseV1> {
+  return requestJson<MetadataResponseV1>("/v1/metadata/districts", { method: "GET" });
+}
+
+export async function getHealth(): Promise<HealthResponseV1> {
+  return requestJson<HealthResponseV1>("/v1/health", { method: "GET" });
+}
+
+export async function generatePathway(
   payload: GeneratePathwayRequest,
 ): Promise<GeneratePathwayResponse> {
   return requestJson<GeneratePathwayResponse>("/v1/pathways/generate", {

@@ -2,7 +2,7 @@
 
 Transfer Pathway Planner is a student-facing web application that generates community-college-to-UC Computer Science transfer pathways.
 
-This repository is now application-first (API + web + runtime data pipeline). Prior research artifacts are preserved under `legacy/`.
+This repository is now application-first (API + React frontend + runtime data pipeline). Prior research artifacts are preserved under `legacy/`.
 
 ## Current Scope
 
@@ -17,8 +17,7 @@ This repository is now application-first (API + web + runtime data pipeline). Pr
 | Path | Purpose |
 |---|---|
 | `apps/api/` | Backend API service (`/v1/pathways/generate`, metadata, health, metrics) |
-| `apps/web/` | Student-facing frontend |
-| `apps/frontend/` | Parallel React + Vite frontend (Phase 8 migration track) |
+| `apps/frontend/` | Student-facing React + Vite frontend |
 | `packages/planner_core/` | Core planning logic |
 | `packages/data_adapter/` | CSV parser/validation/normalization layer |
 | `packages/shared_types/` | Shared contracts and schemas |
@@ -31,7 +30,7 @@ This repository is now application-first (API + web + runtime data pipeline). Pr
 
 Requirements:
 - Python 3.8+
-- Node.js (for web logic tests)
+- Node.js (for frontend)
 
 Start API:
 
@@ -39,38 +38,37 @@ Start API:
 python3 -m apps.api.server
 ```
 
-Start web app (second terminal):
+Start frontend app (second terminal):
 
 ```bash
-python3 -m apps.web.server
+npm --prefix apps/frontend install
+npm --prefix apps/frontend run dev
 ```
 
-Start React + Vite app (optional parallel frontend):
+Or launch frontend + backend with one command:
 
 ```bash
-cd apps/frontend
-npm install
-npm run dev
+TPP_BACKEND_STACK=fastapi scripts/run_stack
+TPP_BACKEND_STACK=stdlib scripts/run_stack
 ```
 
 Open:
 
-- Existing web: `http://127.0.0.1:5173`
-- React + Vite web: `http://127.0.0.1:5174` (or the port Vite prints)
+- Frontend: `http://127.0.0.1:5174` (or the port Vite prints)
 
 Configurable environment variables (optional):
 
 1. `TPP_API_HOST` (default: `127.0.0.1`)
 2. `TPP_API_PORT` (default: `8000`)
 3. `TPP_API_CORS_ENABLED` (default: `true`)
-4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173`)
+4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5174,http://localhost:5174`)
 5. `TPP_API_LOG_LEVEL` (default: `SILENT`)
-6. `TPP_WEB_API_BASE_URL` (default: `http://127.0.0.1:8000`)
+6. `VITE_API_BASE_URL` (default: auto-set by `scripts/run_stack`)
 
-Example running web against a non-default API base URL:
+Example running frontend against a non-default API base URL:
 
 ```bash
-TPP_WEB_API_BASE_URL=http://127.0.0.1:9000 python3 -m apps.web.server
+VITE_API_BASE_URL=http://127.0.0.1:9000 npm --prefix apps/frontend run dev
 ```
 
 ## Data Runtime Refresh
@@ -97,16 +95,17 @@ Data adapter tests:
 python3 -m unittest discover -s tests/data_adapter -p 'test_*.py'
 ```
 
-API + web smoke:
+API smoke:
 
 ```bash
-python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+python3 -m unittest tests/api/test_generate_endpoint.py
 ```
 
-Web logic tests:
+Frontend tests:
 
 ```bash
-node --test tests/web/test_planner_form_logic.mjs tests/web/test_results_view_logic.mjs tests/web/test_status_panel_logic.mjs
+npm --prefix apps/frontend run test:client
+npm --prefix apps/frontend run test:ui
 ```
 
 Reliability check:
@@ -131,6 +130,20 @@ python3 -m pip install fastapi uvicorn
 uvicorn apps.backend.main:app --host 127.0.0.1 --port 8100
 curl -fsS http://127.0.0.1:8100/v1/health
 curl -fsS http://127.0.0.1:8100/v1/metadata/ucs
+```
+
+Hard old-vs-new parity gate:
+
+```bash
+python3 -m pip install fastapi uvicorn
+scripts/parity_gate --suite phase_a
+```
+
+Metrics observability parity check:
+
+```bash
+python3 -m pip install fastapi uvicorn
+python3 -m unittest tests/api_fastapi/test_metrics_observability_parity.py
 ```
 
 ## Product and Engineering Docs

@@ -22,9 +22,17 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: apps/frontend/package-lock.json
+
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
+          npm --prefix apps/frontend ci
 
       - name: Enforce golden update policy (PR only)
         if: github.event_name == 'pull_request'
@@ -70,6 +78,12 @@ jobs:
         run: |
           python -m compileall -q apps packages tests
 
+      - name: Frontend type-check and client unit test
+        run: |
+          npm --prefix apps/frontend run typecheck
+          npm --prefix apps/frontend run test:client
+          npm --prefix apps/frontend run test:ui
+
       - name: Unit tests
         run: |
           python -m unittest \
@@ -81,7 +95,7 @@ jobs:
             tests/planner_core/test_runtime_loader_e2e.py \
             tests/planner_core/test_locked_semantics.py \
             tests/api/test_generate_endpoint.py \
-            tests/web/test_ui_smoke.py
+            tests/api_fastapi/test_parity_comparator.py
 
       - name: Stdlib E2E request smoke
         run: |
@@ -184,16 +198,29 @@ jobs:
           print("FastAPI smoke routes OK")
           PY
 
-  parity-placeholder:
+  parity-gate:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 10
     needs:
       - unit-lint
       - gates
       - fastapi-smoke
 
     steps:
-      - name: P8-7 parity gate placeholder
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
         run: |
-          echo "Parity heavy suite (P8-7) not wired yet."
-          echo "CI plumbing is active via this placeholder job."
+          python -m pip install --upgrade pip
+          python -m pip install fastapi uvicorn
+
+      - name: Run hard parity gate
+        run: |
+          python -m unittest tests/api_fastapi/test_metrics_observability_parity.py
+          scripts/parity_gate --suite phase_a

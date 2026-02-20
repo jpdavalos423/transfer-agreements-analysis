@@ -1,79 +1,31 @@
-export type GePattern = "IGETC" | "7CoursePattern";
+import type {
+  ApiErrorEnvelopeV1,
+  ApiFieldErrorV1,
+  GeneratePathwayRequestV1,
+  GeneratePathwayResponseV1,
+  GePatternV1,
+  MetadataItemV1,
+  MetadataResponseV1,
+  PlanCourseV1,
+  PlanTermV1,
+  WarningPayloadV1,
+} from "@shared_types/v1";
 
-export interface MetadataItem {
-  id: string;
-  name: string;
-}
+export type GePattern = GePatternV1;
+export type MetadataItem = MetadataItemV1;
+export type MetadataResponse = MetadataResponseV1;
+export type GeneratePathwayRequest = GeneratePathwayRequestV1;
+export type PlanCourse = PlanCourseV1;
+export type PlanTerm = PlanTermV1;
+export type WarningItem = WarningPayloadV1;
+export type GeneratePathwayResponse = GeneratePathwayResponseV1;
 
-export interface MetadataResponse {
-  version: string;
-  data: MetadataItem[];
-}
-
-export interface GeneratePathwayRequest {
-  college_id: string;
-  target_ucs: string[];
-  ge_pattern: GePattern;
-  completed_courses: string[];
-}
-
-export interface PlanCourse {
-  courseCode: string;
-  units: number | string;
-}
-
-export interface PlanTerm {
-  term: string;
-  courses: PlanCourse[];
-}
-
-export interface WarningDetail {
-  field: string;
-  message: string;
-}
-
-export interface WarningItem {
-  severity?: string;
-  message?: string;
-  details?: WarningDetail[];
-  source?: string;
-}
-
-export interface GeneratePathwayResponse {
-  version: string;
-  request_id?: string;
-  plan: PlanTerm[];
-  warnings: WarningItem[];
-  unmet_requirements?: unknown[];
-  incomplete?: boolean;
-  completion_status?: string;
-  completion_flags?: {
-    complete?: boolean;
-    is_complete?: boolean;
-  };
-  meta?: {
-    incomplete?: boolean;
-    [key: string]: unknown;
-  };
-  [key: string]: unknown;
-}
-
-export interface ApiFieldError {
-  field: string;
-  message: string;
-}
-
-export interface ApiErrorEnvelope {
-  version?: string;
-  request_id?: string;
-  error?: {
-    code?: string;
-    message?: string;
-    status?: number;
-    path?: string;
+export type ApiFieldError = ApiFieldErrorV1;
+export type ApiErrorEnvelope = Partial<ApiErrorEnvelopeV1> & {
+  error?: Partial<ApiErrorEnvelopeV1["error"]> & {
     details?: ApiFieldError[];
   };
-}
+};
 
 export class ApiRequestError extends Error {
   code: string;

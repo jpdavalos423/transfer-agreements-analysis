@@ -3,10 +3,14 @@
     "target": "ES2020",
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@shared_types/v1": ["../../packages/shared_types/v1/types.ts"]
+    },
     "strict": true,
     "jsx": "react-jsx",
     "noEmit": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "vitest/globals", "node"]
   },
-  "include": ["src"]
+  "include": ["src", "../../packages/shared_types/v1/types.ts"]
 }

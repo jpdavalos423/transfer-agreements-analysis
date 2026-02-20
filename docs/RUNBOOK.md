@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This runbook is for operational troubleshooting and rollback for the MVP API/web stack.
+This runbook is for operational troubleshooting and rollback for the MVP API/frontend stack.
 
 ## 2. Common Issues
 
@@ -137,7 +137,7 @@ curl -s http://127.0.0.1:8000/v1/health
 
 ## 3.2 Application rollback
 
-Use this when a code change regressed API/web behavior.
+Use this when a code change regressed API/frontend behavior.
 
 1. Revert offending commit(s):
 
@@ -148,7 +148,9 @@ git revert <BAD_COMMIT_SHA>
 2. Run verification suite:
 
 ```bash
-python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+python3 -m unittest tests/api/test_generate_endpoint.py
+npm --prefix apps/frontend run test:client
+npm --prefix apps/frontend run test:ui
 scripts/golden --suite phase_a
 scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 ```
@@ -164,4 +166,3 @@ Capture in PR/issue:
 3. Runtime manifest version involved
 4. Recovery action taken (rebuild/rollback/revert)
 5. Follow-up ticket(s)
-

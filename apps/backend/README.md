@@ -14,6 +14,12 @@ Or:
 python3 -m apps.backend.main
 ```
 
+Production-like profile:
+
+```bash
+scripts/run_backend_prod
+```
+
 ## Route parity scaffold
 
 Implemented `/v1` routes:

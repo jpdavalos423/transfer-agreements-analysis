@@ -1,30 +1,29 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { submitGeneratePathway } from "../api/client";
-import { ApiRequestError, GeneratePathwayRequest, GeneratePathwayResponse } from "../types";
+import { generatePathway, mapApiErrorToUiState } from "../api/client";
+import { GeneratePathwayRequest, GeneratePathwayResponse } from "../types";
 import { loadPathwayRequest } from "../utils/pathwayRequestStorage";
 import { ResultsView } from "./ResultsView";
 import { StatusPanel } from "./StatusPanel";
 
 type PathwayUiState = "idle" | "loading" | "success" | "error";
 
-function normalizeError(error: unknown): ApiRequestError {
-  if (error instanceof ApiRequestError) {
-    return error;
-  }
-  return new ApiRequestError({
-    code: "REQUEST_FAILED",
-    message: "Unable to complete request. Please try again.",
-    details: [],
-  });
-}
+type PathwayPageProps = {
+  loadStoredRequest?: () => GeneratePathwayRequest | null;
+  requestPathway?: (
+    payload: GeneratePathwayRequest,
+  ) => Promise<GeneratePathwayResponse>;
+};
 
-export function PathwayPage() {
+export function PathwayPage({
+  loadStoredRequest = loadPathwayRequest,
+  requestPathway = generatePathway,
+}: PathwayPageProps) {
   const [uiState, setUiState] = useState<PathwayUiState>("idle");
   const [payload, setPayload] = useState<GeneratePathwayRequest | null>(null);
   const [response, setResponse] = useState<GeneratePathwayResponse | null>(null);
-  const [error, setError] = useState<ApiRequestError | null>(null);
+  const [error, setError] = useState<ReturnType<typeof mapApiErrorToUiState> | null>(null);
   const inFlightRef = useRef(false);
 
   const hasPayload = payload !== null;
@@ -40,19 +39,19 @@ export function PathwayPage() {
     setResponse(null);
 
     try {
-      const apiResponse = await submitGeneratePathway(requestPayload);
+      const apiResponse = await requestPathway(requestPayload);
       setResponse(apiResponse);
       setUiState("success");
     } catch (err) {
-      setError(normalizeError(err));
+      setError(mapApiErrorToUiState(err));
       setUiState("error");
     } finally {
       inFlightRef.current = false;
     }
-  }, []);
+  }, [requestPathway]);
 
   useEffect(() => {
-    const storedPayload = loadPathwayRequest();
+    const storedPayload = loadStoredRequest();
     if (!storedPayload) {
       setUiState("idle");
       return;
@@ -60,7 +59,7 @@ export function PathwayPage() {
 
     setPayload(storedPayload);
     void runRequest(storedPayload);
-  }, [runRequest]);
+  }, [loadStoredRequest, runRequest]);
 
   const canRetry = useMemo(
     () => hasPayload && (uiState === "idle" || uiState === "error"),

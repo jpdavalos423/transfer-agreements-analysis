@@ -1,6 +1,6 @@
 # apps/frontend
 
-React + Vite parallel frontend for Phase 8 migration. This runs alongside the existing source-of-truth frontend in `apps/web`.
+React + Vite frontend for Transfer Pathway Planner.
 
 ## Run Commands
 
@@ -10,13 +10,7 @@ Start API (terminal 1):
 python3 -m apps.api.server
 ```
 
-Run existing web app (terminal 2):
-
-```bash
-python3 -m apps.web.server
-```
-
-Run React + Vite app (terminal 3):
+Run React + Vite app (terminal 2):
 
 ```bash
 cd apps/frontend
@@ -50,7 +44,13 @@ VITE_API_BASE_URL=http://127.0.0.1:9000 npm run dev
 cd apps/frontend
 npm run typecheck
 npm run a11y:check
+npm run test:client
+npm run test:ui
 ```
+
+Shared contract types are imported from:
+
+- `packages/shared_types/v1/types.ts`
 
 ## Flow Implemented
 

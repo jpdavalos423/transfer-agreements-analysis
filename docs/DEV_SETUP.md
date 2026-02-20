@@ -5,7 +5,7 @@ This document defines the dependency/tooling baseline added for Phase 7 ticket P
 The current app remains:
 
 1. API: `apps/api` (stdlib server)
-2. Web: `apps/web` (vanilla static UI)
+2. Frontend: `apps/frontend` (React + Vite)
 
 The new framework scaffolds are additive only:
 
@@ -70,7 +70,7 @@ npm run preview
 npm run typecheck
 ```
 
-## 3. Existing App Still Runs (No Cutover)
+## 3. Runtime Commands
 
 Current API:
 
@@ -78,14 +78,15 @@ Current API:
 python3 -m apps.api.server
 ```
 
-Current web:
+Frontend:
 
 ```bash
-python3 -m apps.web.server
+cd apps/frontend
+npm run dev
 ```
 
 Open:
 
 ```text
-http://127.0.0.1:5173
+http://127.0.0.1:5174
 ```
