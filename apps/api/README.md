@@ -15,7 +15,7 @@ Optional environment variables:
 1. `TPP_API_HOST` (default: `127.0.0.1`)
 2. `TPP_API_PORT` (default: `8000`)
 3. `TPP_API_CORS_ENABLED` (default: `true`)
-4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173`)
+4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173,http://127.0.0.1:5174,http://localhost:5174`)
 5. `TPP_API_LOG_LEVEL` (default: `SILENT`)
 
 Endpoints:

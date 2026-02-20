@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import sys
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from tests.api_fastapi.parity_harness import run_parity_gate  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Run hard old-vs-new API contract parity gate. "
+            "Allowed nondiff fields: request_id, trace_id."
+        )
+    )
+    parser.add_argument(
+        "--suite",
+        choices=("phase_a", "full"),
+        default="phase_a",
+        help="Scenario suite to compare across stdlib and FastAPI stacks.",
+    )
+    parser.add_argument(
+        "--scenarios-dir",
+        default=str(REPO_ROOT / "tests" / "golden" / "scenarios"),
+        help="Directory containing golden scenario definitions.",
+    )
+    args = parser.parse_args()
+
+    summary = run_parity_gate(suite=args.suite, scenarios_dir=args.scenarios_dir)
+    print(
+        "Parity gate passed: "
+        f"suite={summary.suite} "
+        f"scenarios={summary.scenario_count} "
+        f"metadata_calls={len(summary.metadata_paths)} "
+        f"total_compared_calls={summary.compared_calls}."
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

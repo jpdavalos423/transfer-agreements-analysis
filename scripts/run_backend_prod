@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Production runner for FastAPI backend.
+# Usage:
+#   scripts/run_backend_prod
+#   TPP_BACKEND_SERVER=gunicorn scripts/run_backend_prod
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+SERVER="${TPP_BACKEND_SERVER:-uvicorn}"                # uvicorn | gunicorn
+HOST="${TPP_BACKEND_HOST:-0.0.0.0}"
+PORT="${TPP_BACKEND_PORT:-8100}"
+
+CPU_COUNT="$(getconf _NPROCESSORS_ONLN 2>/dev/null || echo 2)"
+DEFAULT_WORKERS=$(( CPU_COUNT > 1 ? CPU_COUNT : 2 ))
+WORKERS="${TPP_BACKEND_WORKERS:-$DEFAULT_WORKERS}"
+
+KEEP_ALIVE="${TPP_BACKEND_KEEP_ALIVE_SECONDS:-5}"
+MAX_REQUESTS="${TPP_BACKEND_MAX_REQUESTS:-10000}"
+MAX_REQUESTS_JITTER="${TPP_BACKEND_MAX_REQUESTS_JITTER:-500}"
+
+# Gunicorn-specific timeouts (seconds)
+TIMEOUT="${TPP_BACKEND_TIMEOUT_SECONDS:-30}"
+GRACEFUL_TIMEOUT="${TPP_BACKEND_GRACEFUL_TIMEOUT_SECONDS:-30}"
+
+# Uvicorn-specific graceful shutdown timeout (seconds)
+UVICORN_GRACEFUL_SHUTDOWN="${TPP_BACKEND_UVICORN_GRACEFUL_SHUTDOWN_SECONDS:-30}"
+
+APP_IMPORT="apps.backend.main:app"
+
+if [[ "$SERVER" == "uvicorn" ]]; then
+  exec uvicorn "$APP_IMPORT" \
+    --host "$HOST" \
+    --port "$PORT" \
+    --workers "$WORKERS" \
+    --timeout-keep-alive "$KEEP_ALIVE" \
+    --limit-max-requests "$MAX_REQUESTS" \
+    --timeout-graceful-shutdown "$UVICORN_GRACEFUL_SHUTDOWN"
+elif [[ "$SERVER" == "gunicorn" ]]; then
+  if ! command -v gunicorn >/dev/null 2>&1; then
+    echo "gunicorn is not installed. Install with: python3 -m pip install gunicorn" >&2
+    exit 2
+  fi
+
+  exec gunicorn "$APP_IMPORT" \
+    --worker-class uvicorn.workers.UvicornWorker \
+    --bind "$HOST:$PORT" \
+    --workers "$WORKERS" \
+    --timeout "$TIMEOUT" \
+    --graceful-timeout "$GRACEFUL_TIMEOUT" \
+    --keep-alive "$KEEP_ALIVE" \
+    --max-requests "$MAX_REQUESTS" \
+    --max-requests-jitter "$MAX_REQUESTS_JITTER"
+else
+  echo "Unsupported TPP_BACKEND_SERVER='$SERVER' (expected: uvicorn|gunicorn)" >&2
+  exit 2
+fi

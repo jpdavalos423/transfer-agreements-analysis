@@ -25,7 +25,7 @@ This unified plan combines the existing delivery roadmap with new Phase 7 (Fixes
 ## 3. Target Architecture
 1. `apps/api/`:
    - Current stdlib API transport and handlers.
-2. `apps/web/`:
+2. `apps/frontend/`:
    - Current student-facing UI.
 3. `packages/planner_core/`:
    - Extracted planner domain logic, no CLI I/O.
@@ -184,7 +184,7 @@ Goal: migrate to framework stack with no contract drift and controlled cutover.
 Locked migration choices:
 1. Backend framework: FastAPI (parity-first).
 2. Frontend framework: React + Vite.
-3. Cutover strategy: parallel run then switch.
+3. Cutover strategy: keep old UI in parallel until parity gates pass, then switch default UI/traffic while keeping old backend stack behind a rollback flag.
 
 Tickets:
 1. P8-1 Stand up FastAPI app in parallel with route parity.
@@ -195,7 +195,10 @@ Tickets:
 3. P8-3 Stand up React + Vite app in parallel with setup/results/status parity.
 4. P8-4 Preserve accessibility/mobile baseline in React app.
 5. P8-5 Expand CI for dual-stack checks.
-6. P8-6 Cutover switch from stdlib stack to framework stack.
+6. P8-6 Cutover switch from stdlib stack to framework stack:
+   - Flip DEFAULT traffic/UI to framework stack.
+   - Keep old backend stack available behind a rollback flag.
+   - Do not delete old UI as part of cutover.
 7. P8-7 Add hard old-vs-new contract parity gate:
    - Same scenario requests
    - Semantic comparison on outputs
@@ -206,12 +209,26 @@ Tickets:
    - uvicorn/gunicorn worker/timeouts/readiness behavior.
 11. P8-11 React resilience:
    - Error boundary/loading boundary/network failure parity.
-12. P8-12 Dual-run rollback window and stdlib deprecation plan.
+12. P8-12 Dual-run rollback window and stdlib deprecation plan (merged into P8-13).
+13. P8-13 Retire old web app cleanup:
+   - Prerequisites:
+     - Goldens pass.
+     - Determinism suite passes.
+     - Perf/reliability gates pass.
+     - Manual QA passes.
+     - At least one release window (or a few days) with no regressions after default switch.
+   - Deliverables:
+     - Remove old UI app.
+     - Remove old web CI jobs/docs.
+     - Update README and run commands.
+     - Confirm parity gates remain green after removal.
 
 Exit criteria:
 1. Framework stack passes all active golden/NFR/contract tests.
 2. Parity checks are green for defined scenario sets.
 3. Rollback path is validated before stdlib retirement.
+4. Old UI remains in parallel until: goldens, determinism, perf/reliability, and manual QA all pass.
+5. At least one release window (or a few days) completes with no regressions before retiring old UI.
 
 ## 5. Golden Subset Test Plan
 1. Colleges: `de_anza`, `lassen`
@@ -249,8 +266,10 @@ Exit criteria:
    - `scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99`
 4. Performance:
    - `scripts/perf --suite phase_a --repeat 3 --warmup 1 --threshold-seconds 2.0`
-5. API/web regression:
-   - `python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py`
+5. API/frontend regression:
+   - `python3 -m unittest tests/api/test_generate_endpoint.py`
+   - `npm --prefix apps/frontend run test:client`
+   - `npm --prefix apps/frontend run test:ui`
 
 ## 9. Unified Definition of Done
 1. Student pathway generation works via web UI/API with stable contracts.

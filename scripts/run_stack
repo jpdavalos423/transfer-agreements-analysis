@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+
+
+class ManagedProcess:
+    def __init__(self, name: str, args: list[str], *, cwd: Path | None = None, env: dict[str, str] | None = None):
+        self.name = name
+        self.args = args
+        self.cwd = str(cwd) if cwd else None
+        self.env = env
+        self.proc: subprocess.Popen[str] | None = None
+
+    def start(self) -> None:
+        self.proc = subprocess.Popen(
+            self.args,
+            cwd=self.cwd,
+            env=self.env,
+            stdout=None,
+            stderr=None,
+            text=True,
+        )
+
+    def stop(self) -> None:
+        if not self.proc or self.proc.poll() is not None:
+            return
+        self.proc.terminate()
+        try:
+            self.proc.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            self.proc.kill()
+            self.proc.wait(timeout=2)
+
+
+def _build_stdlib_backend_process(base_env: dict[str, str]) -> ManagedProcess:
+    api_env = dict(base_env)
+    api_env.setdefault("TPP_API_HOST", "127.0.0.1")
+    api_env.setdefault("TPP_API_PORT", "8000")
+    return ManagedProcess("stdlib-api", [sys.executable, "-m", "apps.api.server"], cwd=REPO_ROOT, env=api_env)
+
+
+def _build_fastapi_backend_process(base_env: dict[str, str]) -> ManagedProcess:
+    backend_host = base_env.get("TPP_FASTAPI_HOST", base_env.get("TPP_BACKEND_HOST", "127.0.0.1"))
+    backend_port = base_env.get("TPP_FASTAPI_PORT", base_env.get("TPP_BACKEND_PORT", "8100"))
+    return ManagedProcess(
+        "fastapi-backend",
+        [
+            "uvicorn",
+            "apps.backend.main:app",
+            "--host",
+            backend_host,
+            "--port",
+            backend_port,
+        ],
+        cwd=REPO_ROOT,
+        env=base_env,
+    )
+
+
+def _build_frontend_process(base_env: dict[str, str], api_base_url: str) -> ManagedProcess:
+    frontend_host = base_env.get("TPP_FRONTEND_HOST", "127.0.0.1")
+    frontend_port = base_env.get("TPP_FRONTEND_PORT", "5174")
+
+    frontend_env = dict(base_env)
+    frontend_env.setdefault("VITE_API_BASE_URL", api_base_url)
+
+    return ManagedProcess(
+        "frontend",
+        [
+            "npm",
+            "run",
+            "dev",
+            "--",
+            "--host",
+            frontend_host,
+            "--port",
+            frontend_port,
+            "--strictPort",
+        ],
+        cwd=REPO_ROOT / "apps" / "frontend",
+        env=frontend_env,
+    )
+
+
+def main() -> int:
+    backend_mode = os.environ.get("TPP_BACKEND_STACK", "fastapi").strip().lower()
+    if backend_mode not in {"stdlib", "fastapi"}:
+        print("TPP_BACKEND_STACK must be 'stdlib' or 'fastapi'.", file=sys.stderr)
+        return 2
+
+    base_env = dict(os.environ)
+    frontend_host = base_env.get("TPP_FRONTEND_HOST", "127.0.0.1")
+    frontend_port = base_env.get("TPP_FRONTEND_PORT", "5174")
+
+    if backend_mode == "stdlib":
+        std_host = base_env.get("TPP_API_HOST", "127.0.0.1")
+        std_port = base_env.get("TPP_API_PORT", "8000")
+        backend = _build_stdlib_backend_process(base_env)
+        frontend = _build_frontend_process(base_env, api_base_url=f"http://{std_host}:{std_port}")
+        processes = [backend, frontend]
+        print("Starting frontend + stdlib backend (rollback mode)")
+        print(f"Backend: http://{std_host}:{std_port} | Frontend: http://{frontend_host}:{frontend_port}")
+    else:
+        fast_host = base_env.get("TPP_FASTAPI_HOST", base_env.get("TPP_BACKEND_HOST", "127.0.0.1"))
+        fast_port = base_env.get("TPP_FASTAPI_PORT", base_env.get("TPP_BACKEND_PORT", "8100"))
+        backend = _build_fastapi_backend_process(base_env)
+        frontend = _build_frontend_process(base_env, api_base_url=f"http://{fast_host}:{fast_port}")
+        processes = [backend, frontend]
+        print("Starting frontend + FastAPI backend (default)")
+        print(f"Backend: http://{fast_host}:{fast_port} | Frontend: http://{frontend_host}:{frontend_port}")
+
+    should_stop = False
+
+    def _handle_signal(signum, _frame):
+        nonlocal should_stop
+        should_stop = True
+        print(f"\nReceived signal {signum}; shutting down stack...")
+
+    signal.signal(signal.SIGINT, _handle_signal)
+    signal.signal(signal.SIGTERM, _handle_signal)
+
+    try:
+        for proc in processes:
+            print(f"Starting {proc.name}: {' '.join(proc.args)}")
+            proc.start()
+
+        while not should_stop:
+            for proc in processes:
+                if proc.proc and proc.proc.poll() is not None:
+                    print(f"Process exited unexpectedly: {proc.name} (code={proc.proc.returncode})")
+                    should_stop = True
+                    break
+            time.sleep(0.5)
+    finally:
+        for proc in reversed(processes):
+            proc.stop()
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

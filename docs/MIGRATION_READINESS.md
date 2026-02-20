@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-This checklist defines the minimum parity and release gates required to migrate the current stdlib stack (`apps/api`, `apps/web`) to a framework stack (FastAPI + React/Vite) without behavior drift.
+This checklist defines the minimum parity and release gates required to migrate backend traffic from stdlib API (`apps/api`) to FastAPI (`apps/backend`) while keeping React + Vite frontend (`apps/frontend`) stable.
 
 Use this document before, during, and immediately before cutover.
 
@@ -118,7 +118,9 @@ Run all gates on migration branch and again on release candidate commit.
 ## 4.1 Contract and regression gates
 
 ```bash
-python3 -m unittest tests/api/test_generate_endpoint.py tests/web/test_ui_smoke.py
+python3 -m unittest tests/api/test_generate_endpoint.py
+npm --prefix apps/frontend run test:client
+npm --prefix apps/frontend run test:ui
 ```
 
 ## 4.2 Golden parity
@@ -215,7 +217,7 @@ Phase 7 baseline adds framework tooling without cutover:
    - `uvicorn[standard]`
    - `ruff`
    - `mypy`
-2. JS migration scaffold in `apps/web_react/package.json`:
+2. JS migration scaffold in `apps/frontend/package.json`:
    - `react`
    - `react-dom`
    - `vite`
