@@ -48,6 +48,21 @@ Open:
 
 - `http://127.0.0.1:5173`
 
+Configurable environment variables (optional):
+
+1. `TPP_API_HOST` (default: `127.0.0.1`)
+2. `TPP_API_PORT` (default: `8000`)
+3. `TPP_API_CORS_ENABLED` (default: `true`)
+4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173`)
+5. `TPP_API_LOG_LEVEL` (default: `SILENT`)
+6. `TPP_WEB_API_BASE_URL` (default: `http://127.0.0.1:8000`)
+
+Example running web against a non-default API base URL:
+
+```bash
+TPP_WEB_API_BASE_URL=http://127.0.0.1:9000 python3 -m apps.web.server
+```
+
 ## Data Runtime Refresh
 
 Source-of-truth CSV inputs:
@@ -102,6 +117,8 @@ scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 - `docs/DEPLOYMENT.md`
 - `docs/RUNBOOK.md`
 - `docs/FALLBACKS.md`
+- `docs/MIGRATION_READINESS.md`
+- `docs/DEV_SETUP.md`
 
 ## Legacy Notice
 

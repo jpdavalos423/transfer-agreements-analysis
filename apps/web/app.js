@@ -1,15 +1,11 @@
+import { fetchColleges, fetchUcs } from "./api_client.js";
 import {
-  buildGeneratePayload,
-  extractApiError,
-  validateSetupInput,
-} from "./planner_form.js";
-import { renderResults } from "./results_view.js";
-import { renderStatusPanel } from "./status_panel.js";
-
-const API_BASE_URL = "http://127.0.0.1:8000";
-const GENERATE_URL = `${API_BASE_URL}/v1/pathways/generate`;
-const COLLEGES_URL = `${API_BASE_URL}/v1/metadata/colleges`;
-const UCS_URL = `${API_BASE_URL}/v1/metadata/ucs`;
+  PlannerUiStates,
+  isSubmitAllowed,
+  transitionPlannerState,
+} from "./planner_state.js";
+import { savePathwayRequest } from "./pathway_request_storage.js";
+import { processSetupSubmission } from "./setup_page.js";
 
 const form = document.getElementById("planner-form");
 const collegeSelect = document.getElementById("college_id");
@@ -23,18 +19,9 @@ const setupErrorsList = document.getElementById("setup-errors-list");
 const apiErrorPanel = document.getElementById("api-error-panel");
 const apiErrorHeadline = document.getElementById("api-error-headline");
 const apiErrorDetails = document.getElementById("api-error-details");
-const confidenceLabel = document.getElementById("confidence-label");
-const warningsList = document.getElementById("warnings-list");
-const unmetSection = document.getElementById("unmet-section");
-const unmetList = document.getElementById("unmet-list");
-const responseJson = document.getElementById("response-json");
-const resultsContent = document.getElementById("results-content");
-const statusElements = {
-  confidenceLabel,
-  warningsList,
-  unmetSection,
-  unmetList,
-};
+const formControls = [collegeSelect, ucSelect, geSelect, completedCoursesInput];
+
+let plannerState = PlannerUiStates.IDLE;
 
 function clearElementChildren(el) {
   if (!el) {
@@ -77,13 +64,12 @@ function renderSetupErrors(errors) {
   }
 }
 
-function renderApiError(errorPayload) {
-  const { code, message, details } = extractApiError(errorPayload);
-  apiErrorHeadline.textContent = `${code}: ${message}`;
+function renderApiError(message, details = []) {
+  apiErrorHeadline.textContent = message;
   clearElementChildren(apiErrorDetails);
   for (const detail of details) {
     const li = document.createElement("li");
-    li.textContent = `${detail.field}: ${detail.message}`;
+    li.textContent = detail;
     apiErrorDetails.appendChild(li);
   }
   apiErrorPanel.hidden = false;
@@ -93,26 +79,6 @@ function hideApiError() {
   apiErrorPanel.hidden = true;
   apiErrorHeadline.textContent = "";
   clearElementChildren(apiErrorDetails);
-}
-
-function renderResultsPlaceholder(message) {
-  if (!resultsContent) {
-    return;
-  }
-  resultsContent.innerHTML = "";
-  const p = document.createElement("p");
-  p.className = "results-placeholder";
-  p.textContent = message;
-  resultsContent.appendChild(p);
-}
-
-async function fetchJson(url) {
-  const response = await fetch(url, { method: "GET" });
-  const payload = await response.json();
-  if (!response.ok) {
-    throw payload;
-  }
-  return payload;
 }
 
 function populateCollegeOptions(items) {
@@ -136,27 +102,14 @@ function getSelectedUcValues() {
   return Array.from(ucSelect.selectedOptions).map((opt) => opt.value);
 }
 
-async function submitPlannerRequest(payload) {
-  const response = await fetch(GENERATE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const responsePayload = await response.json();
-  if (!response.ok) {
-    throw responsePayload;
-  }
-  return responsePayload;
-}
-
 async function loadMetadata() {
   setSelectLoading(collegeSelect, "Loading colleges...");
   setSelectLoading(ucSelect, "Loading UCs...");
 
   try {
     const [collegesPayload, ucsPayload] = await Promise.all([
-      fetchJson(COLLEGES_URL),
-      fetchJson(UCS_URL),
+      fetchColleges(),
+      fetchUcs(),
     ]);
     const colleges = Array.isArray(collegesPayload?.data)
       ? collegesPayload.data
@@ -165,63 +118,84 @@ async function loadMetadata() {
 
     populateCollegeOptions(colleges);
     populateUcOptions(ucs);
-  } catch (errorPayload) {
+  } catch {
     setSelectError(collegeSelect, "Unable to load colleges.");
     setSelectError(ucSelect, "Unable to load UC options.");
-    renderApiError(errorPayload);
-    responseJson.textContent = JSON.stringify(errorPayload, null, 2);
-    renderResultsPlaceholder("Results will appear after a successful generation.");
+    renderApiError("Failed to load setup options.");
   }
 }
 
 function setSubmittingState(isSubmitting) {
+  for (const control of formControls) {
+    control.disabled = isSubmitting;
+  }
   submitButton.disabled = isSubmitting;
   submitButton.textContent = isSubmitting
-    ? "Generating..."
+    ? "Continuing..."
     : "Generate Pathway";
 }
 
-function buildCurrentPayload() {
-  return buildGeneratePayload({
+function setPlannerState(nextState) {
+  plannerState = transitionPlannerState(plannerState, nextState);
+  setSubmittingState(plannerState === PlannerUiStates.LOADING);
+}
+
+function readCurrentFormState() {
+  return {
     college_id: collegeSelect.value,
     target_ucs: getSelectedUcValues(),
     ge_pattern: geSelect.value,
     completed_courses: completedCoursesInput.value,
-  });
+  };
 }
 
-form.addEventListener("submit", async (event) => {
+form.addEventListener("submit", (event) => {
   event.preventDefault();
-  hideApiError();
-  renderSetupErrors([]);
-
-  const payload = buildCurrentPayload();
-  const validationErrors = validateSetupInput(payload);
-  if (validationErrors.length > 0) {
-    renderSetupErrors(validationErrors);
+  if (!isSubmitAllowed(plannerState)) {
     return;
   }
 
-  setSubmittingState(true);
-  responseJson.textContent = "Loading...";
-  renderStatusPanel(statusElements, { plan: [], warnings: [] });
-  renderResultsPlaceholder("Generating pathway...");
+  hideApiError();
+  renderSetupErrors([]);
+
+  const formState = readCurrentFormState();
+  setPlannerState(PlannerUiStates.LOADING);
 
   try {
-    const data = await submitPlannerRequest(payload);
-    renderStatusPanel(statusElements, data);
-    responseJson.textContent = JSON.stringify(data, null, 2);
-    renderResults(resultsContent, data);
-  } catch (errorPayload) {
-    renderStatusPanel(statusElements, { plan: [], warnings: [] });
-    renderApiError(errorPayload);
-    responseJson.textContent = JSON.stringify(errorPayload, null, 2);
-    renderResultsPlaceholder("Results will appear after a successful generation.");
-  } finally {
-    setSubmittingState(false);
+    const outcome = processSetupSubmission(formState, {
+      saveRequest: (payload) => {
+        savePathwayRequest(payload);
+      },
+      navigate: (path) => {
+        window.location.assign(path);
+      },
+    });
+
+    if (!outcome.ok) {
+      renderSetupErrors(outcome.errors);
+      setPlannerState(PlannerUiStates.ERROR);
+    }
+  } catch {
+    renderSetupErrors([
+      {
+        field: "form",
+        message: "Unable to start pathway generation. Please try again.",
+      },
+    ]);
+    setPlannerState(PlannerUiStates.ERROR);
   }
 });
 
-renderResultsPlaceholder("Results will appear after a successful generation.");
-renderStatusPanel(statusElements, { plan: [], warnings: [] });
+for (const el of [collegeSelect, ucSelect, geSelect, completedCoursesInput]) {
+  el.addEventListener("input", () => {
+    renderSetupErrors([]);
+  });
+  el.addEventListener("change", () => {
+    renderSetupErrors([]);
+  });
+}
+
+setSubmittingState(false);
+hideApiError();
+renderSetupErrors([]);
 loadMetadata();

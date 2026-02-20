@@ -9,23 +9,50 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from time import perf_counter
 from typing import Any
 
+from apps.api.config import APIServerConfig, load_api_server_config_from_env
 from apps.api.metrics import APIMetrics
+from apps.api.services import (
+    GeneratePathwayInput,
+    PathwayServiceError,
+    build_health_response,
+    build_metadata_aggregate_response,
+    build_metadata_colleges_response,
+    build_metadata_districts_response,
+    build_metadata_ucs_response,
+    generate_pathway,
+)
 from packages.shared_types.v1 import (
     ALLOWED_GE_PATTERNS,
     API_VERSION,
     build_error_response,
-    normalize_warning_payloads,
     validate_generate_request,
 )
-from apps.api.planner_service import PlannerServiceError, generate_pathway_response
-from apps.api.metadata_service import load_runtime_metadata
+from apps.api.metadata_service import load_runtime_metadata_with_safe_mode
 
 
 class PathwayRequestHandler(BaseHTTPRequestHandler):
     server_version = "TransferPathwayAPI/0.1"
 
-    def _set_cors_headers(self) -> None:
-        self.send_header("Access-Control-Allow-Origin", "*")
+    def _cors_enabled(self) -> bool:
+        return bool(getattr(self.server, "api_cors_enabled", True))
+
+    def _cors_allowed_origins(self) -> set[str]:
+        configured = getattr(self.server, "api_cors_allowed_origins", ())
+        if isinstance(configured, (tuple, list, set)):
+            return {str(item) for item in configured}
+        return set()
+
+    def _is_origin_allowed(self, origin: str | None) -> bool:
+        if not origin:
+            return True
+        return origin in self._cors_allowed_origins()
+
+    def _set_cors_headers(self, *, origin: str | None = None) -> None:
+        if not bool(getattr(self.server, "api_cors_enabled", True)):
+            return
+        if origin and self._is_origin_allowed(origin):
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Vary", "Origin")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
 
@@ -60,15 +87,29 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             latency_ms=latency_ms,
         )
         self.send_response(status_code)
-        self._set_cors_headers()
+        self._set_cors_headers(origin=self.headers.get("Origin"))
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
 
     def do_OPTIONS(self) -> None:  # noqa: N802 (stdlib naming)
+        origin = self.headers.get("Origin")
+        path = self._normalize_path()
+        request_id = self._request_id()
+        if self._cors_enabled() and origin and not self._is_origin_allowed(origin):
+            self._send_error(
+                HTTPStatus.FORBIDDEN,
+                code="CORS_ORIGIN_FORBIDDEN",
+                message="Origin is not allowed by CORS policy.",
+                request_id=request_id,
+                path=path,
+                details=[{"field": "origin", "message": f"Origin not allowed: {origin}"}],
+                valid_request=False,
+            )
+            return
         self.send_response(HTTPStatus.NO_CONTENT)
-        self._set_cors_headers()
+        self._set_cors_headers(origin=origin)
         self.send_header("Content-Length", "0")
         self.end_headers()
 
@@ -76,10 +117,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         return uuid.uuid4().hex
 
     def _runtime_metadata(self):
-        try:
-            return load_runtime_metadata(), None
-        except Exception as exc:  # pragma: no cover - defensive server fallback
-            return None, exc
+        return load_runtime_metadata_with_safe_mode()
 
     def _send_error(
         self,
@@ -118,6 +156,18 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:  # noqa: N802 (stdlib naming)
         path = self._normalize_path()
         request_id = self._request_id()
+        origin = self.headers.get("Origin")
+        if self._cors_enabled() and origin and not self._is_origin_allowed(origin):
+            self._send_error(
+                HTTPStatus.FORBIDDEN,
+                code="CORS_ORIGIN_FORBIDDEN",
+                message="Origin is not allowed by CORS policy.",
+                request_id=request_id,
+                path=path,
+                details=[{"field": "origin", "message": f"Origin not allowed: {origin}"}],
+                valid_request=False,
+            )
+            return
         if path != "/v1/pathways/generate":
             self._send_error(
                 HTTPStatus.NOT_FOUND,
@@ -136,19 +186,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             return
 
         payload: dict[str, Any] | None = None
-        metadata, metadata_err = self._runtime_metadata()
-        if metadata_err is not None:
-            self._send_error(
-                HTTPStatus.INTERNAL_SERVER_ERROR,
-                code="RUNTIME_METADATA_ERROR",
-                message="Unable to load metadata from runtime artifacts.",
-                request_id=request_id,
-                path=path,
-                details=[{"field": "runtime_metadata", "message": str(metadata_err)}],
-                valid_request=True,
-                request_payload=payload,
-            )
-            return
+        metadata, is_degraded, degraded_reason = self._runtime_metadata()
 
         content_length = self.headers.get("Content-Length")
         if not content_length:
@@ -178,6 +216,24 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             )
             return
 
+        if is_degraded:
+            self._send_error(
+                HTTPStatus.SERVICE_UNAVAILABLE,
+                code="PLANNER_UNAVAILABLE_DEGRADED",
+                message="Planner generation is unavailable while runtime artifacts are degraded.",
+                request_id=request_id,
+                path=path,
+                details=[
+                    {
+                        "field": "runtime_metadata",
+                        "message": degraded_reason or "Runtime artifacts are unavailable.",
+                    }
+                ],
+                valid_request=False,
+                request_payload=payload,
+            )
+            return
+
         validation_errors = validate_generate_request(
             payload,
             allowed_colleges={item["id"] for item in metadata.colleges},
@@ -200,36 +256,35 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         latency_ms: float | None = None
         try:
             start = perf_counter()
-            response = generate_pathway_response(payload)
+            response = generate_pathway(
+                GeneratePathwayInput(
+                    college_id=str(payload["college_id"]),
+                    target_ucs=tuple(str(uc) for uc in payload["target_ucs"]),
+                    ge_pattern=str(payload["ge_pattern"]),
+                    completed_courses=tuple(
+                        str(course) for course in payload["completed_courses"]
+                    ),
+                    request_id=request_id,
+                ),
+                runtime_manifest=metadata.manifest,
+            )
             latency_ms = (perf_counter() - start) * 1000.0
-        except PlannerServiceError as exc:
+        except PathwayServiceError as exc:
             if latency_ms is None:
                 latency_ms = (perf_counter() - start) * 1000.0
             self._send_error(
-                HTTPStatus.INTERNAL_SERVER_ERROR,
-                code="PLANNER_RUNTIME_ERROR",
-                message="Unable to generate pathway response from runtime artifacts.",
+                exc.status,
+                code=exc.code,
+                message=exc.message,
                 request_id=request_id,
                 path=path,
-                details=[{"field": "planner_service", "message": str(exc)}],
+                details=exc.details,
                 valid_request=True,
                 request_payload=payload,
                 latency_ms=latency_ms,
             )
             return
 
-        response.setdefault("meta", {})
-        response["request_id"] = request_id
-        response["warnings"] = normalize_warning_payloads(
-            response.get("warnings"),
-            trace_id=request_id,
-            default_source="planner_core",
-            default_severity="WARN",
-        )
-        response["meta"]["runtime"] = {
-            "dataset_version": metadata.manifest.get("version"),
-            "generated_at": metadata.manifest.get("generated_at"),
-        }
         self._send_json(
             HTTPStatus.OK,
             response,
@@ -242,6 +297,18 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802 (stdlib naming)
         path = self._normalize_path()
         request_id = self._request_id()
+        origin = self.headers.get("Origin")
+        if self._cors_enabled() and origin and not self._is_origin_allowed(origin):
+            self._send_error(
+                HTTPStatus.FORBIDDEN,
+                code="CORS_ORIGIN_FORBIDDEN",
+                message="Origin is not allowed by CORS policy.",
+                request_id=request_id,
+                path=path,
+                details=[{"field": "origin", "message": f"Origin not allowed: {origin}"}],
+                valid_request=False,
+            )
+            return
         if path == "/v1/metrics":
             self._send_json(
                 HTTPStatus.OK,
@@ -250,31 +317,12 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
                 valid_request=True,
             )
             return
-        metadata, metadata_err = self._runtime_metadata()
-        if metadata_err is not None:
-            status = (
-                HTTPStatus.SERVICE_UNAVAILABLE
-                if path == "/v1/health"
-                else HTTPStatus.INTERNAL_SERVER_ERROR
-            )
-            self._send_error(
-                status,
-                code="RUNTIME_METADATA_ERROR",
-                message="Unable to load metadata from runtime artifacts.",
-                request_id=request_id,
-                path=path,
-                details=[{"field": "runtime_metadata", "message": str(metadata_err)}],
-                valid_request=True,
-            )
-            return
+        metadata, is_degraded, degraded_reason = self._runtime_metadata()
 
         if path == "/v1/metadata/colleges":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.colleges,
-                },
+                build_metadata_colleges_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -282,10 +330,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/metadata/districts":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.districts,
-                },
+                build_metadata_districts_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -293,10 +338,7 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         if path == "/v1/metadata/ucs":
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "data": metadata.ucs,
-                },
+                build_metadata_ucs_response(metadata),
                 path=path,
                 valid_request=True,
             )
@@ -305,32 +347,39 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
             # Backward-compatible aggregate metadata endpoint.
             self._send_json(
                 HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "colleges": metadata.colleges,
-                    "districts": metadata.districts,
-                    "ucs": metadata.ucs,
-                    "ge_patterns": sorted(ALLOWED_GE_PATTERNS),
-                },
+                build_metadata_aggregate_response(
+                    metadata,
+                    allowed_ge_patterns=ALLOWED_GE_PATTERNS,
+                ),
                 path=path,
                 valid_request=True,
             )
             return
         if path == "/v1/health":
-            self._send_json(
-                HTTPStatus.OK,
-                {
-                    "version": API_VERSION,
-                    "status": "ok",
-                    "runtime": {
-                        "dataset_version": metadata.manifest.get("version", ""),
-                        "generated_at": metadata.manifest.get("generated_at", ""),
-                        "row_counts": metadata.manifest.get("row_counts", {}),
+            if is_degraded:
+                self._send_json(
+                    HTTPStatus.OK,
+                    {
+                        "version": API_VERSION,
+                        "status": "degraded",
+                        "runtime": {
+                            "dataset_version": metadata.manifest.get("version", ""),
+                            "generated_at": metadata.manifest.get("generated_at", ""),
+                            "row_counts": metadata.manifest.get("row_counts", {}),
+                            "safe_mode": True,
+                            "reason": degraded_reason or "",
+                        },
                     },
-                },
-                path=path,
-                valid_request=True,
-            )
+                    path=path,
+                    valid_request=True,
+                )
+            else:
+                self._send_json(
+                    HTTPStatus.OK,
+                    build_health_response(metadata),
+                    path=path,
+                    valid_request=True,
+                )
             return
 
         self._send_error(
@@ -353,19 +402,33 @@ class PathwayRequestHandler(BaseHTTPRequestHandler):
         )
 
     def log_message(self, fmt: str, *args: Any) -> None:
-        # Keep output concise in tests and local runs.
-        return
+        level = str(getattr(self.server, "api_log_level", "SILENT")).upper()
+        if level == "SILENT":
+            return
+        super().log_message(fmt, *args)
 
 
-def create_server(host: str = "127.0.0.1", port: int = 8000) -> ThreadingHTTPServer:
-    server = ThreadingHTTPServer((host, port), PathwayRequestHandler)
+def create_server(
+    host: str | None = None,
+    port: int | None = None,
+    *,
+    config: APIServerConfig | None = None,
+) -> ThreadingHTTPServer:
+    resolved = config or load_api_server_config_from_env()
+    bind_host = host if host is not None else resolved.host
+    bind_port = port if port is not None else resolved.port
+    server = ThreadingHTTPServer((bind_host, bind_port), PathwayRequestHandler)
     setattr(server, "api_metrics", APIMetrics())
+    setattr(server, "api_cors_enabled", resolved.cors_enabled)
+    setattr(server, "api_cors_allowed_origins", resolved.cors_allowed_origins)
+    setattr(server, "api_log_level", resolved.log_level)
     return server
 
 
-def run(host: str = "127.0.0.1", port: int = 8000) -> None:
+def run(host: str | None = None, port: int | None = None) -> None:
     server = create_server(host=host, port=port)
-    print(f"API listening on http://{host}:{server.server_address[1]}")
+    bound_host, bound_port = server.server_address
+    print(f"API listening on http://{bound_host}:{bound_port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

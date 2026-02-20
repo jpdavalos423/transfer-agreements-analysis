@@ -1,0 +1,18 @@
+{
+  "plan": [
+    {
+      "term": "Term 3",
+      "courses": [
+        { "courseCode": "ZOO 10", "units": 4 },
+        { "courseCode": "BIO 20", "units": 3 }
+      ]
+    },
+    {
+      "term": "Term 1",
+      "courses": [
+        { "courseCode": "ENG 1A", "units": 5 },
+        { "courseCode": "MATH 1A", "units": 5 }
+      ]
+    }
+  ]
+}

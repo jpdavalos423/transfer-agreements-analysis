@@ -10,7 +10,7 @@
     <a class="skip-link" href="#planner-form">Skip to planner form</a>
     <main class="container">
       <h1>Transfer Pathway Planner</h1>
-      <p class="subtle">Student planner setup workflow (P5-1)</p>
+      <p class="subtle">Student planner setup workflow</p>
 
       <form id="planner-form" class="panel">
         <div class="field">
@@ -67,35 +67,9 @@
         <ul id="api-error-details"></ul>
       </section>
 
-      <div class="results-layout">
-        <section id="status-panel" class="panel" aria-live="polite">
-          <h2>Plan Status</h2>
-          <p class="confidence-row">
-            Confidence:
-            <span id="confidence-label" class="confidence-label confidence-incomplete"
-              >Incomplete</span
-            >
-          </p>
-          <h3>Warnings</h3>
-          <ul id="warnings-list"></ul>
-          <div id="unmet-section" hidden>
-            <h3>Unmet Requirements</h3>
-            <ul id="unmet-list"></ul>
-          </div>
-        </section>
-
-        <section id="results-panel" class="panel" aria-live="polite">
-          <h2>Pathway Results</h2>
-          <div id="results-content"></div>
-        </section>
-      </div>
-
-      <section class="panel">
-        <h2>Raw Response</h2>
-        <pre id="response-json">{}</pre>
-      </section>
     </main>
 
+    <script src="./config.js"></script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>

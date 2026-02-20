@@ -6,15 +6,17 @@ This document defines current fallback behavior for runtime-data and planner fai
 
 ## 2. Current Fallback Model (MVP)
 
-Current behavior is fail-fast for runtime-data dependencies.
+Safe mode is implemented for degraded runtime-data conditions.
 
 When runtime artifacts are missing/invalid:
 
-1. `GET /v1/health` returns service-unavailable style error (`RUNTIME_METADATA_ERROR`).
-2. `GET /v1/metadata/*` returns error (`RUNTIME_METADATA_ERROR`).
-3. `POST /v1/pathways/generate` returns error (`RUNTIME_METADATA_ERROR` or `PLANNER_RUNTIME_ERROR`).
+1. `GET /v1/metadata/colleges` returns `200` with structured metadata (best-effort from source file inventory).
+2. `GET /v1/metadata/districts` returns `200` with structured metadata (best-effort from source file inventory).
+3. `GET /v1/metadata/ucs` returns `200` with structured metadata (may be empty if runtime-derived UC data is unavailable).
+4. `POST /v1/pathways/generate` returns `503` with structured error code `PLANNER_UNAVAILABLE_DEGRADED`.
+5. `GET /v1/health` returns `200` with `status: \"degraded\"` and `runtime.safe_mode: true`.
 
-There is no hidden partial fallback that fabricates planner output.
+Safe mode does not fabricate planner output.
 
 ## 3. Warning Surfacing Behavior
 
@@ -36,19 +38,11 @@ Examples of expected warning conditions:
 
 ## 4. Safe-Mode Status
 
-Requested safe mode concept:
+Implemented behavior:
 
-1. Read-only metadata remains available while pathway generation is degraded.
-
-Current implementation status:
-
-1. Not implemented.
-2. Metadata endpoints currently depend on runtime load and fail when runtime is invalid.
-
-Recommended follow-up ticket:
-
-1. Add cached/embedded metadata fallback for `GET /v1/metadata/colleges`, `GET /v1/metadata/districts`, `GET /v1/metadata/ucs` when runtime artifacts are unavailable.
-2. Keep planner generation disabled in degraded mode.
+1. Read-only metadata stays available during degraded runtime conditions.
+2. Planner generation is disabled while degraded.
+3. Health explicitly signals degraded mode.
 
 ## 5. Operator Actions During Degraded Mode
 
@@ -77,4 +71,3 @@ scripts/build_runtime_dataset
 curl -s http://127.0.0.1:8000/v1/health
 curl -s http://127.0.0.1:8000/v1/metrics
 ```
-

@@ -44,3 +44,32 @@ test("view model omits unmet requirements section when not provided", () => {
   assert.equal(model.hasUnmetRequirements, false);
   assert.deepEqual(model.unmetRequirements, []);
 });
+
+test("view model normalizes warning severity and dedupes identical warnings", () => {
+  const model = buildStatusViewModel({
+    plan: [{ term: "Term 1", courses: [{ courseCode: "MATH 1A", units: 5 }] }],
+    warnings: [
+      { severity: " warn ", message: "Gap found", source: "planner_core" },
+      { severity: "WARN", message: "Gap found", source: "planner_core" },
+    ],
+  });
+
+  assert.equal(model.warnings.length, 1);
+  assert.equal(model.warnings[0].severity, "WARN");
+  assert.equal(model.warnings[0].message, "Gap found");
+});
+
+test("unmet requirement fallback rendering is deterministic for object key order", () => {
+  const a = buildStatusViewModel({
+    plan: [{ term: "Term 1", courses: [{ courseCode: "MATH 1A", units: 5 }] }],
+    warnings: [],
+    unmet_requirements: [{ b_key: 2, a_key: 1 }],
+  });
+  const b = buildStatusViewModel({
+    plan: [{ term: "Term 1", courses: [{ courseCode: "MATH 1A", units: 5 }] }],
+    warnings: [],
+    unmet_requirements: [{ a_key: 1, b_key: 2 }],
+  });
+
+  assert.deepEqual(a.unmetRequirements, b.unmetRequirements);
+});

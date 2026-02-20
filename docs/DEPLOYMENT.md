@@ -47,27 +47,24 @@ PY
 
 ## 4. Environment Variables
 
-Current MVP servers do not require custom environment variables.
+Optional environment overrides:
 
-Known behavior:
+1. `TPP_API_HOST` (default: `127.0.0.1`)
+2. `TPP_API_PORT` (default: `8000`)
+3. `TPP_API_CORS_ENABLED` (default: `true`)
+4. `TPP_API_CORS_ALLOWED_ORIGINS` (default: `http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:4173,http://localhost:4173,http://127.0.0.1:5173,http://localhost:5173`)
+5. `TPP_API_LOG_LEVEL` (default: `SILENT`)
+6. `TPP_WEB_API_BASE_URL` (default: `http://127.0.0.1:8000`)
 
-1. API default bind: `127.0.0.1:8000`
-2. Web default bind: `127.0.0.1:5173`
-
-If you need non-default host/port, run server functions directly:
+Example:
 
 ```bash
-python3 - <<'PY'
-from apps.api.server import run
-run(host="0.0.0.0", port=8000)
-PY
+# API with explicit CORS allowlist:
+TPP_API_HOST=0.0.0.0 TPP_API_PORT=9000 TPP_API_CORS_ENABLED=true TPP_API_CORS_ALLOWED_ORIGINS=https://app.example.com,https://admin.example.com TPP_API_LOG_LEVEL=INFO python3 -m apps.api.server
 ```
 
 ```bash
-python3 - <<'PY'
-from apps.web.server import run
-run(host="0.0.0.0", port=5173)
-PY
+TPP_WEB_API_BASE_URL=http://127.0.0.1:9000 python3 -m apps.web.server
 ```
 
 ## 5. Start Services
@@ -126,4 +123,3 @@ scripts/reliability_check --suite phase_a --repeat 2 --threshold 0.99
 scripts/perf --suite phase_a --repeat 3 --warmup 1 --threshold-seconds 2.0
 scripts/determinism --suite full --repeat 10
 ```
-
