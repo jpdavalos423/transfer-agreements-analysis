@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import re
 from dataclasses import dataclass
 from functools import lru_cache
@@ -30,6 +31,13 @@ class RuntimeMetadata:
 
 def _project_root() -> Path:
     return Path(__file__).resolve().parents[2]
+
+
+def _runtime_dir() -> Path:
+    configured = os.environ.get("TPP_RUNTIME_DIR")
+    if configured and configured.strip():
+        return Path(configured.strip())
+    return _project_root() / "data" / "runtime"
 
 
 def _normalize_id(value: str) -> str:
@@ -85,7 +93,7 @@ def _district_entry_from_filename(filename: str) -> dict[str, str] | None:
 
 @lru_cache(maxsize=1)
 def load_runtime_metadata() -> RuntimeMetadata:
-    runtime_dir = _project_root() / "data" / "runtime"
+    runtime_dir = _runtime_dir()
     try:
         loaded = load_runtime_data(runtime_dir)
     except RuntimeDataError as exc:
@@ -121,3 +129,46 @@ def load_runtime_metadata() -> RuntimeMetadata:
         manifest=loaded.model.manifest,
     )
 
+
+def _build_static_fallback_metadata() -> RuntimeMetadata:
+    project_root = _project_root()
+    filtered_dir = project_root / "filtered_results"
+    district_dir = project_root / "district_csvs"
+
+    colleges_unsorted: list[dict[str, str]] = []
+    if filtered_dir.exists():
+        for path in sorted(filtered_dir.glob("*_filtered.csv")):
+            entry = _college_entry_from_filtered_filename(path.name)
+            if entry is not None:
+                colleges_unsorted.append(entry)
+
+    districts_unsorted: list[dict[str, str]] = []
+    if district_dir.exists():
+        for path in sorted(district_dir.glob("*.csv")):
+            entry = _district_entry_from_filename(path.name)
+            if entry is not None:
+                districts_unsorted.append(entry)
+
+    manifest = {
+        "version": "",
+        "generated_at": "",
+        "row_counts": {},
+        "safe_mode": True,
+    }
+    return RuntimeMetadata(
+        colleges=sort_metadata_items(colleges_unsorted),
+        districts=sort_metadata_items(districts_unsorted),
+        ucs=[],
+        manifest=manifest,
+    )
+
+
+def load_runtime_metadata_with_safe_mode() -> tuple[RuntimeMetadata, bool, str | None]:
+    try:
+        return load_runtime_metadata(), False, None
+    except Exception as exc:
+        return _build_static_fallback_metadata(), True, str(exc)
+
+
+def clear_metadata_cache() -> None:
+    load_runtime_metadata.cache_clear()

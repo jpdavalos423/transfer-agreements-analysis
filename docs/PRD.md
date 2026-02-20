@@ -118,7 +118,7 @@ MVP focus is student planning. Counselor workflows are future phases.
 3. Operational docs in place (deployment/runbook/fallback/data refresh/golden workflow).
 
 ### Phase 7 (Fixes/QOL + Migration Readiness)
-1. Remove raw response debug UX and related plumbing.
+1. Remove legacy response-debug UX and related plumbing.
 2. Cleanup API/UI seams for framework transition.
 3. Complete migration-readiness tasks (config externalization, CORS hardening, request lifecycle hygiene, safe-mode fallback workstream).
 

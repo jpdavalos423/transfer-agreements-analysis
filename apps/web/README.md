@@ -22,6 +22,16 @@ Then open:
 http://127.0.0.1:5173
 ```
 
+Optional environment variable:
+
+1. `TPP_WEB_API_BASE_URL` (default: `http://127.0.0.1:8000`)
+
+Example:
+
+```bash
+TPP_WEB_API_BASE_URL=http://127.0.0.1:9000 python3 -m apps.web.server
+```
+
 ## Web Logic Tests
 
 ```bash

@@ -143,7 +143,7 @@ Exit criteria:
 Goal: remove MVP debug friction, clean architecture seams, and prepare for framework migration.
 
 Tickets:
-1. P7-1 Remove raw response section from web UI.
+1. P7-1 Remove legacy debug response section from web UI.
 2. P7-2 Frontend cleanup for migration:
    - Introduce explicit UI state transitions (`idle/loading/success/error`).
    - Centralize API client calls behind a single module.
@@ -173,7 +173,7 @@ Tickets:
    - JS dependency setup for React/Vite.
 
 Exit criteria:
-1. Student UI is cleaned (no raw debug response section).
+1. Student UI is cleaned (no legacy debug response section).
 2. Migration seams are explicit and reusable.
 3. Safe-mode behavior is defined and implemented.
 4. Setup form and pathway output are separated into dedicated pages.

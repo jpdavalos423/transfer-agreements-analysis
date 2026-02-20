@@ -49,6 +49,12 @@ class WebUISmokeTest(unittest.TestCase):
         self.assertIn("No pathway request found", pathway_html)
         self.assertIn("Go to setup form", pathway_html)
 
+        with urllib.request.urlopen(f"http://127.0.0.1:{self.web_port}/config.js", timeout=5) as resp:
+            self.assertEqual(resp.status, 200)
+            config_js = resp.read().decode("utf-8")
+        self.assertIn("window.__TPP_CONFIG__", config_js)
+        self.assertIn("apiBaseUrl", config_js)
+
         # Submit-equivalent API check (basic smoke until browser automation is added).
         payload = {
             "college_id": "de_anza",

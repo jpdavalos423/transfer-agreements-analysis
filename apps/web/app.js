@@ -19,6 +19,7 @@ const setupErrorsList = document.getElementById("setup-errors-list");
 const apiErrorPanel = document.getElementById("api-error-panel");
 const apiErrorHeadline = document.getElementById("api-error-headline");
 const apiErrorDetails = document.getElementById("api-error-details");
+const formControls = [collegeSelect, ucSelect, geSelect, completedCoursesInput];
 
 let plannerState = PlannerUiStates.IDLE;
 
@@ -125,6 +126,9 @@ async function loadMetadata() {
 }
 
 function setSubmittingState(isSubmitting) {
+  for (const control of formControls) {
+    control.disabled = isSubmitting;
+  }
   submitButton.disabled = isSubmitting;
   submitButton.textContent = isSubmitting
     ? "Continuing..."

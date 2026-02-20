@@ -1,6 +1,10 @@
 const DEFAULT_API_BASE_URL = "http://127.0.0.1:8000";
 
 export function getApiBaseUrl() {
+  const configured = globalThis?.window?.__TPP_CONFIG__?.apiBaseUrl;
+  if (typeof configured === "string" && configured.trim() !== "") {
+    return configured.trim();
+  }
   const injected = globalThis?.window?.__TPP_API_BASE_URL;
   if (typeof injected === "string" && injected.trim() !== "") {
     return injected.trim();
@@ -36,4 +40,3 @@ export async function submitGeneratePathway(payload) {
     body: JSON.stringify(payload),
   });
 }
-

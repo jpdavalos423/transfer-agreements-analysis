@@ -155,3 +155,62 @@ test("/pathway prevents duplicate in-flight retry requests", async () => {
   assert.equal(state.plannerState, "success");
   assert.equal(requestCount, 1);
 });
+
+test("/pathway prevents duplicate in-flight initialize requests", async () => {
+  const payload = {
+    college_id: "de_anza",
+    target_ucs: ["UCLA"],
+    ge_pattern: "IGETC",
+    completed_courses: [],
+  };
+  let resolveRequest;
+  let requestCount = 0;
+
+  const controller = createPathwayPageController({
+    storage: makeStorage(payload),
+    submitGeneratePathway: () => {
+      requestCount += 1;
+      return new Promise((resolve) => {
+        resolveRequest = resolve;
+      });
+    },
+  });
+
+  const first = controller.initialize();
+  const second = controller.initialize();
+
+  assert.equal(requestCount, 1);
+  resolveRequest({ plan: [{ term: "Term 1", courses: [] }], warnings: [] });
+  await first;
+  await second;
+
+  const state = controller.getState();
+  assert.equal(state.plannerState, "success");
+  assert.equal(requestCount, 1);
+});
+
+test("/pathway exposes loading state while request is in flight", async () => {
+  const payload = {
+    college_id: "de_anza",
+    target_ucs: ["UCLA"],
+    ge_pattern: "IGETC",
+    completed_courses: [],
+  };
+  let resolveRequest;
+  const controller = createPathwayPageController({
+    storage: makeStorage(payload),
+    submitGeneratePathway: () =>
+      new Promise((resolve) => {
+        resolveRequest = resolve;
+      }),
+  });
+
+  const pending = controller.initialize();
+  const loadingState = controller.getState();
+  assert.equal(loadingState.plannerState, "loading");
+  assert.equal(loadingState.isLoading, true);
+
+  resolveRequest({ plan: [{ term: "Term 1", courses: [] }], warnings: [] });
+  await pending;
+  assert.equal(controller.getState().plannerState, "success");
+});

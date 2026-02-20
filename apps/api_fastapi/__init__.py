@@ -1,0 +1,1 @@
+"""FastAPI migration scaffold package."""
