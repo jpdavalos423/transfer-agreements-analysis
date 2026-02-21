@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { generatePathway, mapApiErrorToUiState } from "../api/client";
 import { GeneratePathwayRequest, GeneratePathwayResponse } from "../types";
 import { loadPathwayRequest } from "../utils/pathwayRequestStorage";
-import { ResultsView } from "./ResultsView";
+import { deriveConfidenceLabel, normalizeUnmetRequirements, normalizeWarnings } from "../utils/statusPanel";
+import { calculatePlanMetrics, ResultsView } from "./ResultsView";
 import { StatusPanel } from "./StatusPanel";
 
 type PathwayUiState = "idle" | "loading" | "success" | "error";
@@ -15,6 +16,14 @@ type PathwayPageProps = {
     payload: GeneratePathwayRequest,
   ) => Promise<GeneratePathwayResponse>;
 };
+
+function formatMetricValue(value: number): string {
+  const rounded = Math.round(value * 100) / 100;
+  if (Number.isInteger(rounded)) {
+    return String(rounded);
+  }
+  return rounded.toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
+}
 
 export function PathwayPage({
   loadStoredRequest = loadPathwayRequest,
@@ -64,6 +73,10 @@ export function PathwayPage({
   const canRetry = useMemo(
     () => hasPayload && (uiState === "idle" || uiState === "error"),
     [hasPayload, uiState],
+  );
+  const summaryMetrics = useMemo(
+    () => (response ? calculatePlanMetrics(response) : null),
+    [response],
   );
 
   async function handleRetry() {
@@ -125,13 +138,48 @@ export function PathwayPage({
       ) : null}
 
       {uiState === "success" && response ? (
-        <div id="pathway-content-anchor" className="results-layout">
-          <StatusPanel response={response} />
-          <section className="panel" aria-live="polite">
-            <h2>Pathway Results</h2>
-            <ResultsView response={response} />
+        <>
+          <section id="pathway-content-anchor" className="panel pathway-summary-panel" aria-live="polite">
+            <h2>Pathway Overview</h2>
+            <div className="pathway-summary-grid">
+              <article className="summary-metric">
+                <p className="summary-label">Plan confidence</p>
+                <p className="summary-value">{deriveConfidenceLabel(response)}</p>
+              </article>
+              <article className="summary-metric">
+                <p className="summary-label">Overall units</p>
+                <p className="summary-value">{formatMetricValue(summaryMetrics?.overallUnits ?? 0)}</p>
+              </article>
+              <article className="summary-metric">
+                <p className="summary-label">Terms</p>
+                <p className="summary-value">{summaryMetrics?.termCount ?? 0}</p>
+              </article>
+              <article className="summary-metric">
+                <p className="summary-label">Courses</p>
+                <p className="summary-value">{summaryMetrics?.courseCount ?? 0}</p>
+              </article>
+              <article className="summary-metric">
+                <p className="summary-label">Warnings</p>
+                <p className="summary-value">
+                  {normalizeWarnings(Array.isArray(response.warnings) ? response.warnings : []).length}
+                </p>
+              </article>
+              <article className="summary-metric">
+                <p className="summary-label">Unmet requirements</p>
+                <p className="summary-value">
+                  {normalizeUnmetRequirements(response.unmet_requirements).length}
+                </p>
+              </article>
+            </div>
           </section>
-        </div>
+          <div className="results-layout">
+            <StatusPanel response={response} />
+            <section className="panel" aria-live="polite">
+              <h2>Pathway Results</h2>
+              <ResultsView response={response} />
+            </section>
+          </div>
+        </>
       ) : null}
     </main>
   );
