@@ -4,6 +4,12 @@ interface Props {
   response: GeneratePathwayResponse;
 }
 
+export interface PlanMetrics {
+  termCount: number;
+  courseCount: number;
+  overallUnits: number;
+}
+
 function toUnitNumber(value: number | string): number {
   if (typeof value === "number" && Number.isFinite(value)) {
     return value;
@@ -41,6 +47,19 @@ function normalizeTerm(term: PlanTerm): { term: string; courses: Array<{ courseC
   };
 }
 
+export function calculatePlanMetrics(response: GeneratePathwayResponse): PlanMetrics {
+  const plan = Array.isArray(response?.plan) ? response.plan : [];
+  const normalizedTerms = plan.map((term) => normalizeTerm(term));
+  const termUnits = normalizedTerms.map((term) =>
+    term.courses.reduce((sum, course) => sum + course.units, 0),
+  );
+  return {
+    termCount: normalizedTerms.length,
+    courseCount: normalizedTerms.reduce((sum, term) => sum + term.courses.length, 0),
+    overallUnits: termUnits.reduce((sum, units) => sum + units, 0),
+  };
+}
+
 export function ResultsView({ response }: Props) {
   const plan = Array.isArray(response?.plan) ? response.plan : [];
 
@@ -56,11 +75,11 @@ export function ResultsView({ response }: Props) {
   const termUnits = normalizedTerms.map((term) =>
     term.courses.reduce((sum, course) => sum + course.units, 0),
   );
-  const overallUnits = termUnits.reduce((sum, units) => sum + units, 0);
+  const metrics = calculatePlanMetrics(response);
 
   return (
     <>
-      <p className="results-summary">Overall Units: {formatUnits(overallUnits)}</p>
+      <p className="results-summary">Overall Units: {formatUnits(metrics.overallUnits)}</p>
       {normalizedTerms.map((term, termIndex) => (
         <article className="term-card" key={`${term.term}-${termIndex}`}>
           <div className="term-header">

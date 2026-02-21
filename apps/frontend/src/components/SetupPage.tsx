@@ -18,8 +18,86 @@ const INITIAL_FORM_STATE: SetupFormState = {
   completed_courses: "",
 };
 
-function readSelectedValues(select: HTMLSelectElement): string[] {
-  return Array.from(select.selectedOptions).map((option) => option.value);
+const UC_ID_ORDER = ["UCB", "UCD", "UCI", "UCLA", "UCM", "UCR", "UCSB", "UCSC", "UCSD"] as const;
+
+const UC_BRAND: Record<string, { name: string; mascot: string; logoPath: string }> = {
+  UCB: {
+    name: "UC Berkeley",
+    mascot: "Golden Bears",
+    logoPath: "/uc-mascots/ucb.webp",
+  },
+  UCD: {
+    name: "UC Davis",
+    mascot: "Aggies",
+    logoPath: "/uc-mascots/ucd.webp",
+  },
+  UCI: {
+    name: "UC Irvine",
+    mascot: "Anteaters",
+    logoPath: "/uc-mascots/uci.webp",
+  },
+  UCLA: {
+    name: "UCLA",
+    mascot: "Bruins",
+    logoPath: "/uc-mascots/ucla.webp",
+  },
+  UCM: {
+    name: "UC Merced",
+    mascot: "Bobcats",
+    logoPath: "/uc-mascots/ucm.webp",
+  },
+  UCR: {
+    name: "UC Riverside",
+    mascot: "Highlanders",
+    logoPath: "/uc-mascots/ucr.webp",
+  },
+  UCSB: {
+    name: "UC Santa Barbara",
+    mascot: "Gauchos",
+    logoPath: "/uc-mascots/ucsb.webp",
+  },
+  UCSC: {
+    name: "UC Santa Cruz",
+    mascot: "Banana Slugs",
+    logoPath: "/uc-mascots/ucsc.webp",
+  },
+  UCSD: {
+    name: "UC San Diego",
+    mascot: "Tritons",
+    logoPath: "/uc-mascots/ucsd.webp",
+  },
+};
+
+type UcButtonOption = {
+  id: string;
+  name: string;
+  mascot: string;
+  logoUrl: string;
+  available: boolean;
+};
+
+function buildUcButtonOptions(ucs: MetadataItem[]): UcButtonOption[] {
+  const availableById = new Map(ucs.map((item) => [item.id, item]));
+
+  const canonical = UC_ID_ORDER.map((id) => ({
+    id,
+    name: UC_BRAND[id]?.name || availableById.get(id)?.name || id,
+    mascot: UC_BRAND[id]?.mascot || "Mascot",
+    logoUrl: UC_BRAND[id]?.logoPath || "/uc-mascots/ucsd.webp",
+    available: availableById.has(id),
+  }));
+
+  const extras = ucs
+    .filter((item) => !UC_ID_ORDER.includes(item.id as (typeof UC_ID_ORDER)[number]))
+    .map((item) => ({
+      id: item.id,
+      name: item.name || item.id,
+      mascot: "Mascot",
+      logoUrl: "/uc-mascots/ucsd.webp",
+      available: true,
+    }));
+
+  return [...canonical, ...extras];
 }
 
 export function SetupPage() {
@@ -34,6 +112,7 @@ export function SetupPage() {
   const [validationErrors, setValidationErrors] = useState<ValidationIssue[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [requestError, setRequestError] = useState<string>("");
+  const [failedUcLogos, setFailedUcLogos] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let active = true;
@@ -68,6 +147,15 @@ export function SetupPage() {
   }, []);
 
   const canSubmit = useMemo(() => !isMetadataLoading && !isSubmitting, [isMetadataLoading, isSubmitting]);
+  const hasTargetUcError = useMemo(
+    () => validationErrors.some((error) => error.field === "target_ucs"),
+    [validationErrors],
+  );
+  const ucButtonOptions = useMemo(() => buildUcButtonOptions(ucs), [ucs]);
+  const unavailableUcCount = useMemo(
+    () => ucButtonOptions.filter((option) => !option.available).length,
+    [ucButtonOptions],
+  );
 
   function clearErrors() {
     if (validationErrors.length > 0) {
@@ -83,9 +171,24 @@ export function SetupPage() {
     setFormState((prev) => ({ ...prev, college_id: value }));
   }
 
-  function onUcChange(select: HTMLSelectElement) {
+  function onUcToggle(ucId: string) {
     clearErrors();
-    setFormState((prev) => ({ ...prev, target_ucs: readSelectedValues(select) }));
+    setFormState((prev) => {
+      const isSelected = prev.target_ucs.includes(ucId);
+      if (isSelected) {
+        return { ...prev, target_ucs: prev.target_ucs.filter((id) => id !== ucId) };
+      }
+      return { ...prev, target_ucs: [...prev.target_ucs, ucId] };
+    });
+  }
+
+  function markLogoFailed(ucId: string) {
+    setFailedUcLogos((prev) => {
+      if (prev[ucId]) {
+        return prev;
+      }
+      return { ...prev, [ucId]: true };
+    });
   }
 
   function onGePatternChange(value: string) {
@@ -125,7 +228,7 @@ export function SetupPage() {
   }
 
   return (
-    <main className="container">
+    <main className="container setup-container">
       <a className="skip-link" href="#planner-setup-form">
         Skip to planner setup form
       </a>
@@ -178,25 +281,98 @@ export function SetupPage() {
 
         <div className="field">
           <label htmlFor="target_ucs">Target UCs</label>
-          <select
+          <input
             id="target_ucs"
             name="target_ucs"
-            value={formState.target_ucs}
-            onChange={(event) => onUcChange(event.currentTarget)}
-            disabled={isMetadataLoading || isSubmitting}
-            multiple
-            size={Math.max(3, Math.min(8, ucs.length || 3))}
-            required
+            className="sr-only-input"
+            value={formState.target_ucs.join(",")}
+            readOnly
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+          <div
+            className={`uc-selector${hasTargetUcError ? " has-error" : ""}`}
+            role="group"
             aria-describedby="target-ucs-help"
-            aria-invalid={validationErrors.some((error) => error.field === "target_ucs")}
+            aria-invalid={hasTargetUcError}
           >
-            {ucs.map((uc) => (
-              <option key={uc.id} value={uc.id}>
-                {uc.name}
-              </option>
-            ))}
-          </select>
-          <small id="target-ucs-help">Hold Ctrl/Cmd to select multiple</small>
+            <div className="uc-selector-row uc-selector-row-5">
+              {ucButtonOptions.slice(0, 5).map((uc) => {
+                const isSelected = formState.target_ucs.includes(uc.id);
+                const isDisabled = isMetadataLoading || isSubmitting || !uc.available;
+                return (
+                  <button
+                    key={uc.id}
+                    type="button"
+                    className={`uc-card${isSelected ? " is-selected" : ""}`}
+                    onClick={() => onUcToggle(uc.id)}
+                    disabled={isDisabled}
+                    aria-pressed={isSelected}
+                    aria-label={uc.name}
+                    title={`${uc.name} ${uc.mascot}`}
+                  >
+                    {failedUcLogos[uc.id] ? (
+                      <span className="uc-card-fallback" aria-hidden="true">
+                        {uc.id}
+                      </span>
+                    ) : (
+                      <img
+                        className="uc-card-logo"
+                        src={uc.logoUrl}
+                        alt=""
+                        aria-hidden="true"
+                        onError={() => markLogoFailed(uc.id)}
+                      />
+                    )}
+                    <span className="uc-card-code">{uc.id}</span>
+                    <span className="uc-card-mascot">{uc.mascot}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="uc-selector-row uc-selector-row-4">
+              {ucButtonOptions.slice(5).map((uc) => {
+                const isSelected = formState.target_ucs.includes(uc.id);
+                const isDisabled = isMetadataLoading || isSubmitting || !uc.available;
+                return (
+                  <button
+                    key={uc.id}
+                    type="button"
+                    className={`uc-card${isSelected ? " is-selected" : ""}`}
+                    onClick={() => onUcToggle(uc.id)}
+                    disabled={isDisabled}
+                    aria-pressed={isSelected}
+                    aria-label={uc.name}
+                    title={`${uc.name} ${uc.mascot}`}
+                  >
+                    {failedUcLogos[uc.id] ? (
+                      <span className="uc-card-fallback" aria-hidden="true">
+                        {uc.id}
+                      </span>
+                    ) : (
+                      <img
+                        className="uc-card-logo"
+                        src={uc.logoUrl}
+                        alt=""
+                        aria-hidden="true"
+                        onError={() => markLogoFailed(uc.id)}
+                      />
+                    )}
+                    <span className="uc-card-code">{uc.id}</span>
+                    <span className="uc-card-mascot">{uc.mascot}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <small id="target-ucs-help" className="uc-selector-help">
+            Select one or more UCs.
+          </small>
+          {!isMetadataLoading && unavailableUcCount > 0 ? (
+            <small className="subtle uc-selector-help">
+              Some UC options are disabled because they are unavailable in the current runtime dataset.
+            </small>
+          ) : null}
         </div>
 
         <div className="field">
